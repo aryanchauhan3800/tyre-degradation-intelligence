@@ -1,0 +1,6242 @@
+[
+  {
+    "timestamp": 0.0,
+    "timestamp_iso": "1970-01-01T05:30:00",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 5.03,
+    "vehicle": {
+      "speed_mps": 25.13,
+      "speed_kph": 90.45,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.64,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.051,
+        "surface_temp_c": 81.98,
+        "carcass_temp_c": 80.06,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.13,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4629.8
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.051,
+        "surface_temp_c": 81.98,
+        "carcass_temp_c": 80.06,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.13,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4629.8
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.951,
+        "surface_temp_c": 77.98,
+        "carcass_temp_c": 76.06,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.63,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3218.2
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.951,
+        "surface_temp_c": 77.98,
+        "carcass_temp_c": 76.06,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.63,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3218.2
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 0.2,
+    "timestamp_iso": "1970-01-01T05:30:00.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 10.08,
+    "vehicle": {
+      "speed_mps": 25.25,
+      "speed_kph": 90.91,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.64,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.051,
+        "surface_temp_c": 81.97,
+        "carcass_temp_c": 80.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.25,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4628.7
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.051,
+        "surface_temp_c": 81.97,
+        "carcass_temp_c": 80.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.25,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4628.7
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.951,
+        "surface_temp_c": 77.97,
+        "carcass_temp_c": 76.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.77,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3219.3
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.951,
+        "surface_temp_c": 77.97,
+        "carcass_temp_c": 76.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.77,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3219.3
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 0.4,
+    "timestamp_iso": "1970-01-01T05:30:00.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 15.15,
+    "vehicle": {
+      "speed_mps": 25.38,
+      "speed_kph": 91.36,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.64,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.052,
+        "surface_temp_c": 81.95,
+        "carcass_temp_c": 80.17,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.38,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4627.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.052,
+        "surface_temp_c": 81.95,
+        "carcass_temp_c": 80.17,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.38,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4627.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.952,
+        "surface_temp_c": 77.95,
+        "carcass_temp_c": 76.17,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.9,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3220.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.952,
+        "surface_temp_c": 77.95,
+        "carcass_temp_c": 76.17,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.9,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3220.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 0.6,
+    "timestamp_iso": "1970-01-01T05:30:00.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 20.25,
+    "vehicle": {
+      "speed_mps": 25.5,
+      "speed_kph": 91.81,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.64,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.053,
+        "surface_temp_c": 81.94,
+        "carcass_temp_c": 80.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.5,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4626.4
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.052,
+        "surface_temp_c": 81.94,
+        "carcass_temp_c": 80.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.5,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4626.4
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.952,
+        "surface_temp_c": 77.94,
+        "carcass_temp_c": 76.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.03,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3221.6
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.952,
+        "surface_temp_c": 77.94,
+        "carcass_temp_c": 76.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.03,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3221.6
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 0.8,
+    "timestamp_iso": "1970-01-01T05:30:00.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 25.38,
+    "vehicle": {
+      "speed_mps": 25.63,
+      "speed_kph": 92.26,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.64,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.053,
+        "surface_temp_c": 81.92,
+        "carcass_temp_c": 80.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.63,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4625.2
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.053,
+        "surface_temp_c": 81.92,
+        "carcass_temp_c": 80.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.63,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4625.2
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.953,
+        "surface_temp_c": 77.92,
+        "carcass_temp_c": 76.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.17,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3222.8
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.953,
+        "surface_temp_c": 77.92,
+        "carcass_temp_c": 76.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.17,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3222.8
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 1.0,
+    "timestamp_iso": "1970-01-01T05:30:01",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 30.53,
+    "vehicle": {
+      "speed_mps": 25.75,
+      "speed_kph": 92.71,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.64,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.054,
+        "surface_temp_c": 81.9,
+        "carcass_temp_c": 80.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.75,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4624.1
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.053,
+        "surface_temp_c": 81.9,
+        "carcass_temp_c": 80.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.75,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4624.1
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.953,
+        "surface_temp_c": 77.9,
+        "carcass_temp_c": 76.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.3,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3223.9
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.953,
+        "surface_temp_c": 77.9,
+        "carcass_temp_c": 76.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.3,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3223.9
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 1.2,
+    "timestamp_iso": "1970-01-01T05:30:01.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 35.7,
+    "vehicle": {
+      "speed_mps": 25.88,
+      "speed_kph": 93.16,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.64,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.054,
+        "surface_temp_c": 81.89,
+        "carcass_temp_c": 80.37,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.88,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4622.9
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.054,
+        "surface_temp_c": 81.89,
+        "carcass_temp_c": 80.37,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.88,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4622.9
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.954,
+        "surface_temp_c": 77.89,
+        "carcass_temp_c": 76.37,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.43,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3225.1
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.954,
+        "surface_temp_c": 77.89,
+        "carcass_temp_c": 76.37,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.43,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3225.1
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 1.4,
+    "timestamp_iso": "1970-01-01T05:30:01.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 40.9,
+    "vehicle": {
+      "speed_mps": 26.0,
+      "speed_kph": 93.61,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.055,
+        "surface_temp_c": 81.87,
+        "carcass_temp_c": 80.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.0,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4621.8
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.054,
+        "surface_temp_c": 81.87,
+        "carcass_temp_c": 80.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.0,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4621.8
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.954,
+        "surface_temp_c": 77.87,
+        "carcass_temp_c": 76.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.56,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3226.2
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.954,
+        "surface_temp_c": 77.87,
+        "carcass_temp_c": 76.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.56,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3226.2
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 1.6,
+    "timestamp_iso": "1970-01-01T05:30:01.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 46.13,
+    "vehicle": {
+      "speed_mps": 26.13,
+      "speed_kph": 94.05,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.056,
+        "surface_temp_c": 81.86,
+        "carcass_temp_c": 80.46,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.13,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4620.7
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.055,
+        "surface_temp_c": 81.86,
+        "carcass_temp_c": 80.46,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.13,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4620.7
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.955,
+        "surface_temp_c": 77.86,
+        "carcass_temp_c": 76.46,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.69,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3227.3
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.955,
+        "surface_temp_c": 77.86,
+        "carcass_temp_c": 76.46,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.69,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3227.3
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 1.8,
+    "timestamp_iso": "1970-01-01T05:30:01.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 51.38,
+    "vehicle": {
+      "speed_mps": 26.25,
+      "speed_kph": 94.5,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.056,
+        "surface_temp_c": 81.84,
+        "carcass_temp_c": 80.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.25,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4619.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.055,
+        "surface_temp_c": 81.84,
+        "carcass_temp_c": 80.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.25,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4619.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.955,
+        "surface_temp_c": 77.84,
+        "carcass_temp_c": 76.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.82,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3228.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.955,
+        "surface_temp_c": 77.84,
+        "carcass_temp_c": 76.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.82,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3228.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 2.0,
+    "timestamp_iso": "1970-01-01T05:30:02",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 56.65,
+    "vehicle": {
+      "speed_mps": 26.37,
+      "speed_kph": 94.94,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.056,
+        "surface_temp_c": 81.82,
+        "carcass_temp_c": 80.54,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.37,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4618.4
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.055,
+        "surface_temp_c": 81.82,
+        "carcass_temp_c": 80.54,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.37,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4618.4
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.955,
+        "surface_temp_c": 77.82,
+        "carcass_temp_c": 76.54,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.96,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3229.6
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.955,
+        "surface_temp_c": 77.82,
+        "carcass_temp_c": 76.54,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.96,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3229.6
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 2.2,
+    "timestamp_iso": "1970-01-01T05:30:02.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 61.95,
+    "vehicle": {
+      "speed_mps": 26.5,
+      "speed_kph": 95.39,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.057,
+        "surface_temp_c": 81.81,
+        "carcass_temp_c": 80.58,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.5,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4617.2
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.056,
+        "surface_temp_c": 81.81,
+        "carcass_temp_c": 80.58,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.5,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4617.2
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.956,
+        "surface_temp_c": 77.81,
+        "carcass_temp_c": 76.58,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.09,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3230.8
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.956,
+        "surface_temp_c": 77.81,
+        "carcass_temp_c": 76.58,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.09,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3230.8
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 2.4,
+    "timestamp_iso": "1970-01-01T05:30:02.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 67.28,
+    "vehicle": {
+      "speed_mps": 26.62,
+      "speed_kph": 95.83,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.057,
+        "surface_temp_c": 81.79,
+        "carcass_temp_c": 80.62,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.62,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4616.1
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.056,
+        "surface_temp_c": 81.79,
+        "carcass_temp_c": 80.62,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.62,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4616.1
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.956,
+        "surface_temp_c": 77.79,
+        "carcass_temp_c": 76.62,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.22,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3231.9
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.956,
+        "surface_temp_c": 77.79,
+        "carcass_temp_c": 76.62,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.22,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3231.9
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 2.6,
+    "timestamp_iso": "1970-01-01T05:30:02.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 72.63,
+    "vehicle": {
+      "speed_mps": 26.74,
+      "speed_kph": 96.28,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.058,
+        "surface_temp_c": 81.78,
+        "carcass_temp_c": 80.65,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.74,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4615.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.056,
+        "surface_temp_c": 81.78,
+        "carcass_temp_c": 80.65,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.74,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4615.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.956,
+        "surface_temp_c": 77.78,
+        "carcass_temp_c": 76.65,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.35,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3233.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.956,
+        "surface_temp_c": 77.78,
+        "carcass_temp_c": 76.65,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.35,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3233.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 2.8,
+    "timestamp_iso": "1970-01-01T05:30:02.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 78.0,
+    "vehicle": {
+      "speed_mps": 26.87,
+      "speed_kph": 96.72,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.058,
+        "surface_temp_c": 81.76,
+        "carcass_temp_c": 80.68,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.87,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4613.8
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.057,
+        "surface_temp_c": 81.76,
+        "carcass_temp_c": 80.68,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.87,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4613.8
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.957,
+        "surface_temp_c": 77.76,
+        "carcass_temp_c": 76.68,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.48,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3234.2
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.957,
+        "surface_temp_c": 77.76,
+        "carcass_temp_c": 76.68,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.48,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3234.2
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 3.0,
+    "timestamp_iso": "1970-01-01T05:30:03",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 83.4,
+    "vehicle": {
+      "speed_mps": 26.99,
+      "speed_kph": 97.16,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.059,
+        "surface_temp_c": 81.74,
+        "carcass_temp_c": 80.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.99,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4612.7
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.057,
+        "surface_temp_c": 81.74,
+        "carcass_temp_c": 80.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.99,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4612.7
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.957,
+        "surface_temp_c": 77.74,
+        "carcass_temp_c": 76.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.61,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3235.3
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.957,
+        "surface_temp_c": 77.74,
+        "carcass_temp_c": 76.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.61,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3235.3
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 3.2,
+    "timestamp_iso": "1970-01-01T05:30:03.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 88.82,
+    "vehicle": {
+      "speed_mps": 27.11,
+      "speed_kph": 97.6,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.63,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.059,
+        "surface_temp_c": 81.73,
+        "carcass_temp_c": 80.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.11,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4611.6
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.057,
+        "surface_temp_c": 81.73,
+        "carcass_temp_c": 80.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.11,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4611.6
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.957,
+        "surface_temp_c": 77.73,
+        "carcass_temp_c": 76.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.74,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3236.4
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.957,
+        "surface_temp_c": 77.73,
+        "carcass_temp_c": 76.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.74,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3236.4
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 3.4,
+    "timestamp_iso": "1970-01-01T05:30:03.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 94.27,
+    "vehicle": {
+      "speed_mps": 27.23,
+      "speed_kph": 98.05,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.62,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.059,
+        "surface_temp_c": 81.71,
+        "carcass_temp_c": 80.77,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.23,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4610.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.058,
+        "surface_temp_c": 81.71,
+        "carcass_temp_c": 80.77,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.23,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4610.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.958,
+        "surface_temp_c": 77.71,
+        "carcass_temp_c": 76.77,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.87,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3237.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.958,
+        "surface_temp_c": 77.71,
+        "carcass_temp_c": 76.77,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 28.87,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3237.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 3.6,
+    "timestamp_iso": "1970-01-01T05:30:03.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 99.74,
+    "vehicle": {
+      "speed_mps": 27.36,
+      "speed_kph": 98.49,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.62,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.06,
+        "surface_temp_c": 81.7,
+        "carcass_temp_c": 80.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.36,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4609.3
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.058,
+        "surface_temp_c": 81.7,
+        "carcass_temp_c": 80.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.36,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4609.3
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.958,
+        "surface_temp_c": 77.7,
+        "carcass_temp_c": 76.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 29.0,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3238.7
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.958,
+        "surface_temp_c": 77.7,
+        "carcass_temp_c": 76.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 29.0,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3238.7
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 3.8,
+    "timestamp_iso": "1970-01-01T05:30:03.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 105.23,
+    "vehicle": {
+      "speed_mps": 27.48,
+      "speed_kph": 98.93,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.62,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.06,
+        "surface_temp_c": 81.68,
+        "carcass_temp_c": 80.83,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.48,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4608.2
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.058,
+        "surface_temp_c": 81.68,
+        "carcass_temp_c": 80.83,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.48,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4608.2
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.958,
+        "surface_temp_c": 77.68,
+        "carcass_temp_c": 76.83,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 29.13,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3239.8
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.958,
+        "surface_temp_c": 77.68,
+        "carcass_temp_c": 76.83,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 29.13,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3239.8
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 4.0,
+    "timestamp_iso": "1970-01-01T05:30:04",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 110.67,
+    "vehicle": {
+      "speed_mps": 27.19,
+      "speed_kph": 97.9,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.061,
+        "surface_temp_c": 82.94,
+        "carcass_temp_c": 80.89,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.35,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.059,
+        "surface_temp_c": 82.94,
+        "carcass_temp_c": 80.89,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.35,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.959,
+        "surface_temp_c": 78.09,
+        "carcass_temp_c": 76.87,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.19,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.959,
+        "surface_temp_c": 78.09,
+        "carcass_temp_c": 76.87,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 27.19,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 4.2,
+    "timestamp_iso": "1970-01-01T05:30:04.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 116.05,
+    "vehicle": {
+      "speed_mps": 26.91,
+      "speed_kph": 96.88,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.062,
+        "surface_temp_c": 84.2,
+        "carcass_temp_c": 80.99,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.08,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.06,
+        "surface_temp_c": 84.2,
+        "carcass_temp_c": 80.99,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.08,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.959,
+        "surface_temp_c": 78.5,
+        "carcass_temp_c": 76.92,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.91,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.959,
+        "surface_temp_c": 78.5,
+        "carcass_temp_c": 76.92,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.91,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 4.4,
+    "timestamp_iso": "1970-01-01T05:30:04.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 121.38,
+    "vehicle": {
+      "speed_mps": 26.63,
+      "speed_kph": 95.85,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.063,
+        "surface_temp_c": 85.46,
+        "carcass_temp_c": 81.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.82,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.061,
+        "surface_temp_c": 85.46,
+        "carcass_temp_c": 81.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.82,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.96,
+        "surface_temp_c": 78.91,
+        "carcass_temp_c": 76.97,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.63,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.96,
+        "surface_temp_c": 78.91,
+        "carcass_temp_c": 76.97,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.63,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 4.6,
+    "timestamp_iso": "1970-01-01T05:30:04.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 126.65,
+    "vehicle": {
+      "speed_mps": 26.34,
+      "speed_kph": 94.83,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.066,
+        "surface_temp_c": 86.72,
+        "carcass_temp_c": 81.29,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.55,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.063,
+        "surface_temp_c": 86.72,
+        "carcass_temp_c": 81.29,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.55,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.96,
+        "surface_temp_c": 79.32,
+        "carcass_temp_c": 77.05,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.34,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.96,
+        "surface_temp_c": 79.32,
+        "carcass_temp_c": 77.05,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.34,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 4.8,
+    "timestamp_iso": "1970-01-01T05:30:04.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 131.86,
+    "vehicle": {
+      "speed_mps": 26.06,
+      "speed_kph": 93.8,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.068,
+        "surface_temp_c": 87.97,
+        "carcass_temp_c": 81.49,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.28,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.065,
+        "surface_temp_c": 87.97,
+        "carcass_temp_c": 81.49,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.28,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.961,
+        "surface_temp_c": 79.72,
+        "carcass_temp_c": 77.13,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.06,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.961,
+        "surface_temp_c": 79.72,
+        "carcass_temp_c": 77.13,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.06,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 5.0,
+    "timestamp_iso": "1970-01-01T05:30:05",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 137.01,
+    "vehicle": {
+      "speed_mps": 25.77,
+      "speed_kph": 92.78,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.071,
+        "surface_temp_c": 89.23,
+        "carcass_temp_c": 81.73,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.02,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.067,
+        "surface_temp_c": 89.23,
+        "carcass_temp_c": 81.73,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.02,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.962,
+        "surface_temp_c": 80.13,
+        "carcass_temp_c": 77.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.77,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.962,
+        "surface_temp_c": 80.13,
+        "carcass_temp_c": 77.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.77,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 5.2,
+    "timestamp_iso": "1970-01-01T05:30:05.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 142.11,
+    "vehicle": {
+      "speed_mps": 25.49,
+      "speed_kph": 91.76,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.074,
+        "surface_temp_c": 90.49,
+        "carcass_temp_c": 81.99,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.75,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.07,
+        "surface_temp_c": 90.49,
+        "carcass_temp_c": 81.99,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.75,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.963,
+        "surface_temp_c": 80.54,
+        "carcass_temp_c": 77.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.49,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.963,
+        "surface_temp_c": 80.54,
+        "carcass_temp_c": 77.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.49,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 5.4,
+    "timestamp_iso": "1970-01-01T05:30:05.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 147.15,
+    "vehicle": {
+      "speed_mps": 25.2,
+      "speed_kph": 90.73,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.077,
+        "surface_temp_c": 91.75,
+        "carcass_temp_c": 82.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.49,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.073,
+        "surface_temp_c": 91.75,
+        "carcass_temp_c": 82.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.49,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.964,
+        "surface_temp_c": 80.95,
+        "carcass_temp_c": 77.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.2,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.964,
+        "surface_temp_c": 80.95,
+        "carcass_temp_c": 77.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.2,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 5.6,
+    "timestamp_iso": "1970-01-01T05:30:05.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 152.14,
+    "vehicle": {
+      "speed_mps": 24.92,
+      "speed_kph": 89.71,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.081,
+        "surface_temp_c": 93.01,
+        "carcass_temp_c": 82.6,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.22,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.076,
+        "surface_temp_c": 93.01,
+        "carcass_temp_c": 82.6,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.22,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.965,
+        "surface_temp_c": 81.36,
+        "carcass_temp_c": 77.54,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.92,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.965,
+        "surface_temp_c": 81.36,
+        "carcass_temp_c": 77.54,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.92,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 5.8,
+    "timestamp_iso": "1970-01-01T05:30:05.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 157.06,
+    "vehicle": {
+      "speed_mps": 24.63,
+      "speed_kph": 88.68,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.085,
+        "surface_temp_c": 94.27,
+        "carcass_temp_c": 82.95,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.96,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.08,
+        "surface_temp_c": 94.27,
+        "carcass_temp_c": 82.95,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.96,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.967,
+        "surface_temp_c": 81.77,
+        "carcass_temp_c": 77.67,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.63,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.967,
+        "surface_temp_c": 81.77,
+        "carcass_temp_c": 77.67,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.63,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 6.0,
+    "timestamp_iso": "1970-01-01T05:30:06",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 161.93,
+    "vehicle": {
+      "speed_mps": 24.35,
+      "speed_kph": 87.66,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.09,
+        "surface_temp_c": 95.53,
+        "carcass_temp_c": 83.33,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.69,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.083,
+        "surface_temp_c": 95.53,
+        "carcass_temp_c": 83.33,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.69,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.968,
+        "surface_temp_c": 82.18,
+        "carcass_temp_c": 77.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.35,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.968,
+        "surface_temp_c": 82.18,
+        "carcass_temp_c": 77.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.35,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 6.2,
+    "timestamp_iso": "1970-01-01T05:30:06.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 166.75,
+    "vehicle": {
+      "speed_mps": 24.07,
+      "speed_kph": 86.64,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.095,
+        "surface_temp_c": 96.79,
+        "carcass_temp_c": 83.73,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.43,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.087,
+        "surface_temp_c": 96.79,
+        "carcass_temp_c": 83.73,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.43,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.969,
+        "surface_temp_c": 82.59,
+        "carcass_temp_c": 77.95,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.07,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.969,
+        "surface_temp_c": 82.59,
+        "carcass_temp_c": 77.95,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.07,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 6.4,
+    "timestamp_iso": "1970-01-01T05:30:06.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 171.5,
+    "vehicle": {
+      "speed_mps": 23.78,
+      "speed_kph": 85.61,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.1,
+        "surface_temp_c": 98.05,
+        "carcass_temp_c": 84.16,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.16,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.092,
+        "surface_temp_c": 98.05,
+        "carcass_temp_c": 84.16,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.16,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.971,
+        "surface_temp_c": 83.0,
+        "carcass_temp_c": 78.1,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.78,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.971,
+        "surface_temp_c": 83.0,
+        "carcass_temp_c": 78.1,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.78,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 6.6,
+    "timestamp_iso": "1970-01-01T05:30:06.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 176.2,
+    "vehicle": {
+      "speed_mps": 23.5,
+      "speed_kph": 84.59,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.105,
+        "surface_temp_c": 99.31,
+        "carcass_temp_c": 84.62,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 21.9,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.096,
+        "surface_temp_c": 99.31,
+        "carcass_temp_c": 84.62,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 21.9,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.973,
+        "surface_temp_c": 83.41,
+        "carcass_temp_c": 78.26,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.5,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.973,
+        "surface_temp_c": 83.41,
+        "carcass_temp_c": 78.26,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.5,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 6.8,
+    "timestamp_iso": "1970-01-01T05:30:06.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 180.84,
+    "vehicle": {
+      "speed_mps": 23.21,
+      "speed_kph": 83.56,
+      "steer_angle_deg": -2.0,
+      "throttle_pct": 0.0,
+      "brake_pct": 85.0,
+      "longitudinal_accel_g": -1.45,
+      "lateral_accel_g": 0.05,
+      "yaw_rate_deg_s": 0.5,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.111,
+        "surface_temp_c": 100.56,
+        "carcass_temp_c": 85.1,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 21.63,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2281.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.101,
+        "surface_temp_c": 100.56,
+        "carcass_temp_c": 85.1,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 21.63,
+        "slip_ratio": -0.068,
+        "slip_angle_deg": -0.62,
+        "vertical_load_n": 2376.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.974,
+        "surface_temp_c": 83.81,
+        "carcass_temp_c": 78.43,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.21,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5471.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.974,
+        "surface_temp_c": 83.81,
+        "carcass_temp_c": 78.43,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.21,
+        "slip_ratio": 0.0,
+        "slip_angle_deg": -0.06,
+        "vertical_load_n": 5566.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 7.0,
+    "timestamp_iso": "1970-01-01T05:30:07",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 185.49,
+    "vehicle": {
+      "speed_mps": 23.23,
+      "speed_kph": 83.63,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.117,
+        "surface_temp_c": 100.55,
+        "carcass_temp_c": 85.56,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.23,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.106,
+        "surface_temp_c": 100.69,
+        "carcass_temp_c": 85.56,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.23,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.976,
+        "surface_temp_c": 83.8,
+        "carcass_temp_c": 78.59,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.72,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.976,
+        "surface_temp_c": 83.89,
+        "carcass_temp_c": 78.59,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.72,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 7.2,
+    "timestamp_iso": "1970-01-01T05:30:07.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 190.14,
+    "vehicle": {
+      "speed_mps": 23.25,
+      "speed_kph": 83.7,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.122,
+        "surface_temp_c": 100.53,
+        "carcass_temp_c": 86.01,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.25,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.11,
+        "surface_temp_c": 100.81,
+        "carcass_temp_c": 86.02,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.25,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.977,
+        "surface_temp_c": 83.78,
+        "carcass_temp_c": 78.74,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.74,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.978,
+        "surface_temp_c": 83.97,
+        "carcass_temp_c": 78.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.74,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 7.4,
+    "timestamp_iso": "1970-01-01T05:30:07.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 194.79,
+    "vehicle": {
+      "speed_mps": 23.27,
+      "speed_kph": 83.77,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.127,
+        "surface_temp_c": 100.52,
+        "carcass_temp_c": 86.44,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.27,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.115,
+        "surface_temp_c": 100.94,
+        "carcass_temp_c": 86.47,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.27,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.979,
+        "surface_temp_c": 83.77,
+        "carcass_temp_c": 78.89,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.76,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.979,
+        "surface_temp_c": 84.05,
+        "carcass_temp_c": 78.91,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.76,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 7.6,
+    "timestamp_iso": "1970-01-01T05:30:07.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 199.45,
+    "vehicle": {
+      "speed_mps": 23.29,
+      "speed_kph": 83.85,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.132,
+        "surface_temp_c": 100.5,
+        "carcass_temp_c": 86.87,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.29,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.119,
+        "surface_temp_c": 101.06,
+        "carcass_temp_c": 86.91,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.29,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.98,
+        "surface_temp_c": 83.75,
+        "carcass_temp_c": 79.04,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.78,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.981,
+        "surface_temp_c": 84.12,
+        "carcass_temp_c": 79.07,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.78,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 7.8,
+    "timestamp_iso": "1970-01-01T05:30:07.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 204.11,
+    "vehicle": {
+      "speed_mps": 23.31,
+      "speed_kph": 83.92,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.137,
+        "surface_temp_c": 100.48,
+        "carcass_temp_c": 87.27,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.31,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.123,
+        "surface_temp_c": 101.18,
+        "carcass_temp_c": 87.33,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.31,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.982,
+        "surface_temp_c": 83.73,
+        "carcass_temp_c": 79.18,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.8,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.982,
+        "surface_temp_c": 84.2,
+        "carcass_temp_c": 79.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.8,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 8.0,
+    "timestamp_iso": "1970-01-01T05:30:08",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 208.78,
+    "vehicle": {
+      "speed_mps": 23.33,
+      "speed_kph": 83.99,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.142,
+        "surface_temp_c": 100.47,
+        "carcass_temp_c": 87.67,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.33,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.128,
+        "surface_temp_c": 101.31,
+        "carcass_temp_c": 87.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.33,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.983,
+        "surface_temp_c": 83.72,
+        "carcass_temp_c": 79.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.82,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.984,
+        "surface_temp_c": 84.28,
+        "carcass_temp_c": 79.37,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.82,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 8.2,
+    "timestamp_iso": "1970-01-01T05:30:08.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 213.45,
+    "vehicle": {
+      "speed_mps": 23.35,
+      "speed_kph": 84.06,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.147,
+        "surface_temp_c": 100.45,
+        "carcass_temp_c": 88.05,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.35,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.132,
+        "surface_temp_c": 101.43,
+        "carcass_temp_c": 88.16,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.35,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.984,
+        "surface_temp_c": 83.7,
+        "carcass_temp_c": 79.45,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.84,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.985,
+        "surface_temp_c": 84.35,
+        "carcass_temp_c": 79.52,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.84,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 8.4,
+    "timestamp_iso": "1970-01-01T05:30:08.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 218.12,
+    "vehicle": {
+      "speed_mps": 23.37,
+      "speed_kph": 84.13,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.151,
+        "surface_temp_c": 100.44,
+        "carcass_temp_c": 88.43,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.37,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.136,
+        "surface_temp_c": 101.55,
+        "carcass_temp_c": 88.57,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.37,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.986,
+        "surface_temp_c": 83.69,
+        "carcass_temp_c": 79.58,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.86,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.987,
+        "surface_temp_c": 84.43,
+        "carcass_temp_c": 79.67,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.86,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 8.6,
+    "timestamp_iso": "1970-01-01T05:30:08.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 222.8,
+    "vehicle": {
+      "speed_mps": 23.39,
+      "speed_kph": 84.2,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.155,
+        "surface_temp_c": 100.42,
+        "carcass_temp_c": 88.79,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.39,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.14,
+        "surface_temp_c": 101.68,
+        "carcass_temp_c": 88.96,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.39,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.987,
+        "surface_temp_c": 83.67,
+        "carcass_temp_c": 79.7,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.88,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.988,
+        "surface_temp_c": 84.51,
+        "carcass_temp_c": 79.81,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.88,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 8.8,
+    "timestamp_iso": "1970-01-01T05:30:08.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 227.48,
+    "vehicle": {
+      "speed_mps": 23.41,
+      "speed_kph": 84.27,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.16,
+        "surface_temp_c": 100.4,
+        "carcass_temp_c": 89.13,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.41,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.143,
+        "surface_temp_c": 101.8,
+        "carcass_temp_c": 89.34,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.41,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.988,
+        "surface_temp_c": 83.65,
+        "carcass_temp_c": 79.82,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.9,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.99,
+        "surface_temp_c": 84.58,
+        "carcass_temp_c": 79.96,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.9,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 9.0,
+    "timestamp_iso": "1970-01-01T05:30:09",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 232.17,
+    "vehicle": {
+      "speed_mps": 23.43,
+      "speed_kph": 84.34,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.164,
+        "surface_temp_c": 100.39,
+        "carcass_temp_c": 89.47,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.43,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.147,
+        "surface_temp_c": 101.92,
+        "carcass_temp_c": 89.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.43,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.989,
+        "surface_temp_c": 83.64,
+        "carcass_temp_c": 79.93,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.92,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.991,
+        "surface_temp_c": 84.66,
+        "carcass_temp_c": 80.1,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.92,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 9.2,
+    "timestamp_iso": "1970-01-01T05:30:09.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 236.86,
+    "vehicle": {
+      "speed_mps": 23.45,
+      "speed_kph": 84.41,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.168,
+        "surface_temp_c": 100.37,
+        "carcass_temp_c": 89.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.45,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.151,
+        "surface_temp_c": 102.05,
+        "carcass_temp_c": 90.09,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.45,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.99,
+        "surface_temp_c": 83.62,
+        "carcass_temp_c": 80.04,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.94,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.992,
+        "surface_temp_c": 84.74,
+        "carcass_temp_c": 80.24,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.94,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 9.4,
+    "timestamp_iso": "1970-01-01T05:30:09.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 241.55,
+    "vehicle": {
+      "speed_mps": 23.47,
+      "speed_kph": 84.48,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.171,
+        "surface_temp_c": 100.36,
+        "carcass_temp_c": 90.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.47,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.155,
+        "surface_temp_c": 102.17,
+        "carcass_temp_c": 90.45,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.47,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.991,
+        "surface_temp_c": 83.61,
+        "carcass_temp_c": 80.15,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.96,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.994,
+        "surface_temp_c": 84.82,
+        "carcass_temp_c": 80.37,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.96,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 9.6,
+    "timestamp_iso": "1970-01-01T05:30:09.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 246.25,
+    "vehicle": {
+      "speed_mps": 23.49,
+      "speed_kph": 84.55,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.175,
+        "surface_temp_c": 100.34,
+        "carcass_temp_c": 90.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.49,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.158,
+        "surface_temp_c": 102.29,
+        "carcass_temp_c": 90.81,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.49,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.993,
+        "surface_temp_c": 83.59,
+        "carcass_temp_c": 80.25,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.98,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.995,
+        "surface_temp_c": 84.89,
+        "carcass_temp_c": 80.51,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.98,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 9.8,
+    "timestamp_iso": "1970-01-01T05:30:09.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 250.95,
+    "vehicle": {
+      "speed_mps": 23.51,
+      "speed_kph": 84.62,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.179,
+        "surface_temp_c": 100.32,
+        "carcass_temp_c": 90.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.51,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.162,
+        "surface_temp_c": 102.42,
+        "carcass_temp_c": 91.16,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.51,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.994,
+        "surface_temp_c": 83.57,
+        "carcass_temp_c": 80.35,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.0,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.996,
+        "surface_temp_c": 84.97,
+        "carcass_temp_c": 80.64,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.0,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 10.0,
+    "timestamp_iso": "1970-01-01T05:30:10",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 255.65,
+    "vehicle": {
+      "speed_mps": 23.53,
+      "speed_kph": 84.69,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.182,
+        "surface_temp_c": 100.31,
+        "carcass_temp_c": 91.01,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.53,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.165,
+        "surface_temp_c": 102.54,
+        "carcass_temp_c": 91.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.53,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.994,
+        "surface_temp_c": 83.56,
+        "carcass_temp_c": 80.45,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.02,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.998,
+        "surface_temp_c": 85.05,
+        "carcass_temp_c": 80.78,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.02,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 10.2,
+    "timestamp_iso": "1970-01-01T05:30:10.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 260.36,
+    "vehicle": {
+      "speed_mps": 23.55,
+      "speed_kph": 84.76,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.185,
+        "surface_temp_c": 100.29,
+        "carcass_temp_c": 91.29,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.55,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.168,
+        "surface_temp_c": 102.66,
+        "carcass_temp_c": 91.83,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.55,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.995,
+        "surface_temp_c": 83.54,
+        "carcass_temp_c": 80.54,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.04,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 1.999,
+        "surface_temp_c": 85.12,
+        "carcass_temp_c": 80.91,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.04,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 10.4,
+    "timestamp_iso": "1970-01-01T05:30:10.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 265.08,
+    "vehicle": {
+      "speed_mps": 23.56,
+      "speed_kph": 84.83,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.189,
+        "surface_temp_c": 100.28,
+        "carcass_temp_c": 91.56,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.56,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.172,
+        "surface_temp_c": 102.79,
+        "carcass_temp_c": 92.16,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.56,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.996,
+        "surface_temp_c": 83.53,
+        "carcass_temp_c": 80.63,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.06,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.0,
+        "surface_temp_c": 85.2,
+        "carcass_temp_c": 81.04,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.06,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 10.6,
+    "timestamp_iso": "1970-01-01T05:30:10.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 269.79,
+    "vehicle": {
+      "speed_mps": 23.58,
+      "speed_kph": 84.9,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.192,
+        "surface_temp_c": 100.26,
+        "carcass_temp_c": 91.82,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.58,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.175,
+        "surface_temp_c": 102.91,
+        "carcass_temp_c": 92.48,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.58,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.997,
+        "surface_temp_c": 83.51,
+        "carcass_temp_c": 80.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.08,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.002,
+        "surface_temp_c": 85.28,
+        "carcass_temp_c": 81.16,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.08,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 10.8,
+    "timestamp_iso": "1970-01-01T05:30:10.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 274.51,
+    "vehicle": {
+      "speed_mps": 23.6,
+      "speed_kph": 84.98,
+      "steer_angle_deg": -18.0,
+      "throttle_pct": 35.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.1,
+      "lateral_accel_g": 1.55,
+      "yaw_rate_deg_s": 16.0,
+      "gear": 2
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.195,
+        "surface_temp_c": 100.24,
+        "carcass_temp_c": 92.07,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.6,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 2561.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.178,
+        "surface_temp_c": 103.03,
+        "carcass_temp_c": 92.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.6,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": -3.97,
+        "vertical_load_n": 5506.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.998,
+        "surface_temp_c": 83.49,
+        "carcass_temp_c": 80.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.1,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 2341.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.003,
+        "surface_temp_c": 85.35,
+        "carcass_temp_c": 81.29,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.1,
+        "slip_ratio": 0.021,
+        "slip_angle_deg": -1.71,
+        "vertical_load_n": 5286.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 11.0,
+    "timestamp_iso": "1970-01-01T05:30:11",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 279.24,
+    "vehicle": {
+      "speed_mps": 23.64,
+      "speed_kph": 85.12,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.198,
+        "surface_temp_c": 100.44,
+        "carcass_temp_c": 92.32,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.93,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.181,
+        "surface_temp_c": 103.02,
+        "carcass_temp_c": 93.11,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.64,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 1.999,
+        "surface_temp_c": 83.58,
+        "carcass_temp_c": 80.88,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.35,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.004,
+        "surface_temp_c": 85.34,
+        "carcass_temp_c": 81.41,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.35,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 11.2,
+    "timestamp_iso": "1970-01-01T05:30:11.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 283.98,
+    "vehicle": {
+      "speed_mps": 23.68,
+      "speed_kph": 85.26,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.201,
+        "surface_temp_c": 100.64,
+        "carcass_temp_c": 92.57,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 22.97,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.184,
+        "surface_temp_c": 103.0,
+        "carcass_temp_c": 93.4,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.68,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.0,
+        "surface_temp_c": 83.66,
+        "carcass_temp_c": 80.97,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.39,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.005,
+        "surface_temp_c": 85.32,
+        "carcass_temp_c": 81.53,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.39,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 11.4,
+    "timestamp_iso": "1970-01-01T05:30:11.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 288.72,
+    "vehicle": {
+      "speed_mps": 23.72,
+      "speed_kph": 85.4,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.204,
+        "surface_temp_c": 100.84,
+        "carcass_temp_c": 92.82,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.01,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.187,
+        "surface_temp_c": 102.99,
+        "carcass_temp_c": 93.69,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.72,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.001,
+        "surface_temp_c": 83.74,
+        "carcass_temp_c": 81.05,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.43,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.006,
+        "surface_temp_c": 85.31,
+        "carcass_temp_c": 81.64,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.43,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 11.6,
+    "timestamp_iso": "1970-01-01T05:30:11.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 293.48,
+    "vehicle": {
+      "speed_mps": 23.76,
+      "speed_kph": 85.54,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.207,
+        "surface_temp_c": 101.04,
+        "carcass_temp_c": 93.06,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.05,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.19,
+        "surface_temp_c": 102.97,
+        "carcass_temp_c": 93.97,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.76,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.001,
+        "surface_temp_c": 83.83,
+        "carcass_temp_c": 81.13,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.47,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.008,
+        "surface_temp_c": 85.29,
+        "carcass_temp_c": 81.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.47,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 11.8,
+    "timestamp_iso": "1970-01-01T05:30:11.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 298.24,
+    "vehicle": {
+      "speed_mps": 23.8,
+      "speed_kph": 85.68,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.21,
+        "surface_temp_c": 101.24,
+        "carcass_temp_c": 93.31,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.09,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.192,
+        "surface_temp_c": 102.95,
+        "carcass_temp_c": 94.24,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.8,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.002,
+        "surface_temp_c": 83.91,
+        "carcass_temp_c": 81.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.51,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.009,
+        "surface_temp_c": 85.27,
+        "carcass_temp_c": 81.86,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.51,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 12.0,
+    "timestamp_iso": "1970-01-01T05:30:12",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 303.0,
+    "vehicle": {
+      "speed_mps": 23.84,
+      "speed_kph": 85.82,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.213,
+        "surface_temp_c": 101.44,
+        "carcass_temp_c": 93.55,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.12,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.195,
+        "surface_temp_c": 102.94,
+        "carcass_temp_c": 94.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.84,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.003,
+        "surface_temp_c": 83.99,
+        "carcass_temp_c": 81.3,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.55,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.01,
+        "surface_temp_c": 85.26,
+        "carcass_temp_c": 81.96,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.55,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 12.2,
+    "timestamp_iso": "1970-01-01T05:30:12.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 307.78,
+    "vehicle": {
+      "speed_mps": 23.88,
+      "speed_kph": 85.96,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.216,
+        "surface_temp_c": 101.63,
+        "carcass_temp_c": 93.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.16,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.198,
+        "surface_temp_c": 102.92,
+        "carcass_temp_c": 94.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.88,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.004,
+        "surface_temp_c": 84.08,
+        "carcass_temp_c": 81.38,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.6,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.011,
+        "surface_temp_c": 85.24,
+        "carcass_temp_c": 82.06,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.6,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 12.4,
+    "timestamp_iso": "1970-01-01T05:30:12.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 312.56,
+    "vehicle": {
+      "speed_mps": 23.92,
+      "speed_kph": 86.11,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.218,
+        "surface_temp_c": 101.83,
+        "carcass_temp_c": 94.04,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.2,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.2,
+        "surface_temp_c": 102.91,
+        "carcass_temp_c": 95.0,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.92,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.005,
+        "surface_temp_c": 84.16,
+        "carcass_temp_c": 81.47,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.64,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.012,
+        "surface_temp_c": 85.23,
+        "carcass_temp_c": 82.15,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.64,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 12.6,
+    "timestamp_iso": "1970-01-01T05:30:12.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 317.36,
+    "vehicle": {
+      "speed_mps": 23.96,
+      "speed_kph": 86.25,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.221,
+        "surface_temp_c": 102.03,
+        "carcass_temp_c": 94.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.24,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.202,
+        "surface_temp_c": 102.89,
+        "carcass_temp_c": 95.24,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.96,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.005,
+        "surface_temp_c": 84.24,
+        "carcass_temp_c": 81.55,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.68,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.012,
+        "surface_temp_c": 85.21,
+        "carcass_temp_c": 82.24,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.68,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 12.8,
+    "timestamp_iso": "1970-01-01T05:30:12.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 322.15,
+    "vehicle": {
+      "speed_mps": 24.0,
+      "speed_kph": 86.39,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.224,
+        "surface_temp_c": 102.23,
+        "carcass_temp_c": 94.52,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.28,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.205,
+        "surface_temp_c": 102.87,
+        "carcass_temp_c": 95.46,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.0,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.006,
+        "surface_temp_c": 84.32,
+        "carcass_temp_c": 81.63,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.72,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.013,
+        "surface_temp_c": 85.19,
+        "carcass_temp_c": 82.33,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.72,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 13.0,
+    "timestamp_iso": "1970-01-01T05:30:13",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 326.96,
+    "vehicle": {
+      "speed_mps": 24.04,
+      "speed_kph": 86.53,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.227,
+        "surface_temp_c": 102.43,
+        "carcass_temp_c": 94.75,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.31,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.207,
+        "surface_temp_c": 102.86,
+        "carcass_temp_c": 95.69,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.04,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.007,
+        "surface_temp_c": 84.41,
+        "carcass_temp_c": 81.72,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.76,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.014,
+        "surface_temp_c": 85.18,
+        "carcass_temp_c": 82.42,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.76,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 13.2,
+    "timestamp_iso": "1970-01-01T05:30:13.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 331.78,
+    "vehicle": {
+      "speed_mps": 24.08,
+      "speed_kph": 86.67,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.23,
+        "surface_temp_c": 102.63,
+        "carcass_temp_c": 94.99,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.35,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.209,
+        "surface_temp_c": 102.84,
+        "carcass_temp_c": 95.9,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.08,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.008,
+        "surface_temp_c": 84.49,
+        "carcass_temp_c": 81.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.8,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.015,
+        "surface_temp_c": 85.16,
+        "carcass_temp_c": 82.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.8,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 13.4,
+    "timestamp_iso": "1970-01-01T05:30:13.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 336.6,
+    "vehicle": {
+      "speed_mps": 24.11,
+      "speed_kph": 86.81,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.233,
+        "surface_temp_c": 102.83,
+        "carcass_temp_c": 95.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.39,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.211,
+        "surface_temp_c": 102.83,
+        "carcass_temp_c": 96.11,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.11,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.009,
+        "surface_temp_c": 84.57,
+        "carcass_temp_c": 81.88,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.84,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.016,
+        "surface_temp_c": 85.15,
+        "carcass_temp_c": 82.58,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.84,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 13.6,
+    "timestamp_iso": "1970-01-01T05:30:13.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 341.43,
+    "vehicle": {
+      "speed_mps": 24.15,
+      "speed_kph": 86.95,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.236,
+        "surface_temp_c": 103.02,
+        "carcass_temp_c": 95.46,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.43,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.213,
+        "surface_temp_c": 102.81,
+        "carcass_temp_c": 96.31,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.15,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.01,
+        "surface_temp_c": 84.66,
+        "carcass_temp_c": 81.97,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.88,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.017,
+        "surface_temp_c": 85.13,
+        "carcass_temp_c": 82.66,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.88,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 13.8,
+    "timestamp_iso": "1970-01-01T05:30:13.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 346.27,
+    "vehicle": {
+      "speed_mps": 24.19,
+      "speed_kph": 87.09,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.238,
+        "surface_temp_c": 103.22,
+        "carcass_temp_c": 95.69,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.47,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.215,
+        "surface_temp_c": 102.79,
+        "carcass_temp_c": 96.5,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.19,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.01,
+        "surface_temp_c": 84.74,
+        "carcass_temp_c": 82.05,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.92,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.017,
+        "surface_temp_c": 85.11,
+        "carcass_temp_c": 82.73,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.92,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 14.0,
+    "timestamp_iso": "1970-01-01T05:30:14",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 351.12,
+    "vehicle": {
+      "speed_mps": 24.23,
+      "speed_kph": 87.24,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.241,
+        "surface_temp_c": 103.42,
+        "carcass_temp_c": 95.92,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.51,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.217,
+        "surface_temp_c": 102.78,
+        "carcass_temp_c": 96.69,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.23,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.011,
+        "surface_temp_c": 84.82,
+        "carcass_temp_c": 82.13,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.96,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.018,
+        "surface_temp_c": 85.1,
+        "carcass_temp_c": 82.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.96,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 14.2,
+    "timestamp_iso": "1970-01-01T05:30:14.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 355.97,
+    "vehicle": {
+      "speed_mps": 24.27,
+      "speed_kph": 87.38,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.244,
+        "surface_temp_c": 103.62,
+        "carcass_temp_c": 96.15,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.54,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.219,
+        "surface_temp_c": 102.76,
+        "carcass_temp_c": 96.87,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.27,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.012,
+        "surface_temp_c": 84.91,
+        "carcass_temp_c": 82.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.0,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.019,
+        "surface_temp_c": 85.08,
+        "carcass_temp_c": 82.87,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.0,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 14.4,
+    "timestamp_iso": "1970-01-01T05:30:14.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 360.83,
+    "vehicle": {
+      "speed_mps": 24.31,
+      "speed_kph": 87.52,
+      "steer_angle_deg": 22.0,
+      "throttle_pct": 50.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.2,
+      "lateral_accel_g": -1.65,
+      "yaw_rate_deg_s": -18.5,
+      "gear": 3
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.247,
+        "surface_temp_c": 103.82,
+        "carcass_temp_c": 96.38,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 23.58,
+        "slip_ratio": -0.03,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 5711.5
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.221,
+        "surface_temp_c": 102.75,
+        "carcass_temp_c": 97.05,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.31,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 5.22,
+        "vertical_load_n": 2576.5
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.013,
+        "surface_temp_c": 84.99,
+        "carcass_temp_c": 82.3,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.04,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 5271.5
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.019,
+        "surface_temp_c": 85.07,
+        "carcass_temp_c": 82.94,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.04,
+        "slip_ratio": 0.03,
+        "slip_angle_deg": 1.81,
+        "vertical_load_n": 2136.5
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 14.6,
+    "timestamp_iso": "1970-01-01T05:30:14.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 365.72,
+    "vehicle": {
+      "speed_mps": 24.45,
+      "speed_kph": 88.01,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.7,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 4
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.249,
+        "surface_temp_c": 103.8,
+        "carcass_temp_c": 96.61,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.45,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.222,
+        "surface_temp_c": 102.73,
+        "carcass_temp_c": 97.22,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.45,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.014,
+        "surface_temp_c": 84.97,
+        "carcass_temp_c": 82.38,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.91,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.02,
+        "surface_temp_c": 85.05,
+        "carcass_temp_c": 83.0,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.91,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 14.8,
+    "timestamp_iso": "1970-01-01T05:30:14.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 370.64,
+    "vehicle": {
+      "speed_mps": 24.59,
+      "speed_kph": 88.51,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.7,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 4
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.252,
+        "surface_temp_c": 103.79,
+        "carcass_temp_c": 96.82,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.59,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.224,
+        "surface_temp_c": 102.71,
+        "carcass_temp_c": 97.39,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.59,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.015,
+        "surface_temp_c": 84.96,
+        "carcass_temp_c": 82.46,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.06,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.021,
+        "surface_temp_c": 85.03,
+        "carcass_temp_c": 83.06,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.06,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 15.0,
+    "timestamp_iso": "1970-01-01T05:30:15",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 375.58,
+    "vehicle": {
+      "speed_mps": 24.72,
+      "speed_kph": 89.0,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.7,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 4
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.254,
+        "surface_temp_c": 103.77,
+        "carcass_temp_c": 97.03,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.72,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.225,
+        "surface_temp_c": 102.7,
+        "carcass_temp_c": 97.55,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.72,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.015,
+        "surface_temp_c": 84.94,
+        "carcass_temp_c": 82.53,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.21,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.021,
+        "surface_temp_c": 85.02,
+        "carcass_temp_c": 83.12,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.21,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 15.2,
+    "timestamp_iso": "1970-01-01T05:30:15.200000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 380.55,
+    "vehicle": {
+      "speed_mps": 24.86,
+      "speed_kph": 89.5,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.7,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 4
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.257,
+        "surface_temp_c": 103.75,
+        "carcass_temp_c": 97.23,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.86,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.227,
+        "surface_temp_c": 102.68,
+        "carcass_temp_c": 97.7,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 24.86,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.016,
+        "surface_temp_c": 84.92,
+        "carcass_temp_c": 82.6,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.35,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.022,
+        "surface_temp_c": 85.0,
+        "carcass_temp_c": 83.18,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.35,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 15.4,
+    "timestamp_iso": "1970-01-01T05:30:15.400000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 385.55,
+    "vehicle": {
+      "speed_mps": 25.0,
+      "speed_kph": 89.99,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.7,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 4
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.259,
+        "surface_temp_c": 103.74,
+        "carcass_temp_c": 97.43,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.0,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.228,
+        "surface_temp_c": 102.67,
+        "carcass_temp_c": 97.85,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.0,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.017,
+        "surface_temp_c": 84.91,
+        "carcass_temp_c": 82.67,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.5,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.022,
+        "surface_temp_c": 84.99,
+        "carcass_temp_c": 83.23,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.5,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 15.6,
+    "timestamp_iso": "1970-01-01T05:30:15.600000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 390.58,
+    "vehicle": {
+      "speed_mps": 25.13,
+      "speed_kph": 90.48,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.7,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 4
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.261,
+        "surface_temp_c": 103.72,
+        "carcass_temp_c": 97.62,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.13,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.23,
+        "surface_temp_c": 102.65,
+        "carcass_temp_c": 97.99,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.13,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.017,
+        "surface_temp_c": 84.89,
+        "carcass_temp_c": 82.74,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.64,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.023,
+        "surface_temp_c": 84.97,
+        "carcass_temp_c": 83.28,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.64,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  },
+  {
+    "timestamp": 15.8,
+    "timestamp_iso": "1970-01-01T05:30:15.800000",
+    "session_id": "SESSION_DEMO_001",
+    "lap": 1,
+    "distance_m": 395.64,
+    "vehicle": {
+      "speed_mps": 25.27,
+      "speed_kph": 90.98,
+      "steer_angle_deg": 0.0,
+      "throttle_pct": 100.0,
+      "brake_pct": 0.0,
+      "longitudinal_accel_g": 0.7,
+      "lateral_accel_g": 0.0,
+      "yaw_rate_deg_s": 0.0,
+      "gear": 4
+    },
+    "tyres": {
+      "fl": {
+        "corner": "FL",
+        "pressure_bar": 2.264,
+        "surface_temp_c": 103.71,
+        "carcass_temp_c": 97.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.27,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "fr": {
+        "corner": "FR",
+        "pressure_bar": 2.231,
+        "surface_temp_c": 102.63,
+        "carcass_temp_c": 98.13,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 25.27,
+        "slip_ratio": -0.0,
+        "slip_angle_deg": 0.0,
+        "vertical_load_n": 4694.0
+      },
+      "rl": {
+        "corner": "RL",
+        "pressure_bar": 2.018,
+        "surface_temp_c": 84.88,
+        "carcass_temp_c": 82.8,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.79,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      },
+      "rr": {
+        "corner": "RR",
+        "pressure_bar": 2.023,
+        "surface_temp_c": 84.95,
+        "carcass_temp_c": 83.33,
+        "inner_temp_c": null,
+        "middle_temp_c": null,
+        "outer_temp_c": null,
+        "wheel_speed_mps": 26.79,
+        "slip_ratio": 0.06,
+        "slip_angle_deg": -0.0,
+        "vertical_load_n": 3154.0
+      }
+    },
+    "environment": {
+      "ambient_temp_c": 24.5,
+      "track_temp_c": 36.2,
+      "track_condition": "dry",
+      "track_friction_mu": 1.0
+    }
+  }
+]
