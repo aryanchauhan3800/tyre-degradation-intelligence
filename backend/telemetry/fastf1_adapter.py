@@ -195,7 +195,11 @@ class FastF1Adapter(TelemetryAdapter):
             drs = int(row["DRS"]) if "DRS" in row and pd.notna(row["DRS"]) else None
 
             dist = float(row["Distance"]) if "Distance" in row and pd.notna(row["Distance"]) else None
+            if dist is not None:
+                dist = max(0.0, dist)
             rel_dist = float(row["RelativeDistance"]) if "RelativeDistance" in row and pd.notna(row["RelativeDistance"]) else None
+            if rel_dist is not None:
+                rel_dist = min(1.0, max(0.0, rel_dist))
 
             pos_x = float(row["X"]) if "X" in row and pd.notna(row["X"]) else None
             pos_y = float(row["Y"]) if "Y" in row and pd.notna(row["Y"]) else None

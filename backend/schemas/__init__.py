@@ -7,6 +7,8 @@ from backend.schemas.telemetry import (
     TelemetryFrame,
 )
 
+from backend.schemas.twin import SignalOrigin, TwinEngineOutput
+
 __all__ = [
     "WheelCorner",
     "TyreState",
@@ -14,4 +16,6 @@ __all__ = [
     "VehicleState",
     "EnvironmentState",
     "TelemetryFrame",
+    "SignalOrigin",
+    "TwinEngineOutput",
 ]
