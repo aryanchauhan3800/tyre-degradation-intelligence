@@ -478,19 +478,24 @@ export class RaceCarScene {
           for (const corner of corners) {
             if (child.name === `Wheel_${corner}`) {
               this.blenderWheels[corner] = child;
-              // Compute dynamic tyre center from wheel mesh bounding box
-              const box = new THREE.Box3().setFromObject(child);
-              if (!box.isEmpty()) {
-                const center = new THREE.Vector3();
-                box.getCenter(center);
-                this.TYRE_POSITIONS[corner].copy(center);
-              }
             }
           }
         });
 
         this.blenderModel = model;
         this.carRoot.add(model);
+        model.updateMatrixWorld(true);
+
+        for (const corner of corners) {
+          const wChild = this.blenderWheels[corner];
+          if (wChild) {
+            const center = new THREE.Vector3();
+            wChild.getWorldPosition(center);
+            if (!isNaN(center.x) && !isNaN(center.y) && !isNaN(center.z) && (center.x !== 0 || center.z !== 0)) {
+              this.TYRE_POSITIONS[corner].copy(center);
+            }
+          }
+        }
         this.updateVisualHighlights();
       },
       undefined,
@@ -735,7 +740,7 @@ export class RaceCarScene {
 
     // 1. Wheel Rotation (coupled to vehicle speed_kph)
     // omega = (v_kph / 3.6) / r
-    if (this.currentSpeedKph > 0.5) {
+    if (typeof this.currentSpeedKph === 'number' && !isNaN(this.currentSpeedKph) && this.currentSpeedKph > 0.5) {
       const speedMps = this.currentSpeedKph / 3.6;
       const dTheta = (speedMps / 0.35) * 0.016; // approx 60fps delta
       this.wheelRotationAngle -= dTheta;
@@ -760,15 +765,22 @@ export class RaceCarScene {
       this.transitionAlpha = Math.min(1.0, this.transitionAlpha + 0.016 * this.transitionSpeed);
       const t = this.transitionAlpha * this.transitionAlpha * (3 - 2 * this.transitionAlpha);
 
-      this.currentCameraPos.lerpVectors(this.currentCameraPos, this.targetCameraPos, 0.08 + t * 0.1);
-      this.currentLookAt.lerpVectors(this.currentLookAt, this.targetLookAt, 0.08 + t * 0.1);
+      if (!isNaN(this.targetCameraPos.x) && !isNaN(this.targetLookAt.x)) {
+        this.currentCameraPos.lerpVectors(this.currentCameraPos, this.targetCameraPos, 0.08 + t * 0.1);
+        this.currentLookAt.lerpVectors(this.currentLookAt, this.targetLookAt, 0.08 + t * 0.1);
 
-      this.camera.position.copy(this.currentCameraPos);
-      this.camera.lookAt(this.currentLookAt);
+        this.camera.position.copy(this.currentCameraPos);
+        this.camera.lookAt(this.currentLookAt);
+      }
     }
 
     // 3. Render
-    this.renderer.render(this.scene, this.camera);
+    try {
+      this.renderer.render(this.scene, this.camera);
+    } catch (renderErr) {
+      // Guard against WebGL context interruption
+      console.warn('WebGL render cycle warning:', renderErr);
+    }
   }
 
   public destroy(): void {

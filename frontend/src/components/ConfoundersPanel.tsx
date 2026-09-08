@@ -92,7 +92,7 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
                 nonTyreScore > 0.4 ? 'text-amber-400' : 'text-slate-300'
               }`}
             >
-              {nonTyreScore.toFixed(2)}
+              {(typeof nonTyreScore === 'number' && !isNaN(nonTyreScore) ? nonTyreScore : 0).toFixed(2)}
             </span>
           </div>
           <div className="w-full h-2 bg-[#171d2b] rounded-full overflow-hidden">
@@ -100,7 +100,7 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
               className={`h-full transition-all duration-150 ${
                 nonTyreScore > 0.4 ? 'bg-amber-400' : 'bg-slate-500'
               }`}
-              style={{ width: `${Math.min(100, nonTyreScore * 100)}%` }}
+              style={{ width: `${Math.min(100, Math.max(0, (nonTyreScore || 0) * 100))}%` }}
             />
           </div>
         </div>
@@ -116,7 +116,7 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
                 tyreEvidenceQuality >= 0.7 ? 'text-emerald-400' : 'text-amber-400'
               }`}
             >
-              {tyreEvidenceQuality.toFixed(2)}
+              {(typeof tyreEvidenceQuality === 'number' && !isNaN(tyreEvidenceQuality) ? tyreEvidenceQuality : 1).toFixed(2)}
             </span>
           </div>
           <div className="w-full h-2 bg-[#171d2b] rounded-full overflow-hidden">
@@ -124,7 +124,7 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
               className={`h-full transition-all duration-150 ${
                 tyreEvidenceQuality >= 0.7 ? 'bg-emerald-400' : 'bg-amber-400'
               }`}
-              style={{ width: `${Math.min(100, tyreEvidenceQuality * 100)}%` }}
+              style={{ width: `${Math.min(100, Math.max(0, (tyreEvidenceQuality || 0) * 100))}%` }}
             />
           </div>
         </div>

@@ -36,7 +36,8 @@ export const TDITrajectoryChart: React.FC<TDITrajectoryChartProps> = ({
   const n = displayedPoints.length;
   const getX = (idx: number) => padding.left + (idx / Math.max(1, n - 1)) * plotWidth;
   const getY = (val: number) => {
-    const clamped = Math.max(0, Math.min(100, val));
+    const safeVal = typeof val === 'number' && !isNaN(val) ? val : 0;
+    const clamped = Math.max(0, Math.min(100, safeVal));
     return padding.top + plotHeight - (clamped / 100) * plotHeight;
   };
 
@@ -267,15 +268,15 @@ export const TDITrajectoryChart: React.FC<TDITrajectoryChartProps> = ({
             <div className="space-y-0.5">
               <div className="flex justify-between space-x-3">
                 <span className="text-purple-300 font-bold">FUSION:</span>
-                <span className="font-bold text-white">{hoveredPoint.final_tdi.toFixed(1)}</span>
+                <span className="font-bold text-white">{(typeof hoveredPoint.final_tdi === 'number' && !isNaN(hoveredPoint.final_tdi) ? hoveredPoint.final_tdi : 0).toFixed(1)}</span>
               </div>
               <div className="flex justify-between space-x-3">
                 <span className="text-cyan-400">PHYSICS:</span>
-                <span>{hoveredPoint.physics_tdi.toFixed(1)}</span>
+                <span>{(typeof hoveredPoint.physics_tdi === 'number' && !isNaN(hoveredPoint.physics_tdi) ? hoveredPoint.physics_tdi : 0).toFixed(1)}</span>
               </div>
               <div className="flex justify-between space-x-3">
                 <span className="text-amber-400">AI MODEL:</span>
-                <span>{hoveredPoint.ai_tdi.toFixed(1)}</span>
+                <span>{(typeof hoveredPoint.ai_tdi === 'number' && !isNaN(hoveredPoint.ai_tdi) ? hoveredPoint.ai_tdi : 0).toFixed(1)}</span>
               </div>
             </div>
           </div>

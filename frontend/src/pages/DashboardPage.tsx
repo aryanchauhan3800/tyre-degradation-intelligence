@@ -131,12 +131,14 @@ export const DashboardPage: React.FC = () => {
 
       // Mode-aware corner state resolution
       if (dataMode === 'DEMO_SIMULATION') {
-        const simWheels = computeDemoWheelStates(msg.tdi.final_tdi, frameIdx, lap, speed);
+        const currentFinalTdi = msg.tdi?.final_tdi ?? 50.0;
+        const simWheels = computeDemoWheelStates(currentFinalTdi, frameIdx, lap, speed);
         setFourWheelStates(simWheels);
       } else {
         // REAL_REPLAY: Preserve canonical unavailability
+        const fourWheel = msg.telemetry?.four_wheel_states as FourWheelTyres | undefined;
         setFourWheelStates(
-          (msg.telemetry.four_wheel_states as FourWheelTyres) || {
+          fourWheel || {
             FL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
             FR: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
             RL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
@@ -150,23 +152,28 @@ export const DashboardPage: React.FC = () => {
       if (now - lastChartUpdateRef.current > 80) {
         lastChartUpdateRef.current = now;
 
-        const ts = msg.timestamp;
+        const ts = msg.timestamp || new Date().toISOString();
         const newTdiPoint: TDIHistoryPoint = {
           timestamp: ts,
           lap: lap,
-          physics_tdi: msg.tdi.physics_tdi,
-          ai_tdi: msg.tdi.ai_tdi,
-          final_tdi: msg.tdi.final_tdi,
+          physics_tdi: typeof msg.tdi?.physics_tdi === 'number' && !isNaN(msg.tdi.physics_tdi) ? msg.tdi.physics_tdi : 0,
+          ai_tdi: typeof msg.tdi?.ai_tdi === 'number' && !isNaN(msg.tdi.ai_tdi) ? msg.tdi.ai_tdi : 0,
+          final_tdi: typeof msg.tdi?.final_tdi === 'number' && !isNaN(msg.tdi.final_tdi) ? msg.tdi.final_tdi : 0,
         };
         setTdiHistory((prev) => [...prev.slice(-299), newTdiPoint]);
+
+        const rawRes = (msg.residual as any)?.acceleration_residual_mps2 ?? msg.residual?.raw_residual_mps2 ?? 0;
+        const normRes = msg.residual?.normalized_residual ?? 0;
+        const qScore = msg.confounders?.tyre_evidence_quality ?? 1.0;
+        const cScore = msg.confounders?.non_tyre_explanation_score ?? 0.0;
 
         const newResidualPoint: ResidualHistoryPoint = {
           timestamp: ts,
           lap: lap,
-          raw_residual: msg.residual.raw_residual_mps2,
-          normalized_residual: msg.residual.normalized_residual,
-          tyre_evidence_quality: msg.confounders.tyre_evidence_quality,
-          confounder_score: msg.confounders.non_tyre_explanation_score,
+          raw_residual: typeof rawRes === 'number' && !isNaN(rawRes) ? rawRes : 0,
+          normalized_residual: typeof normRes === 'number' && !isNaN(normRes) ? normRes : 0,
+          tyre_evidence_quality: typeof qScore === 'number' && !isNaN(qScore) ? qScore : 1.0,
+          confounder_score: typeof cScore === 'number' && !isNaN(cScore) ? cScore : 0.0,
         };
         setResidualHistory((prev) => [...prev.slice(-299), newResidualPoint]);
       }

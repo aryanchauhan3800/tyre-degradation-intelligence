@@ -35,14 +35,16 @@ export const ResidualChart: React.FC<ResidualChartProps> = ({ history }) => {
   const yMin = -3.0;
   const yMax = 3.0;
   const getYResidual = (val: number) => {
-    const clamped = Math.max(yMin, Math.min(yMax, val));
+    const safeVal = typeof val === 'number' && !isNaN(val) ? val : 0;
+    const clamped = Math.max(yMin, Math.min(yMax, safeVal));
     const normalized = (clamped - yMin) / (yMax - yMin);
     return padding.top + plotHeight - normalized * plotHeight;
   };
 
   // Right Axis: Evidence Quality & Confounders (0.0 to 1.0)
   const getYQuality = (val: number) => {
-    const clamped = Math.max(0, Math.min(1.0, val));
+    const safeVal = typeof val === 'number' && !isNaN(val) ? val : 0;
+    const clamped = Math.max(0, Math.min(1.0, safeVal));
     return padding.top + plotHeight - clamped * plotHeight;
   };
 
@@ -278,19 +280,19 @@ export const ResidualChart: React.FC<ResidualChartProps> = ({ history }) => {
             <div className="space-y-0.5">
               <div className="flex justify-between space-x-3">
                 <span className="text-rose-400 font-bold">RAW RESIDUAL:</span>
-                <span className="font-bold text-white">{hoveredPoint.raw_residual.toFixed(2)} m/s²</span>
+                <span className="font-bold text-white">{(typeof hoveredPoint.raw_residual === 'number' && !isNaN(hoveredPoint.raw_residual) ? hoveredPoint.raw_residual : 0).toFixed(2)} m/s²</span>
               </div>
               <div className="flex justify-between space-x-3">
                 <span className="text-cyan-400">NORM RESIDUAL:</span>
-                <span>{hoveredPoint.normalized_residual.toFixed(2)}</span>
+                <span>{(typeof hoveredPoint.normalized_residual === 'number' && !isNaN(hoveredPoint.normalized_residual) ? hoveredPoint.normalized_residual : 0).toFixed(2)}</span>
               </div>
               <div className="flex justify-between space-x-3">
                 <span className="text-emerald-400">TYRE EVIDENCE (Q):</span>
-                <span>{hoveredPoint.tyre_evidence_quality.toFixed(2)}</span>
+                <span>{(typeof hoveredPoint.tyre_evidence_quality === 'number' && !isNaN(hoveredPoint.tyre_evidence_quality) ? hoveredPoint.tyre_evidence_quality : 1).toFixed(2)}</span>
               </div>
               <div className="flex justify-between space-x-3">
                 <span className="text-amber-400">CONFOUNDER (S):</span>
-                <span>{hoveredPoint.confounder_score.toFixed(2)}</span>
+                <span>{(typeof hoveredPoint.confounder_score === 'number' && !isNaN(hoveredPoint.confounder_score) ? hoveredPoint.confounder_score : 0).toFixed(2)}</span>
               </div>
             </div>
           </div>

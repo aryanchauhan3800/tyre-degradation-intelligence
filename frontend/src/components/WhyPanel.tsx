@@ -41,7 +41,7 @@ export const WhyPanel: React.FC<WhyPanelProps> = ({
           </span>
         </div>
         <span className="text-[10px] font-mono text-slate-400">
-          TDI: <strong className="text-cyan-300">{finalTdi.toFixed(1)}</strong>
+          TDI: <strong className="text-cyan-300">{(typeof finalTdi === 'number' && !isNaN(finalTdi) ? finalTdi : 0).toFixed(1)}</strong>
         </span>
       </div>
 

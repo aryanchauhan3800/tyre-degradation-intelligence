@@ -1,7 +1,12 @@
 import { DashboardPage } from './pages/DashboardPage'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 export function App() {
-  return <DashboardPage />
+  return (
+    <ErrorBoundary>
+      <DashboardPage />
+    </ErrorBoundary>
+  )
 }
 
 export default App

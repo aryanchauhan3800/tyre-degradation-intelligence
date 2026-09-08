@@ -96,7 +96,7 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
           </span>
           <div className="flex items-baseline space-x-2">
             <span className="text-5xl font-black font-mono text-slate-100 tracking-tight tabular-nums">
-              {finalTdi.toFixed(1)}
+              {(typeof finalTdi === 'number' && !isNaN(finalTdi) ? finalTdi : 0).toFixed(1)}
             </span>
             <span className="text-xs font-mono text-slate-400">/ 100</span>
           </div>
@@ -123,15 +123,15 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
             <span className="text-[10px] font-mono text-slate-500 block uppercase">
               MODEL RELIABILITY
             </span>
-            <span className="text-xs font-mono text-slate-300 tabular-nums">
+            <span className="text-xs font-mono text-slate-400 tabular-nums">
               {reliabilityPct}%
             </span>
           </div>
         </div>
       </div>
 
-      {/* 3-Way Architecture Breakdown: Physics vs AI vs Fusion */}
-      <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#1b2233] text-center font-mono">
+      {/* Tri-Split Provenance Cards */}
+      <div className="grid grid-cols-3 gap-2 text-center font-mono pt-2 border-t border-[#1b2233]">
         {/* Physics Twin */}
         <div className="bg-[#121622] p-2 rounded border border-[#1e2639]">
           <div className="flex items-center justify-center space-x-1 text-slate-400 mb-0.5">
@@ -139,7 +139,7 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
             <span className="text-[10px] uppercase">Physics</span>
           </div>
           <span className="text-base font-bold text-cyan-300 tabular-nums">
-            {physicsTdi.toFixed(1)}
+            {(typeof physicsTdi === 'number' && !isNaN(physicsTdi) ? physicsTdi : 0).toFixed(1)}
           </span>
           <span className="text-[9px] text-slate-500 block mt-0.5">Deterministic</span>
         </div>
@@ -151,7 +151,7 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
             <span className="text-[10px] uppercase">AI Model</span>
           </div>
           <span className="text-base font-bold text-amber-300 tabular-nums">
-            {aiTdi.toFixed(1)}
+            {(typeof aiTdi === 'number' && !isNaN(aiTdi) ? aiTdi : 0).toFixed(1)}
           </span>
           <span className="text-[9px] text-slate-500 block mt-0.5">Random Forest</span>
         </div>
@@ -163,7 +163,7 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
             <span className="text-[10px] uppercase font-semibold">Fusion</span>
           </div>
           <span className="text-base font-black text-white tabular-nums">
-            {finalTdi.toFixed(1)}
+            {(typeof finalTdi === 'number' && !isNaN(finalTdi) ? finalTdi : 0).toFixed(1)}
           </span>
           <span className="text-[9px] text-purple-300 block mt-0.5">α=0.60 Phys</span>
         </div>
