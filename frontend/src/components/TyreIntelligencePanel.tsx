@@ -16,6 +16,8 @@ interface TyreIntelligencePanelProps {
   selectedTyre: TyreCorner | null;
   dataMode: DataMode;
   fourWheelStates?: FourWheelTyres | null;
+  canonicalTyreAge?: number | null;
+  canonicalCompound?: string | null;
   onResetSelection: () => void;
   onToggleDemoMode: () => void;
 }
@@ -24,6 +26,8 @@ export const TyreIntelligencePanel: React.FC<TyreIntelligencePanelProps> = ({
   selectedTyre,
   dataMode,
   fourWheelStates,
+  canonicalTyreAge,
+  canonicalCompound,
   onResetSelection,
   onToggleDemoMode,
 }) => {
@@ -37,11 +41,11 @@ export const TyreIntelligencePanel: React.FC<TyreIntelligencePanelProps> = ({
   const tdi = isAvailable && tyreState ? tyreState.tdi : null;
   const trend = tyreState?.trend ?? 'STABLE';
   const confidencePct = tyreState?.confidence ? Math.round(tyreState.confidence * 100) : 76;
-  const tyreAge = tyreState?.age_laps ?? 18;
-  const compound = tyreState?.compound ?? 'HARD';
+  const effectiveAge = typeof canonicalTyreAge === 'number' ? canonicalTyreAge : (tyreState?.age_laps ?? null);
+  const effectiveCompound = canonicalCompound ?? tyreState?.compound ?? 'SOFT';
   const evidence = tyreState?.evidence ?? [
-    'Persistent acceleration residual in traction phases',
-    'Accumulated thermal tyre age',
+    'Persistent acceleration residual in traction phases (Simulated)',
+    'Accumulated thermal tyre age (Simulated)',
   ];
   const counterEvidence = tyreState?.counter_evidence ?? ['Aero drag active at peak velocity'];
 
@@ -106,6 +110,22 @@ export const TyreIntelligencePanel: React.FC<TyreIntelligencePanelProps> = ({
               tread temperature, surface wear, and individual wheel speeds.
             </p>
 
+            {/* Canonical Tyre Set Info from Telemetry */}
+            <div className="grid grid-cols-2 gap-2 text-xs mb-3">
+              <div className="bg-[#161c29] p-2 rounded border border-[#253147]">
+                <span className="text-[10px] text-slate-500 block uppercase">TYRE SET AGE</span>
+                <span className="font-bold text-slate-200">
+                  {effectiveAge !== null ? `${effectiveAge} laps` : '—'}
+                </span>
+              </div>
+              <div className="bg-[#161c29] p-2 rounded border border-[#253147]">
+                <span className="text-[10px] text-slate-500 block uppercase">COMPOUND</span>
+                <span className="font-bold text-white bg-slate-800 px-1.5 py-0.5 rounded text-[11px]">
+                  {effectiveCompound}
+                </span>
+              </div>
+            </div>
+
             <div className="p-2.5 rounded bg-[#161c29] border border-[#253147] flex items-center justify-between">
               <span className="text-[10px] text-slate-300">
                 Want to preview 4-wheel interaction?
@@ -138,7 +158,7 @@ export const TyreIntelligencePanel: React.FC<TyreIntelligencePanelProps> = ({
               <div className="text-right">
                 <span className="text-[10px] text-slate-500 block uppercase">TREND</span>
                 <span className="text-xs font-bold text-rose-400">{trend}</span>
-                <span className="text-[10px] text-slate-500 block mt-1 uppercase">CONFIDENCE</span>
+                <span className="text-[10px] text-slate-500 block mt-1 uppercase">SIMULATION CONFIDENCE</span>
                 <span className="text-xs font-bold text-cyan-400">{confidencePct}%</span>
               </div>
             </div>
@@ -146,13 +166,15 @@ export const TyreIntelligencePanel: React.FC<TyreIntelligencePanelProps> = ({
             {/* Tyre Specs */}
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="bg-[#121622] p-2 rounded border border-[#1e2639]">
-                <span className="text-[10px] text-slate-500 block uppercase">TYRE AGE</span>
-                <span className="font-bold text-slate-200">{tyreAge} laps</span>
+                <span className="text-[10px] text-slate-500 block uppercase">TYRE SET AGE</span>
+                <span className="font-bold text-slate-200">
+                  {effectiveAge !== null ? `${effectiveAge} laps` : '—'}
+                </span>
               </div>
               <div className="bg-[#121622] p-2 rounded border border-[#1e2639]">
                 <span className="text-[10px] text-slate-500 block uppercase">COMPOUND</span>
                 <span className="font-bold text-white bg-slate-800 px-1.5 py-0.5 rounded text-[11px]">
-                  {compound}
+                  {effectiveCompound}
                 </span>
               </div>
             </div>

@@ -205,12 +205,18 @@ class ReplayController:
         return frame
 
     async def _playback_loop(self) -> None:
-        """Internal asynchronous loop driving temporal playback."""
+        """Internal asynchronous loop driving temporal playback with continuous looping."""
         try:
-            while self.is_running and self.current_idx < len(self.frames):
+            while self.is_running:
                 if self.is_paused:
                     await asyncio.sleep(0.1)
                     continue
+
+                if self.current_idx >= len(self.frames):
+                    # Loop replay seamlessly from start
+                    self.current_idx = 0
+                    self.pipeline.reset()
+                    self._sync_state()
 
                 curr_frame = self.frames[self.current_idx]
                 next_frame = self.frames[self.current_idx + 1] if self.current_idx + 1 < len(self.frames) else None

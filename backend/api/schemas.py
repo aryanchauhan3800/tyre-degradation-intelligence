@@ -70,6 +70,7 @@ class ConfoundersStateResponse(BaseModel):
     compound: Optional[str] = Field(None, description="Current tyre compound")
     non_tyre_explanation_score: float = Field(..., ge=0.0, le=1.0, description="Confounder explanatory score in [0, 1]")
     tyre_evidence_quality: float = Field(..., ge=0.0, le=1.0, description="Tyre observation quality score in [0, 1]")
+    confounders: Optional[Dict[str, Any]] = Field(None, description="Detailed evaluations for each confounder category")
 
 
 class TDIStateResponse(BaseModel):

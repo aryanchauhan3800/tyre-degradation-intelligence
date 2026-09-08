@@ -43,6 +43,16 @@ class ConnectionManager:
         tel = result.telemetry
         iso_ts = tel.timestamp_iso or f"T+{tel.timestamp:.3f}s"
 
+        conf_dict = result.confounders.model_dump()
+        conf_eval = result.confounders.confounders
+        conf_dict["drs_active"] = conf_eval.drs.active
+        conf_dict["braking_active"] = conf_eval.braking.active
+        conf_dict["throttle_active"] = conf_eval.throttle.active
+        conf_dict["high_speed_active"] = conf_eval.high_speed.active
+        conf_dict["transient_active"] = conf_eval.transient.active
+        conf_dict["tyre_age_laps"] = tel.tyres.fl.tyre_life_laps
+        conf_dict["compound"] = tel.tyres.fl.compound
+
         message = {
             "type": "telemetry_update",
             "sequence": self._sequence,
@@ -50,7 +60,7 @@ class ConnectionManager:
             "telemetry": tel.model_dump(),
             "physics": result.physics,
             "residual": result.residual.model_dump(),
-            "confounders": result.confounders.model_dump(),
+            "confounders": conf_dict,
             "tdi": {
                 "physics_tdi": result.physics_tdi,
                 "ai_tdi": result.ai_tdi,

@@ -14,12 +14,19 @@ export function computeDemoWheelStates(
   globalTdi: number,
   frameIndex: number,
   lap: number,
-  vehicleSpeedKph: number
+  vehicleSpeedKph: number,
+  tyreAgeLaps?: number,
+  compound?: string
 ): FourWheelTyres {
   // Monza track bias: Heavy continuous loading on Left-hand tyres (FL, RL) through
   // Curva Grande (T3), Curva di Lesmo (T6, T7), Variante Ascari (T8-10), and Curva Parabolica (T11).
   const smoothOscillation = Math.sin(frameIndex * 0.02) * 1.5;
   const speedWeight = Math.min(1.0, vehicleSpeedKph / 320.0);
+
+  const canonicalAge = typeof tyreAgeLaps === 'number' && !isNaN(tyreAgeLaps)
+    ? tyreAgeLaps
+    : (lap > 0 ? lap : 2);
+  const canonicalCompound = compound ?? 'HARD';
 
   // FL: Highest thermal and mechanical stress on Monza (front left)
   const tdiFL = Math.max(0, Math.min(100, Math.round((globalTdi * 1.10 + smoothOscillation + 2.0) * 10) / 10));
@@ -47,8 +54,8 @@ export function computeDemoWheelStates(
       source: 'SIMULATED',
       trend: getTrend(tdiFL),
       confidence: getConfidence(),
-      compound: 'HARD',
-      age_laps: lap > 0 ? lap : 14,
+      compound: canonicalCompound,
+      age_laps: canonicalAge,
       reason: null,
       evidence: [
         'High lateral duty cycle in Curva Grande & Parabolica (Simulated)',
@@ -63,8 +70,8 @@ export function computeDemoWheelStates(
       source: 'SIMULATED',
       trend: getTrend(tdiFR),
       confidence: getConfidence(),
-      compound: 'HARD',
-      age_laps: lap > 0 ? lap : 14,
+      compound: canonicalCompound,
+      age_laps: canonicalAge,
       reason: null,
       evidence: [
         'Nominal inside wheel unloading (Simulated)',
@@ -78,8 +85,8 @@ export function computeDemoWheelStates(
       source: 'SIMULATED',
       trend: getTrend(tdiRL),
       confidence: getConfidence(),
-      compound: 'HARD',
-      age_laps: lap > 0 ? lap : 14,
+      compound: canonicalCompound,
+      age_laps: canonicalAge,
       reason: null,
       evidence: [
         'Longitudinal traction slip during acceleration zones (Simulated)',
@@ -93,8 +100,8 @@ export function computeDemoWheelStates(
       source: 'SIMULATED',
       trend: getTrend(tdiRR),
       confidence: getConfidence(),
-      compound: 'HARD',
-      age_laps: lap > 0 ? lap : 14,
+      compound: canonicalCompound,
+      age_laps: canonicalAge,
       reason: null,
       evidence: [
         'Symmetric longitudinal braking torque distribution (Simulated)',

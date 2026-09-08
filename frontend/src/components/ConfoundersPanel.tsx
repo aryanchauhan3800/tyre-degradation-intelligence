@@ -12,20 +12,75 @@ interface ConfoundersPanelProps {
 }
 
 export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders }) => {
-  const flags = confounders?.active_flags;
-  const drsActive = flags?.drs_active ?? false;
-  const brakingActive = flags?.braking_active ?? false;
-  const highSpeedActive = flags?.high_speed_active ?? false;
-  const transientActive = flags?.transient_active ?? false;
+  const rawFlags = confounders?.active_flags;
+  const flags = Array.isArray(rawFlags) ? rawFlags : [];
+  const flagsObj = (rawFlags && typeof rawFlags === 'object' && !Array.isArray(rawFlags))
+    ? (rawFlags as Record<string, any>)
+    : null;
+  const evalDetails = confounders?.confounders;
+
+  const drsActive = Boolean(
+    evalDetails?.drs?.active ??
+      confounders?.drs_active ??
+      flagsObj?.drs_active ??
+      flags.includes('DRS_ACTIVE')
+  );
+  const brakingActive = Boolean(
+    evalDetails?.braking?.active ??
+      confounders?.braking_active ??
+      flagsObj?.braking_active ??
+      (flags.includes('HEAVY_BRAKING') || flags.includes('BRAKING_ACTIVE'))
+  );
+  const highSpeedActive = Boolean(
+    evalDetails?.high_speed?.active ??
+      confounders?.high_speed_active ??
+      flagsObj?.high_speed_active ??
+      flags.includes('HIGH_SPEED')
+  );
+  const transientActive = Boolean(
+    evalDetails?.transient?.active ??
+      confounders?.transient_active ??
+      flagsObj?.transient_active ??
+      (flags.includes('TRANSIENT_EVENT') || flags.includes('TRANSIENT_DYNAMICS'))
+  );
+
+  const drsClassification = evalDetails?.drs?.classification ?? (drsActive ? 'EXPLANATORY' : 'NONE');
+  const brakingClassification = evalDetails?.braking?.classification ?? (brakingActive ? 'EXPLANATORY' : 'NONE');
+  const highSpeedClassification = evalDetails?.high_speed?.classification ?? (highSpeedActive ? 'EXPLANATORY' : 'NONE');
+  const transientClassification = evalDetails?.transient?.classification ?? (transientActive ? 'POSSIBLE' : 'NONE');
 
   const nonTyreScore = confounders ? Math.round(confounders.non_tyre_explanation_score * 100) / 100 : 0;
   const tyreEvidenceQuality = confounders ? Math.round(confounders.tyre_evidence_quality * 100) / 100 : 1;
 
   const flagItems = [
-    { label: 'DRS', active: drsActive, icon: Wind, desc: 'Aerodynamic drag reduction' },
-    { label: 'BRAKING', active: brakingActive, icon: Disc, desc: 'High brake line pressure' },
-    { label: 'HIGH SPEED', active: highSpeedActive, icon: Zap, desc: 'v > 280 km/h aerodynamic dominance' },
-    { label: 'TRANSIENT', active: transientActive, icon: AlertCircle, desc: 'Rapid gear/throttle transition' },
+    {
+      label: 'DRS',
+      active: drsActive,
+      classification: drsClassification,
+      icon: Wind,
+      desc: drsActive ? 'Aerodynamic drag reduction active' : 'Rear wing flap closed',
+    },
+    {
+      label: 'BRAKING',
+      active: brakingActive,
+      classification: brakingClassification,
+      icon: Disc,
+      desc: brakingActive ? 'Threshold braking demand active' : 'Below active braking threshold (25%)',
+    },
+    {
+      label: 'HIGH SPEED',
+      active: highSpeedActive,
+      classification: highSpeedClassification,
+      icon: Zap,
+      desc: highSpeedActive ? 'Aerodynamic dominance (>250 km/h)' : 'Below aero-dominant speed threshold',
+    },
+    {
+      label: 'TRANSIENT',
+      active: transientActive,
+      classification: transientClassification,
+      icon: AlertCircle,
+      desc: transientActive ? 'Rapid gear/throttle/brake rate transition' : 'Quasi-steady-state kinematics',
+    },
   ];
 
   return (
@@ -64,16 +119,21 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
                 <span
                   className={`text-[9px] px-1.5 py-0.2 rounded font-semibold ${
                     item.active
-                      ? 'bg-amber-500 text-black'
+                      ? 'bg-amber-500 text-black font-bold'
                       : 'bg-[#192030] text-slate-500'
                   }`}
                 >
                   {item.active ? 'ACTIVE' : 'INACTIVE'}
                 </span>
               </div>
-              <span className="text-[9px] text-slate-500 block mt-1 truncate">
-                {item.desc}
-              </span>
+              <div className="flex items-center justify-between mt-1 text-[9px]">
+                <span className="text-slate-500 truncate max-w-[130px]">{item.desc}</span>
+                {item.active && (
+                  <span className="text-[8px] font-semibold text-amber-300 uppercase tracking-tighter shrink-0 ml-1">
+                    {item.classification}
+                  </span>
+                )}
+              </div>
             </div>
           );
         })}

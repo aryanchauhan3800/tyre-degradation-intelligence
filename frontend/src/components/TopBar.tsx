@@ -10,6 +10,7 @@ import { RefreshCw, AlertCircle } from 'lucide-react';
 interface TopBarProps {
   session: SessionResponse | null;
   vehicleState: VehicleState | null;
+  drsActive?: boolean;
   connectionStatus: ConnectionStatus;
   dataMode: DataMode;
   onToggleDataMode: (mode: DataMode) => void;
@@ -19,6 +20,7 @@ interface TopBarProps {
 export const TopBar: React.FC<TopBarProps> = ({
   session,
   vehicleState,
+  drsActive = false,
   connectionStatus,
   dataMode,
   onToggleDataMode,
@@ -52,8 +54,8 @@ export const TopBar: React.FC<TopBarProps> = ({
               <span className="font-mono text-base font-bold tracking-wider text-slate-100">
                 TYRETRACE
               </span>
-              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950 border border-cyan-500/40 text-cyan-300">
-                PHASE 9
+              <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/40 text-cyan-300 font-bold tracking-wider">
+                DIGITAL TWIN
               </span>
             </div>
             <p className="text-[10px] font-mono text-slate-400 tracking-tight leading-none">
@@ -134,6 +136,19 @@ export const TopBar: React.FC<TopBarProps> = ({
                 style={{ width: `${Math.min(100, Math.max(0, brake))}%` }}
               />
             </div>
+          </div>
+
+          {/* Canonical DRS Indicator */}
+          <div className="pl-2 border-l border-[#222a3d] flex items-center">
+            <span
+              className={`px-1.5 py-0.5 rounded text-[10px] font-bold tracking-wider ${
+                drsActive
+                  ? 'bg-emerald-950/80 text-emerald-400 border border-emerald-500/40 shadow-[0_0_8px_rgba(16,185,129,0.2)]'
+                  : 'bg-[#1b2230] text-slate-500 border border-slate-700/40'
+              }`}
+            >
+              DRS {drsActive ? 'OPEN' : 'CLOSED'}
+            </span>
           </div>
         </div>
       </div>

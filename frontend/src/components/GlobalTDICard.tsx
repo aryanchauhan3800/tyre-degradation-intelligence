@@ -113,7 +113,7 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
         <div className="text-right space-y-2">
           <div>
             <span className="text-[10px] font-mono text-slate-500 block uppercase">
-              CONFIDENCE
+              SYSTEM CONFIDENCE
             </span>
             <span className="text-lg font-bold font-mono text-cyan-400 tabular-nums">
               {confidencePct}%

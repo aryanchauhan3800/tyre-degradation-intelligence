@@ -46,10 +46,10 @@ export const WhyPanel: React.FC<WhyPanelProps> = ({
       </div>
 
       <div className="space-y-3 font-mono text-xs">
-        {/* Supporting Evidence List */}
+        {/* Supporting Evidence List / Assessment */}
         <div>
           <span className="text-[10px] uppercase text-emerald-400 font-semibold tracking-wider block mb-1.5">
-            PRIMARY SUPPORTING EVIDENCE
+            {hasEvidence ? 'PRIMARY SUPPORTING EVIDENCE' : 'ASSESSMENT'}
           </span>
           {hasEvidence ? (
             <ul className="space-y-1">
@@ -61,9 +61,10 @@ export const WhyPanel: React.FC<WhyPanelProps> = ({
               ))}
             </ul>
           ) : (
-            <p className="text-slate-500 text-[11px] italic">
-              Awaiting persistent degradation signal window...
-            </p>
+            <div className="flex items-center space-x-1.5 text-slate-400 text-[11px]">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+              <span>No significant degradation evidence detected.</span>
+            </div>
           )}
         </div>
 

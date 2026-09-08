@@ -33,6 +33,98 @@ import { TDITrajectoryChart } from '../components/TDITrajectoryChart';
 import { ResidualChart } from '../components/ResidualChart';
 import { ReplayControlBar } from '../components/ReplayControlBar';
 
+interface DashboardFrameState {
+  sequence: number;
+  timestamp: string;
+  telemetry: TelemetryFrame | null;
+  confounders: ConfounderFrame | null;
+  tdi: TDIStateResponse | null;
+  fourWheelStates: FourWheelTyres | null;
+  canonicalDrsActive: boolean;
+  canonicalBrakingActive: boolean;
+  canonicalHighSpeedActive: boolean;
+  canonicalTransientActive: boolean;
+  canonicalTyreAge: number | null;
+  canonicalCompound: string;
+}
+
+function buildUnifiedFrameState(
+  seq: number,
+  ts: string,
+  tel: TelemetryFrame | null,
+  conf: ConfounderFrame | null,
+  tdiRes: TDIStateResponse | null,
+  mode: DataMode
+): DashboardFrameState {
+  const veh = (tel?.vehicle || tel?.vehicle_state) ?? null;
+  const speed = veh?.speed_kph ?? 0;
+  const rawBrk = veh?.brake_pct ?? (veh as any)?.brake ?? 0;
+  const brakePct = typeof rawBrk === 'number' && !isNaN(rawBrk) ? rawBrk : 0;
+  const rawDrs = veh?.drs ?? 0;
+
+  const activeFlags = Array.isArray(conf?.active_flags) ? conf.active_flags : [];
+
+  const drsActive = conf?.drs_active !== undefined
+    ? Boolean(conf.drs_active)
+    : activeFlags.includes('DRS_ACTIVE') || (typeof rawDrs === 'number' && (rawDrs === 8 || rawDrs === 10 || rawDrs === 12 || rawDrs === 14 || rawDrs >= 8));
+
+  const brakingActive = conf?.braking_active !== undefined
+    ? Boolean(conf.braking_active)
+    : activeFlags.includes('HEAVY_BRAKING') || brakePct > 0;
+
+  const highSpeedActive = conf?.high_speed_active !== undefined
+    ? Boolean(conf.high_speed_active)
+    : activeFlags.includes('HIGH_SPEED') || speed > 250;
+
+  const transientActive = conf?.transient_active !== undefined
+    ? Boolean(conf.transient_active)
+    : activeFlags.includes('TRANSIENT_EVENT') || activeFlags.includes('TRANSIENT_DYNAMICS');
+
+  const canonicalTyreAge = typeof conf?.tyre_age_laps === 'number'
+    ? conf.tyre_age_laps
+    : typeof tel?.tyres?.fl?.tyre_life_laps === 'number'
+      ? tel.tyres.fl.tyre_life_laps
+      : null;
+
+  const canonicalCompound = conf?.compound || tel?.tyres?.fl?.compound || 'SOFT';
+
+  let resolvedFourWheel: FourWheelTyres | null = null;
+  if (mode === 'DEMO_SIMULATION') {
+    const currentFinalTdi = tdiRes?.final_tdi ?? 50.0;
+    const lap = tel?.lap ?? 1;
+    resolvedFourWheel = computeDemoWheelStates(
+      currentFinalTdi,
+      seq,
+      lap,
+      speed,
+      canonicalTyreAge ?? undefined,
+      canonicalCompound
+    );
+  } else {
+    resolvedFourWheel = (tel?.four_wheel_states as FourWheelTyres) || {
+      FL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
+      FR: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
+      RL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
+      RR: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
+    };
+  }
+
+  return {
+    sequence: seq,
+    timestamp: ts,
+    telemetry: tel,
+    confounders: conf,
+    tdi: tdiRes,
+    fourWheelStates: resolvedFourWheel,
+    canonicalDrsActive: drsActive,
+    canonicalBrakingActive: brakingActive,
+    canonicalHighSpeedActive: highSpeedActive,
+    canonicalTransientActive: transientActive,
+    canonicalTyreAge,
+    canonicalCompound,
+  };
+}
+
 export const DashboardPage: React.FC = () => {
   // Session & Replay State
   const [session, setSession] = useState<SessionResponse | null>(null);
@@ -42,13 +134,10 @@ export const DashboardPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [apiError, setApiError] = useState<string | null>(null);
 
-  // Live Telemetry & Model States
-  const [telemetry, setTelemetry] = useState<TelemetryFrame | null>(null);
-  const [confounders, setConfounders] = useState<ConfounderFrame | null>(null);
-  const [tdi, setTdi] = useState<TDIStateResponse | null>(null);
-
-  // Four Wheel Corner State
-  const [fourWheelStates, setFourWheelStates] = useState<FourWheelTyres | null>(null);
+  // SINGLE SOURCE OF TRUTH: Normalized Current Frame State
+  const [frameState, setFrameState] = useState<DashboardFrameState>(() =>
+    buildUnifiedFrameState(0, new Date().toISOString(), null, null, null, 'REPLAY')
+  );
 
   // Rolling Histories
   const [tdiHistory, setTdiHistory] = useState<TDIHistoryPoint[]>([]);
@@ -76,40 +165,50 @@ export const DashboardPage: React.FC = () => {
       if (resHistRes) setResidualHistory(resHistRes);
 
       // Attempt to fetch current frame state
-      const [tel, conf, tdiRes, tyresRes] = await Promise.all([
+      const [tel, conf, tdiRes] = await Promise.all([
         api.getTelemetry().catch(() => null),
         api.getConfounders().catch(() => null),
         api.getTDI().catch(() => null),
-        api.getTyres().catch(() => null),
       ]);
 
-      if (tel) setTelemetry(tel);
-      if (conf) setConfounders(conf);
-      if (tdiRes) setTdi(tdiRes);
-      if (tyresRes) setFourWheelStates(tyresRes);
+      const initialUnified = buildUnifiedFrameState(
+        0,
+        new Date().toISOString(),
+        tel,
+        conf,
+        tdiRes,
+        dataMode
+      );
+      setFrameState(initialUnified);
     } catch (err) {
       console.error('Failed to load initial API state:', err);
       setApiError('Unable to connect to TYRETRACE API backend.');
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [dataMode]);
 
   useEffect(() => {
     loadInitialData();
   }, [loadInitialData]);
 
-  // 2. WebSocket Live Stream Handler
+  // 2. WebSocket Live Stream Handler (Atomic Frame Commit)
   const handleWebSocketMessage = useCallback(
     (msg: WebSocketTelemetryMessage) => {
-      setTelemetry(msg.telemetry);
-      setConfounders(msg.confounders);
-      setTdi(msg.tdi);
-
       const frameIdx = msg.sequence;
       const lap = msg.telemetry?.lap ?? 1;
-      const veh = msg.telemetry?.vehicle || msg.telemetry?.vehicle_state;
-      const speed = veh?.speed_kph ?? 0;
+      const ts = msg.timestamp || new Date().toISOString();
+
+      // Commit single unified frame to state
+      const nextUnified = buildUnifiedFrameState(
+        frameIdx,
+        ts,
+        msg.telemetry,
+        msg.confounders,
+        msg.tdi,
+        dataMode
+      );
+      setFrameState(nextUnified);
 
       // Update Replay status frame
       setReplayStatus((prev) =>
@@ -129,30 +228,11 @@ export const DashboardPage: React.FC = () => {
             }
       );
 
-      // Mode-aware corner state resolution
-      if (dataMode === 'DEMO_SIMULATION') {
-        const currentFinalTdi = msg.tdi?.final_tdi ?? 50.0;
-        const simWheels = computeDemoWheelStates(currentFinalTdi, frameIdx, lap, speed);
-        setFourWheelStates(simWheels);
-      } else {
-        // REAL_REPLAY: Preserve canonical unavailability
-        const fourWheel = msg.telemetry?.four_wheel_states as FourWheelTyres | undefined;
-        setFourWheelStates(
-          fourWheel || {
-            FL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-            FR: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-            RL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-            RR: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-          }
-        );
-      }
-
       // Throttle history array appending to ~10 Hz to prevent DOM churn
       const now = performance.now();
       if (now - lastChartUpdateRef.current > 80) {
         lastChartUpdateRef.current = now;
 
-        const ts = msg.timestamp || new Date().toISOString();
         const newTdiPoint: TDIHistoryPoint = {
           timestamp: ts,
           lap: lap,
@@ -250,24 +330,19 @@ export const DashboardPage: React.FC = () => {
   const toggleDataMode = (mode: DataMode) => {
     setDataMode(mode);
     api.setDataMode(mode).catch(() => {});
-    if (mode === 'DEMO_SIMULATION') {
-      const currentFinalTdi = tdi?.final_tdi ?? 50.0;
-      const frameIdx = replayStatus?.current_frame ?? 0;
-      const lap = session?.current_lap ?? 1;
-      const veh = telemetry?.vehicle || telemetry?.vehicle_state;
-      const speed = veh?.speed_kph ?? 280;
-      setFourWheelStates(computeDemoWheelStates(currentFinalTdi, frameIdx, lap, speed));
-    } else {
-      setFourWheelStates({
-        FL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-        FR: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-        RL: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-        RR: { available: false, tdi: null, reason: 'Wheel-level telemetry unavailable in FastF1 source' },
-      });
-    }
+    setFrameState((prev) =>
+      buildUnifiedFrameState(
+        prev.sequence,
+        prev.timestamp,
+        prev.telemetry,
+        prev.confounders,
+        prev.tdi,
+        mode
+      )
+    );
   };
 
-  const currentVehicle: VehicleState | null = (telemetry?.vehicle || telemetry?.vehicle_state) ?? null;
+  const currentVehicle: VehicleState | null = (frameState.telemetry?.vehicle || frameState.telemetry?.vehicle_state) ?? null;
 
   return (
     <div className="w-full min-h-screen bg-[#07090e] text-slate-100 flex flex-col justify-between overflow-x-hidden font-sans">
@@ -275,6 +350,7 @@ export const DashboardPage: React.FC = () => {
       <TopBar
         session={session}
         vehicleState={currentVehicle}
+        drsActive={frameState.canonicalDrsActive}
         connectionStatus={wsStatus}
         dataMode={dataMode}
         onToggleDataMode={toggleDataMode}
@@ -300,9 +376,9 @@ export const DashboardPage: React.FC = () => {
         <section className="col-span-12 lg:col-span-5 flex flex-col h-[480px] lg:h-auto min-h-[440px]">
           <DigitalTwinCanvas
             speedKph={currentVehicle?.speed_kph ?? 0}
-            drs={currentVehicle?.drs ?? 0}
+            drs={frameState.canonicalDrsActive ? 8 : 0}
             dataMode={dataMode}
-            fourWheelStates={fourWheelStates}
+            fourWheelStates={frameState.fourWheelStates}
             selectedTyre={selectedTyre}
             onSelectTyre={handleSelectTyre}
           />
@@ -311,18 +387,18 @@ export const DashboardPage: React.FC = () => {
         {/* CENTER COLUMN: GLOBAL INTELLIGENCE & REASONING (4 of 12 columns) */}
         <section className="col-span-12 md:col-span-7 lg:col-span-4 flex flex-col gap-3">
           {/* Primary Global TDI Intelligence Card */}
-          <GlobalTDICard tdiData={tdi} />
+          <GlobalTDICard tdiData={frameState.tdi} />
 
           {/* Dynamic Evidence / Counter Evidence "Why" Panel */}
           <WhyPanel
-            evidence={tdi?.evidence ?? []}
-            counterEvidence={tdi?.counter_evidence ?? []}
-            trend={tdi?.trend ?? 'STABLE'}
-            finalTdi={tdi?.final_tdi ?? 0}
+            evidence={frameState.tdi?.evidence ?? []}
+            counterEvidence={frameState.tdi?.counter_evidence ?? []}
+            trend={frameState.tdi?.trend ?? 'STABLE'}
+            finalTdi={frameState.tdi?.final_tdi ?? 0}
           />
 
           {/* Confounder Filter Engine */}
-          <ConfoundersPanel confounders={confounders} />
+          <ConfoundersPanel confounders={frameState.confounders} />
         </section>
 
         {/* RIGHT COLUMN: CORNER INTELLIGENCE / TYRE INSPECTION (3 of 12 columns) */}
@@ -330,7 +406,9 @@ export const DashboardPage: React.FC = () => {
           <TyreIntelligencePanel
             selectedTyre={selectedTyre}
             dataMode={dataMode}
-            fourWheelStates={fourWheelStates}
+            fourWheelStates={frameState.fourWheelStates}
+            canonicalTyreAge={frameState.canonicalTyreAge}
+            canonicalCompound={frameState.canonicalCompound}
             onResetSelection={() => handleSelectTyre(null)}
             onToggleDemoMode={() => toggleDataMode('DEMO_SIMULATION')}
           />
@@ -341,7 +419,7 @@ export const DashboardPage: React.FC = () => {
           {/* TDI Trajectory (Physics vs AI vs Fusion) */}
           <TDITrajectoryChart
             history={tdiHistory}
-            currentFinalTdi={tdi?.final_tdi}
+            currentFinalTdi={frameState.tdi?.final_tdi}
           />
 
           {/* Residual & Evidence Dynamics */}

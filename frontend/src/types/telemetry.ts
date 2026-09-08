@@ -60,6 +60,13 @@ export interface FourWheelTyres {
   RR: TyreAvailabilitySlot;
 }
 
+export interface TyreCornerMetadata {
+  compound?: string | null;
+  tyre_life_laps?: number | null;
+  stint?: number | null;
+  [key: string]: any;
+}
+
 export interface TelemetryFrame {
   timestamp: number;
   timestamp_iso?: string | null;
@@ -67,6 +74,12 @@ export interface TelemetryFrame {
   lap: number;
   vehicle?: VehicleState;
   vehicle_state?: VehicleState;
+  tyres?: {
+    fl?: TyreCornerMetadata;
+    fr?: TyreCornerMetadata;
+    rl?: TyreCornerMetadata;
+    rr?: TyreCornerMetadata;
+  } | null;
   four_wheel_states?: FourWheelTyres | null;
   environment?: EnvironmentState | null;
 }
@@ -123,11 +136,33 @@ export interface ResidualFrame {
   trend?: string | null;
 }
 
+export interface ConfounderDetail {
+  name: string;
+  active: boolean;
+  strength: number;
+  classification: 'EXPLANATORY' | 'POSSIBLE' | 'WEAK' | 'NONE' | 'UNKNOWN';
+  reason: string;
+  status: string;
+}
+
+export interface ConfounderEvaluation {
+  drs: ConfounderDetail;
+  braking: ConfounderDetail;
+  throttle: ConfounderDetail;
+  high_speed: ConfounderDetail;
+  transient: ConfounderDetail;
+  tyre_age?: ConfounderDetail;
+  compound?: ConfounderDetail;
+  environment?: ConfounderDetail;
+  rainfall?: ConfounderDetail;
+  data_quality?: ConfounderDetail;
+}
+
 export interface ConfounderActiveFlags {
-  drs_active: boolean;
-  braking_active: boolean;
-  high_speed_active: boolean;
-  transient_active: boolean;
+  drs_active?: boolean;
+  braking_active?: boolean;
+  high_speed_active?: boolean;
+  transient_active?: boolean;
   cold_tyre_active?: boolean;
   old_tyre_active?: boolean;
   wet_active?: boolean;
@@ -135,9 +170,17 @@ export interface ConfounderActiveFlags {
 }
 
 export interface ConfounderFrame {
-  active_flags: ConfounderActiveFlags;
+  active_flags: string[];
+  drs_active?: boolean;
+  braking_active?: boolean;
+  high_speed_active?: boolean;
+  transient_active?: boolean;
+  throttle_active?: boolean;
+  confounders?: ConfounderEvaluation;
   non_tyre_explanation_score: number;
   tyre_evidence_quality: number;
+  tyre_age_laps?: number;
+  compound?: string;
   environmental_context?: {
     track_temp_c?: number | null;
     air_temp_c?: number | null;
@@ -145,7 +188,8 @@ export interface ConfounderFrame {
     tyre_age_laps?: number | null;
   };
   dominant_confounder?: string | null;
-  explanation?: string | null;
+  explanation?: string | string[] | null;
+  interpretation?: string | null;
 }
 
 export interface TDIStateResponse {

@@ -104,11 +104,12 @@ class RuntimeState:
                 "braking_active": "HEAVY_BRAKING" in flags,
                 "throttle_active": "HIGH_THROTTLE" in flags,
                 "high_speed_active": "HIGH_SPEED" in flags,
-                "transient_active": "TRANSIENT_DYNAMICS" in flags,
+                "transient_active": "TRANSIENT_EVENT" in flags or "TRANSIENT_DYNAMICS" in flags,
                 "tyre_age_laps": tel.tyres.fl.tyre_life_laps,
                 "compound": tel.tyres.fl.compound,
                 "non_tyre_explanation_score": conf_frame.non_tyre_explanation_score,
                 "tyre_evidence_quality": conf_frame.tyre_evidence_quality,
+                "confounders": conf_frame.confounders.model_dump(),
             }
 
             tdi_frame = result.tdi_frame
