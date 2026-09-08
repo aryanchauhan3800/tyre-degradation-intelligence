@@ -23,11 +23,13 @@ export interface VehicleState {
   speed_mps: number;
   rpm?: number | null;
   gear?: number | null;
-  throttle: number;
-  brake: number;
-  drs: number;
+  throttle?: number;
+  throttle_pct?: number;
+  brake?: number;
+  brake_pct?: number;
+  drs?: number | null;
   steer?: number | null;
-  distance_m: number;
+  distance_m?: number;
   relative_distance?: number | null;
 }
 
@@ -63,10 +65,12 @@ export interface TelemetryFrame {
   timestamp_iso?: string | null;
   session_id: string;
   lap: number;
-  vehicle_state: VehicleState;
+  vehicle?: VehicleState;
+  vehicle_state?: VehicleState;
   four_wheel_states?: FourWheelTyres | null;
   environment?: EnvironmentState | null;
 }
+
 
 export interface PhysicsForces {
   drag_n: number;

@@ -101,4 +101,17 @@ export const api = {
 
   getLapSummary: (lapNumber: number): Promise<LapSummaryResponse> =>
     fetchJson<LapSummaryResponse>(`${API_BASE}/laps/${lapNumber}`),
+
+  selectTyre: (tyre: string | null): Promise<{ selected_component: string | null; selected_tyre: string | null }> =>
+    fetchJson<{ selected_component: string | null; selected_tyre: string | null }>(`${API_BASE}/component/select`, {
+      method: 'POST',
+      body: JSON.stringify({ tyre }),
+    }),
+
+  setDataMode: (mode: string): Promise<{ data_mode: string }> =>
+    fetchJson<{ data_mode: string }>(`${API_BASE}/mode`, {
+      method: 'POST',
+      body: JSON.stringify({ mode }),
+    }),
 };
+

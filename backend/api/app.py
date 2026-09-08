@@ -84,6 +84,24 @@ def create_app(
                 # Optional client ping/pong or echo
                 if data == "ping":
                     await websocket.send_text("pong")
+                elif data.startswith("{"):
+                    try:
+                        msg = json.loads(data)
+                        msg_type = msg.get("type")
+                        if msg_type in ("tyre_select", "component_select"):
+                            tyre = msg.get("tyre") or msg.get("component")
+                            if tyre:
+                                t_clean = tyre.upper()
+                                comp = f"Wheel_{t_clean}" if t_clean in ("FL", "FR", "RL", "RR") else tyre
+                            else:
+                                comp = None
+                            pipeline.set_selected_component(comp)
+                        elif msg_type == "set_mode":
+                            target_mode = "DEMO_SIMULATION" if str(msg.get("mode", "")).upper() == "DEMO_SIMULATION" else "REPLAY"
+                            pipeline.set_data_mode(target_mode)
+                            runtime_state.session_info["data_mode"] = target_mode
+                    except Exception as err:
+                        logger.debug(f"Failed to process client control message: {err}")
         except WebSocketDisconnect:
             await ws_manager.disconnect(websocket)
         except Exception as e:

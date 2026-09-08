@@ -84,7 +84,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
           3D Digital Twin
         </span>
         <span className="text-[10px] px-1.5 py-0.5 rounded bg-[#161d2b] border border-[#28354d] text-cyan-400 font-mono">
-          CANONICAL GEOMETRY
+          BLENDER F2 DIGITAL TWIN
         </span>
       </div>
 

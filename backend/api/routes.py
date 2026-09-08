@@ -9,10 +9,15 @@ from fastapi import APIRouter, HTTPException, Query, status
 
 from backend.api.replay_controller import ReplayController
 from backend.api.schemas import (
+    ComponentSelectRequest,
+    ComponentSelectResponse,
     ConfoundersStateResponse,
+    CornerSlot,
     FourWheelTyresResponse,
     HealthResponse,
     LapSummaryResponse,
+    ModeSelectRequest,
+    ModeSelectResponse,
     PhysicsStateResponse,
     ReplaySeekRequest,
     ReplaySpeedRequest,
@@ -187,4 +192,52 @@ def create_router(state: RuntimeState, controller: ReplayController) -> APIRoute
             )
         return state.lap_summaries[lap_number]
 
+    # 12. Component & Tyre Selection (Blender Digital Twin Sync)
+    @router.post("/component/select", response_model=ComponentSelectResponse)
+    async def select_component(req: ComponentSelectRequest):
+        comp = req.component
+        tyre = req.tyre
+        if not comp and tyre:
+            tyre_clean = tyre.upper()
+            comp = f"Wheel_{tyre_clean}" if tyre_clean in ("FL", "FR", "RL", "RR") else tyre
+        elif comp and not tyre:
+            if comp.startswith("Wheel_"):
+                tyre = comp.replace("Wheel_", "")
+
+        controller.pipeline.set_selected_component(comp)
+        return ComponentSelectResponse(selected_component=comp, selected_tyre=tyre)
+
+    @router.get("/component/selected", response_model=ComponentSelectResponse)
+    async def get_selected_component():
+        comp = controller.pipeline.selected_component
+        tyre = comp.replace("Wheel_", "") if comp and comp.startswith("Wheel_") else None
+        return ComponentSelectResponse(selected_component=comp, selected_tyre=tyre)
+
+    # 13. Mode Selection (REAL_REPLAY vs DEMO_SIMULATION)
+    @router.post("/mode", response_model=ModeSelectResponse)
+    async def set_mode(req: ModeSelectRequest):
+        target_mode = "DEMO_SIMULATION" if req.mode.upper() == "DEMO_SIMULATION" else "REPLAY"
+        controller.pipeline.set_data_mode(target_mode)
+        state.session_info["data_mode"] = target_mode
+        if target_mode == "DEMO_SIMULATION":
+            state.current_tyres = FourWheelTyresResponse(
+                FL=CornerSlot(available=True, tdi=12.5, reason="Simulated 4-wheel telemetry in DEMO mode"),
+                FR=CornerSlot(available=True, tdi=9.8, reason="Simulated 4-wheel telemetry in DEMO mode"),
+                RL=CornerSlot(available=True, tdi=8.2, reason="Simulated 4-wheel telemetry in DEMO mode"),
+                RR=CornerSlot(available=True, tdi=7.9, reason="Simulated 4-wheel telemetry in DEMO mode"),
+            )
+        else:
+            state.current_tyres = FourWheelTyresResponse(
+                FL=CornerSlot(available=False, tdi=None),
+                FR=CornerSlot(available=False, tdi=None),
+                RL=CornerSlot(available=False, tdi=None),
+                RR=CornerSlot(available=False, tdi=None),
+            )
+        return ModeSelectResponse(data_mode=target_mode)
+
+    @router.get("/mode", response_model=ModeSelectResponse)
+    async def get_mode():
+        return ModeSelectResponse(data_mode=controller.pipeline.data_mode)
+
     return router
+

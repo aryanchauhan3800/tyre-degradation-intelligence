@@ -147,3 +147,22 @@ class LapSummaryResponse(BaseModel):
     trend: str = Field(..., description="Dominant trend in lap")
     confidence: float = Field(..., description="Mean confidence in lap")
     sample_count: int = Field(..., description="Samples evaluated in lap")
+
+
+class ComponentSelectRequest(BaseModel):
+    component: Optional[str] = Field(None, description="Focused component name (e.g. Wheel_FL, BrakeDisc_FR)")
+    tyre: Optional[str] = Field(None, description="Tyre corner alias (FL, FR, RL, RR)")
+
+
+class ComponentSelectResponse(BaseModel):
+    selected_component: Optional[str] = Field(None, description="Currently active component")
+    selected_tyre: Optional[str] = Field(None, description="Currently active tyre corner alias (FL, FR, RL, RR)")
+
+
+class ModeSelectRequest(BaseModel):
+    mode: str = Field(..., description="Target mode (REPLAY or DEMO_SIMULATION)")
+
+
+class ModeSelectResponse(BaseModel):
+    data_mode: str = Field(..., description="Current active mode")
+

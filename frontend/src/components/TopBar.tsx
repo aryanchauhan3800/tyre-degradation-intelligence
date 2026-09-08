@@ -25,9 +25,10 @@ export const TopBar: React.FC<TopBarProps> = ({
   onReconnect,
 }) => {
   const speedKph = vehicleState ? Math.round(vehicleState.speed_kph) : 0;
-  const gear = vehicleState?.gear ?? 'N';
-  const throttle = vehicleState ? Math.round(vehicleState.throttle) : 0;
-  const brake = vehicleState ? Math.round(vehicleState.brake) : 0;
+  const gear = vehicleState?.gear !== undefined && vehicleState?.gear !== null ? (vehicleState.gear === 0 ? 'N' : vehicleState.gear) : 'N';
+  const throttle = vehicleState ? Math.round(vehicleState.throttle_pct ?? vehicleState.throttle ?? 0) : 0;
+  const brake = vehicleState ? Math.round(vehicleState.brake_pct ?? vehicleState.brake ?? 0) : 0;
+
 
   const currentLap = session?.current_lap ?? (vehicleState ? 1 : 0);
   const totalLaps = session?.total_laps ?? 35;

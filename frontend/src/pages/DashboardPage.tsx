@@ -13,6 +13,7 @@ import type {
   TDIStateResponse,
   TelemetryFrame,
   TyreCorner,
+  VehicleState,
   WebSocketTelemetryMessage,
   ReplayStatusResponse,
   ConfounderFrame,
@@ -106,8 +107,9 @@ export const DashboardPage: React.FC = () => {
       setTdi(msg.tdi);
 
       const frameIdx = msg.sequence;
-      const lap = msg.telemetry.lap;
-      const speed = msg.telemetry.vehicle_state.speed_kph;
+      const lap = msg.telemetry?.lap ?? 1;
+      const veh = msg.telemetry?.vehicle || msg.telemetry?.vehicle_state;
+      const speed = veh?.speed_kph ?? 0;
 
       // Update Replay status frame
       setReplayStatus((prev) =>
@@ -233,13 +235,20 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
+  const handleSelectTyre = (corner: TyreCorner | null) => {
+    setSelectedTyre(corner);
+    api.selectTyre(corner).catch(() => {});
+  };
+
   const toggleDataMode = (mode: DataMode) => {
     setDataMode(mode);
+    api.setDataMode(mode).catch(() => {});
     if (mode === 'DEMO_SIMULATION') {
       const currentFinalTdi = tdi?.final_tdi ?? 50.0;
       const frameIdx = replayStatus?.current_frame ?? 0;
       const lap = session?.current_lap ?? 1;
-      const speed = telemetry?.vehicle_state.speed_kph ?? 280;
+      const veh = telemetry?.vehicle || telemetry?.vehicle_state;
+      const speed = veh?.speed_kph ?? 280;
       setFourWheelStates(computeDemoWheelStates(currentFinalTdi, frameIdx, lap, speed));
     } else {
       setFourWheelStates({
@@ -251,12 +260,14 @@ export const DashboardPage: React.FC = () => {
     }
   };
 
+  const currentVehicle: VehicleState | null = (telemetry?.vehicle || telemetry?.vehicle_state) ?? null;
+
   return (
     <div className="w-full min-h-screen bg-[#07090e] text-slate-100 flex flex-col justify-between overflow-x-hidden font-sans">
       {/* 1. TOP BAR */}
       <TopBar
         session={session}
-        vehicleState={telemetry ? telemetry.vehicle_state : null}
+        vehicleState={currentVehicle}
         connectionStatus={wsStatus}
         dataMode={dataMode}
         onToggleDataMode={toggleDataMode}
@@ -281,12 +292,12 @@ export const DashboardPage: React.FC = () => {
         {/* LEFT COLUMN: 3D DIGITAL TWIN (5 of 12 columns) */}
         <section className="col-span-12 lg:col-span-5 flex flex-col h-[480px] lg:h-auto min-h-[440px]">
           <DigitalTwinCanvas
-            speedKph={telemetry?.vehicle_state.speed_kph ?? 0}
-            drs={telemetry?.vehicle_state.drs ?? 0}
+            speedKph={currentVehicle?.speed_kph ?? 0}
+            drs={currentVehicle?.drs ?? 0}
             dataMode={dataMode}
             fourWheelStates={fourWheelStates}
             selectedTyre={selectedTyre}
-            onSelectTyre={setSelectedTyre}
+            onSelectTyre={handleSelectTyre}
           />
         </section>
 
@@ -313,7 +324,7 @@ export const DashboardPage: React.FC = () => {
             selectedTyre={selectedTyre}
             dataMode={dataMode}
             fourWheelStates={fourWheelStates}
-            onResetSelection={() => setSelectedTyre(null)}
+            onResetSelection={() => handleSelectTyre(null)}
             onToggleDemoMode={() => toggleDataMode('DEMO_SIMULATION')}
           />
         </section>

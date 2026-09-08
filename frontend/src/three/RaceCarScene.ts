@@ -14,6 +14,7 @@
  */
 
 import * as THREE from 'three';
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { DataMode, FourWheelTyres, TyreCorner } from '../types/telemetry';
 
 export interface SceneCallbacks {
@@ -35,12 +36,29 @@ export class RaceCarScene {
   public rearWingGroup: THREE.Group;
   public drsFlapMesh: THREE.Mesh | null = null;
 
+  // Authentic Blender Car Model
+  public blenderModel: THREE.Group | null = null;
+  public blenderWheels: Record<TyreCorner, THREE.Object3D | null> = {
+    FL: null,
+    FR: null,
+    RL: null,
+    RR: null,
+  };
+  public blenderTyreMaterials: Record<TyreCorner, THREE.MeshStandardMaterial[]> = {
+    FL: [],
+    FR: [],
+    RL: [],
+    RR: [],
+  };
+  public blenderClickableMeshes: THREE.Mesh[] = [];
+
   // Wheels and Tyres
   public wheelNodes: Record<TyreCorner, THREE.Group>;
   public tyreMeshes: Record<TyreCorner, THREE.Mesh>;
   public tyreMaterials: Record<TyreCorner, THREE.MeshStandardMaterial>;
   public rimMeshes: Record<TyreCorner, THREE.Mesh>;
   public selectionRings: Record<TyreCorner, THREE.LineLoop>;
+
 
   // Camera Targets & Transitions
   private currentCameraPos: THREE.Vector3;
@@ -65,7 +83,7 @@ export class RaceCarScene {
   private readonly OVERVIEW_POS = new THREE.Vector3(3.8, 2.2, 4.4);
   private readonly OVERVIEW_LOOKAT = new THREE.Vector3(0, 0.35, 0);
 
-  private readonly TYRE_POSITIONS: Record<TyreCorner, THREE.Vector3> = {
+  private TYRE_POSITIONS: Record<TyreCorner, THREE.Vector3> = {
     FL: new THREE.Vector3(-0.88, 0.34, 1.45),
     FR: new THREE.Vector3(0.88, 0.34, 1.45),
     RL: new THREE.Vector3(-0.90, 0.37, -1.45),
@@ -122,6 +140,7 @@ export class RaceCarScene {
 
     this.buildCar();
     this.scene.add(this.carRoot);
+    this.loadBlenderGlb();
 
     // 7. Event Listeners
     this.bindEvents();
@@ -403,6 +422,84 @@ export class RaceCarScene {
     }
   }
 
+  private loadBlenderGlb(): void {
+    const loader = new GLTFLoader();
+    loader.load(
+      '/models/f2_car.glb',
+      (gltf) => {
+        const model = gltf.scene;
+        model.name = 'BLENDER_F2_CAR';
+        // Formula 2 Blender digital twin geometry:
+        // Length ~9.26m in raw coordinates -> scaled by 0.44 = ~4.07m
+        // Rotate -90 deg on Y to align with Three.js car heading (+Z forward)
+        model.rotation.y = -Math.PI / 2;
+        model.scale.set(0.44, 0.44, 0.44);
+        model.position.set(0, 0, 0);
+
+        // Hide procedural fallback car components
+        this.bodyGroup.visible = false;
+        this.frontWingGroup.visible = false;
+        this.rearWingGroup.visible = false;
+        const corners: TyreCorner[] = ['FL', 'FR', 'RL', 'RR'];
+        for (const c of corners) {
+          if (this.wheelNodes[c]) {
+            this.wheelNodes[c].visible = false;
+          }
+        }
+
+        // Traverse Blender model hierarchy to map wheels, tyres, and interactive meshes
+        model.traverse((child) => {
+          if ((child as THREE.Mesh).isMesh) {
+            const mesh = child as THREE.Mesh;
+            mesh.castShadow = true;
+            mesh.receiveShadow = true;
+
+            for (const corner of corners) {
+              const matchesCorner =
+                mesh.name.includes(`_${corner}`) ||
+                (mesh.parent && mesh.parent.name.includes(`_${corner}`));
+
+              if (matchesCorner) {
+                mesh.userData = { corner };
+                this.blenderClickableMeshes.push(mesh);
+
+                if (mesh.material) {
+                  const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+                  for (const m of mats) {
+                    if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
+                      this.blenderTyreMaterials[corner].push(m as THREE.MeshStandardMaterial);
+                    }
+                  }
+                }
+              }
+            }
+          }
+
+          for (const corner of corners) {
+            if (child.name === `Wheel_${corner}`) {
+              this.blenderWheels[corner] = child;
+              // Compute dynamic tyre center from wheel mesh bounding box
+              const box = new THREE.Box3().setFromObject(child);
+              if (!box.isEmpty()) {
+                const center = new THREE.Vector3();
+                box.getCenter(center);
+                this.TYRE_POSITIONS[corner].copy(center);
+              }
+            }
+          }
+        });
+
+        this.blenderModel = model;
+        this.carRoot.add(model);
+        this.updateVisualHighlights();
+      },
+      undefined,
+      (err) => {
+        console.warn('Fallback to procedural race car geometry:', err);
+      }
+    );
+  }
+
   private bindEvents(): void {
     const el = this.renderer.domElement;
 
@@ -412,13 +509,16 @@ export class RaceCarScene {
       this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       this.raycaster.setFromCamera(this.mouse, this.camera);
-      const tyreMeshList = Object.values(this.tyreMeshes);
+      const tyreMeshList = [
+        ...Object.values(this.tyreMeshes),
+        ...this.blenderClickableMeshes,
+      ];
       const intersects = this.raycaster.intersectObjects(tyreMeshList, false);
 
       if (intersects.length > 0) {
         const hit = intersects[0].object as THREE.Mesh;
         const corner = hit.userData.corner as TyreCorner;
-        if (this.hoveredCorner !== corner) {
+        if (corner && this.hoveredCorner !== corner) {
           this.hoveredCorner = corner;
           el.style.cursor = 'pointer';
           this.callbacks.onHoverTyre(corner);
@@ -440,13 +540,18 @@ export class RaceCarScene {
       this.mouse.y = -((e.clientY - rect.top) / rect.height) * 2 + 1;
 
       this.raycaster.setFromCamera(this.mouse, this.camera);
-      const tyreMeshList = Object.values(this.tyreMeshes);
+      const tyreMeshList = [
+        ...Object.values(this.tyreMeshes),
+        ...this.blenderClickableMeshes,
+      ];
       const intersects = this.raycaster.intersectObjects(tyreMeshList, false);
 
       if (intersects.length > 0) {
         const hit = intersects[0].object as THREE.Mesh;
         const corner = hit.userData.corner as TyreCorner;
-        this.selectTyre(corner);
+        if (corner) {
+          this.selectTyre(corner);
+        }
       }
     };
 
@@ -506,6 +611,23 @@ export class RaceCarScene {
           mat.opacity = 0.0;
         }
       }
+
+      // Also highlight Blender tyre materials
+      const bMats = this.blenderTyreMaterials[c];
+      if (bMats && bMats.length > 0) {
+        for (const bMat of bMats) {
+          if (isSelected) {
+            bMat.emissive.setHex(0x00f0ff);
+            bMat.emissiveIntensity = 0.45;
+          } else if (isHovered) {
+            bMat.emissive.setHex(0x38bdf8);
+            bMat.emissiveIntensity = 0.25;
+          } else {
+            bMat.emissive.setHex(0x000000);
+            bMat.emissiveIntensity = 0.0;
+          }
+        }
+      }
     }
   }
 
@@ -530,20 +652,42 @@ export class RaceCarScene {
     const corners: TyreCorner[] = ['FL', 'FR', 'RL', 'RR'];
     for (const corner of corners) {
       const mat = this.tyreMaterials[corner];
-      if (!mat) continue;
+      if (mat) {
+        if (dataMode === 'DEMO_SIMULATION' && fourWheelStates && fourWheelStates[corner]?.tdi !== null) {
+          // DEMO_SIMULATION Mode: map TDI to visual thermal intensity
+          const tdi = fourWheelStates[corner].tdi || 0;
+          this.applyThermalColor(mat, tdi);
+        } else {
+          // REAL_REPLAY Mode: STRICTLY PRESERVE NEUTRAL MATTE SLICK
+          mat.color.setHex(0x171920);
+          mat.roughness = 0.85;
+          mat.metalness = 0.15;
+          mat.emissive.setHex(0x000000);
+          mat.emissiveIntensity = 0.0;
+        }
+      }
 
-      if (dataMode === 'DEMO_SIMULATION' && fourWheelStates && fourWheelStates[corner]?.tdi !== null) {
-        // DEMO_SIMULATION Mode: map TDI to visual thermal intensity
-        const tdi = fourWheelStates[corner].tdi || 0;
-        this.applyThermalColor(mat, tdi);
-      } else {
-        // REAL_REPLAY Mode: STRICTLY PRESERVE NEUTRAL MATTE SLICK
-        // FastF1 has NO corner wear data; do NOT fabricate color heatmaps!
-        mat.color.setHex(0x171920);
-        mat.roughness = 0.85;
-        mat.metalness = 0.15;
-        mat.emissive.setHex(0x000000);
-        mat.emissiveIntensity = 0.0;
+      // Blender Tyre Materials
+      const bMats = this.blenderTyreMaterials[corner];
+      if (bMats && bMats.length > 0) {
+        for (const bMat of bMats) {
+          if (dataMode === 'DEMO_SIMULATION' && fourWheelStates && fourWheelStates[corner]?.tdi !== null) {
+            const tdi = fourWheelStates[corner].tdi || 0;
+            this.applyThermalColor(bMat, tdi);
+          } else {
+            // REAL_REPLAY Mode: keep authentic slick unless selected/hovered
+            if (this.selectedCorner === corner) {
+              bMat.emissive.setHex(0x00f0ff);
+              bMat.emissiveIntensity = 0.45;
+            } else if (this.hoveredCorner === corner) {
+              bMat.emissive.setHex(0x38bdf8);
+              bMat.emissiveIntensity = 0.25;
+            } else {
+              bMat.emissive.setHex(0x000000);
+              bMat.emissiveIntensity = 0.0;
+            }
+          }
+        }
       }
     }
   }
@@ -601,6 +745,13 @@ export class RaceCarScene {
         const rim = this.rimMeshes[corner];
         if (tyre) tyre.rotation.x = this.wheelRotationAngle;
         if (rim) rim.rotation.x = this.wheelRotationAngle;
+
+        // Blender wheels
+        const bWheel = this.blenderWheels[corner];
+        if (bWheel) {
+          const isLeft = corner.endsWith('L');
+          bWheel.rotation.z += isLeft ? dTheta : -dTheta;
+        }
       }
     }
 

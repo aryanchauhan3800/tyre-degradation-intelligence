@@ -92,6 +92,7 @@ class UnifiedIntelligencePipeline:
 
         # 6. Blender Bridge
         self.blender_bridge = BlenderBridge(data_mode=data_mode)
+        self.selected_component: Optional[str] = None
 
         # Rolling buffers for temporal window feature extraction
         self._tel_buffer: deque[TelemetryFrame] = deque(maxlen=window_size)
@@ -206,6 +207,7 @@ class UnifiedIntelligencePipeline:
                 "final_tdi": final_tdi,
                 "state": tdi_frame.state.value,
             },
+            selected_component=self.selected_component,
         )
 
         return PipelineResult(
@@ -220,3 +222,14 @@ class UnifiedIntelligencePipeline:
             model_reliability=round(model_reliability, 3),
             blender_payload=blender_payload,
         )
+
+    def set_selected_component(self, component: Optional[str]) -> None:
+        """Sets active focused component in Blender bridge."""
+        self.selected_component = component
+        self.blender_bridge.selected_component = component
+
+    def set_data_mode(self, mode: str) -> None:
+        """Updates pipeline data mode (REPLAY or DEMO_SIMULATION)."""
+        self.data_mode = mode
+        self.blender_bridge.data_mode = mode
+
