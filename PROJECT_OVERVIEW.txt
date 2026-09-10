@@ -1,0 +1,665 @@
+================================================================================
+  TYRETRACE — TYRE DEGRADATION INTELLIGENCE (TDI) SYSTEM
+  Comprehensive Project Overview & Technical Documentation
+================================================================================
+
+Project Name    : TYRETRACE — Tyre Degradation Intelligence
+Repository      : tyre-degradation-intelligence
+Developer       : TrackShift
+Tech Stack      : Python (FastAPI) · React (TypeScript/Vite) · Three.js · Blender
+Data Source     : Official Formula 1 Telemetry via FastF1
+Status          : Phase 11 Complete (Blender Digital Twin Connected)
+Test Suite      : 139 backend tests · 20 frontend tests — All Passing
+
+================================================================================
+  1. WHAT IS THIS PROJECT?
+================================================================================
+
+TYRETRACE is a real-time, physics-informed tyre degradation intelligence system 
+for Formula 1 racing. It ingests live (or replayed) telemetry data from an F1 car, 
+runs it through a chain of physics engines and machine learning models, and 
+produces a unified "Tyre Degradation Index" (TDI) — a severity score from 0 to 100 
+that indicates how much a car's tyres have degraded during a session.
+
+The system features:
+  - A physics-based digital twin of the car (Newton's laws, aerodynamics, 
+    rolling resistance, load transfer)
+  - An Actual-vs-Expected residual engine that detects anomalies
+  - A deterministic confounder analysis engine that filters out non-tyre causes
+  - A temporal TDI engine that synthesizes degradation evidence
+  - A machine learning model (Random Forest) that fuses AI predictions with 
+    physics results
+  - A 3D interactive web dashboard with a Three.js race car visualization
+  - A Blender integration for photorealistic digital twin rendering
+  - Full replay controls to step through historical F1 sessions frame-by-frame
+
+The key scientific principle: The system NEVER fabricates data. When telemetry is 
+unavailable (e.g., FastF1 doesn't provide tyre temperatures, pressures, or wheel 
+speeds), those fields are explicitly marked as "UNAVAILABLE" / None — never 
+invented or simulated (except in explicit DEMO_SIMULATION mode).
+
+================================================================================
+  2. HOW THE SYSTEM WORKS — THE UNIFIED INTELLIGENCE PIPELINE
+================================================================================
+
+Every incoming telemetry frame passes through a strict sequential chain:
+
+  TelemetryFrame → Physics Twin → Residual Engine → Confounder Engine → TDI Engine → AI Model → Fusion
+
+STEP-BY-STEP PIPELINE:
+
+  Step 1: TELEMETRY INGESTION
+  ---------------------------
+  - Source: FastF1 Python library (official F1 timing/telemetry data)
+  - Data includes: speed, throttle, brake, gear, RPM, DRS, GPS position, 
+    track/air temperature, humidity, wind, compound type, tyre age (laps)
+  - Data NOT available from FastF1: tyre temperature, tyre pressure, wheel 
+    speed, slip ratio, slip angle, corner-specific loads
+  - Telemetry is normalized into canonical TelemetryFrame objects with vehicle 
+    state, four-corner tyre states, and environment state
+  - Sessions can be replayed from pre-recorded JSON files or fetched live
+
+  Step 2: PHYSICS DIGITAL TWIN
+  ----------------------------
+  - Implements Newton's second law force balance for the car:
+      F_net = F_traction − F_drag − F_rolling − F_brake
+      a_expected = F_net / m
+  - Calculates aerodynamic drag: F_drag = 0.5 × ρ × Cd × A × v²
+  - Calculates rolling resistance: F_rolling = Crr × m × g
+  - Calculates longitudinal load transfer: ΔFz = (m × ax × h) / L
+  - Calculates effective tyre grip: μ_eff = μ0 × (1 − D) × f_temp × f_pressure
+  - Also includes tyre thermal energy balance model (for when data is available):
+      m_t × cp × dT/dt = P_heat − P_loss
+  - Tracks provenance of every parameter: MEASURED, DERIVED, MODELLED, UNAVAILABLE
+  - Uses configurable PhysicsParameters (mass=798kg, Cd=1.0, frontal area=1.5m²,
+    Crr=0.012, wheelbase=3.6m, etc.)
+
+  Step 3: ACTUAL-VS-EXPECTED RESIDUAL ENGINE
+  -------------------------------------------
+  - Computes actual acceleration by differentiating speed: a_actual = Δv / Δt
+  - Calculates residual: r = a_actual − a_expected
+  - Normalizes: r_norm = r / max(|a_expected|, ε)
+  - Validates data quality (rejects non-positive Δt, sub-millisecond jitter, 
+    acceleration spikes > 60 m/s²)
+  - Flags each sample as VALID, MISSING_INPUT, INVALID_DT, or NUMERICAL_OUTLIER
+  - Computes rolling window features: slope, persistence ratio, std deviation
+  - IMPORTANT: Residual ≠ tyre degradation. It is the unexplained difference 
+    between actual and expected behaviour. Degradation is inferred downstream.
+
+  Step 4: CONFOUNDER ANALYSIS ENGINE
+  -----------------------------------
+  - Evaluates whether the residual can be explained by NON-TYRE factors:
+      • DRS (Drag Reduction System) active — affects aerodynamic drag model
+      • Heavy braking — threshold braking zones create transient dynamics
+      • High throttle — full-power acceleration creates powertrain confounding
+      • High speed (> ~250 km/h) — amplifies aerodynamic model uncertainty
+      • Transient events — rapid throttle/brake/accel changes (rate-of-change)
+      • Tyre age — fresh tyres have lower prior for degradation
+      • Compound type — different compounds degrade at different rates
+      • Environment shifts — temperature, wind, humidity changes
+      • Rainfall — wet conditions fundamentally change tyre behaviour
+      • Data quality — invalid or outlier samples reduce reliability
+  - Produces two key scores:
+      • non_tyre_explanation_score [0, 1]: How much of the residual can be 
+        explained by non-tyre factors
+      • tyre_evidence_quality [0, 1]: How suitable this observation is for 
+        inferring tyre degradation
+  - Classifies each frame: STRONG_TYRE_EVIDENCE, MODERATE, LOW, 
+    NON_TYRE_DOMINANT, INSUFFICIENT_DATA
+
+  Step 5: TDI ENGINE (Tyre Degradation Index)
+  --------------------------------------------
+  - The core degradation scoring engine
+  - Synthesizes components: magnitude, persistence, trend, age, evidence quality
+  - Applies temporal trajectory smoothing (EMA-based) over configurable window
+  - Computes trend: RISING, FALLING, STABLE, or INSUFFICIENT_DATA
+  - Classifies degradation state:
+      • HEALTHY           (TDI < 15)
+      • EARLY_WEAR        (TDI 15-35)
+      • MODERATE_WEAR     (TDI 35-55)
+      • HIGH_WEAR         (TDI 55-75)
+      • CRITICAL_WEAR     (TDI 75-100)
+      • (with _LOW_EVIDENCE variants when confidence is low)
+  - Generates dynamic explainability:
+      • evidence[] — reasons supporting degradation inference
+      • counter_evidence[] — reasons attenuating confidence
+  - Produces lap-level summaries and session-level reports
+
+  Step 6: AI / MACHINE LEARNING MODEL
+  ------------------------------------
+  - Interpretable Random Forest Regressor (scikit-learn)
+  - Trained on physics-informed temporal window features:
+      • Residual statistics (mean, std, slope, persistence)
+      • Confounder scores (non-tyre, evidence quality)
+      • TDI trajectory components
+      • Speed, throttle, brake patterns
+      • Tyre age and compound encoding
+  - Outputs AI_INFERRED_DEGRADATION in [0, 100]
+  - NOT ground-truth physical wear — it's a modelled prediction
+  - Computes model_reliability score accounting for out-of-distribution inputs
+  - Model artifact stored as: data/ml/baseline_model.joblib
+
+  Step 7: PHYSICS + AI FUSION
+  ----------------------------
+  - Transparent weighted fusion:
+      Final TDI = α × Physics_TDI + (1 − α) × AI_TDI
+  - Default α = 0.60 (60% physics, 40% AI)
+  - Final TDI is clamped to [0, 100]
+  - All three scores (physics_tdi, ai_tdi, final_tdi) are always exposed 
+    independently — never collapsed
+
+  Step 8: BLENDER PAYLOAD GENERATION
+  -----------------------------------
+  - Transforms unified pipeline output into compact visualization payloads
+  - For Blender 3D scene synchronization (wheel rotation, tyre highlighting,
+    camera alignment, HUD overlay)
+
+================================================================================
+  3. PROJECT ARCHITECTURE & DIRECTORY STRUCTURE
+================================================================================
+
+tyre-degradation-intelligence/
+│
+├── backend/                    ← Python FastAPI Backend
+│   ├── main.py                 ← Minimal entry point (basic health check)
+│   ├── api/                    ← REST API & WebSocket Gateway
+│   │   ├── app.py              ← FastAPI application factory (create_app)
+│   │   ├── routes.py           ← All REST endpoint definitions (/api/*)
+│   │   ├── schemas.py          ← Pydantic response models
+│   │   ├── pipeline.py         ← UnifiedIntelligencePipeline orchestrator
+│   │   ├── replay_controller.py← Async replay loop with start/pause/seek
+│   │   ├── state.py            ← RuntimeState (in-memory current state store)
+│   │   ├── websocket.py        ← WebSocket connection manager
+│   │   ├── benchmark.py        ← Pipeline performance benchmarking
+│   │   └── __init__.py
+│   │
+│   ├── twin_engine/            ← Physics Digital Twin Engine
+│   │   ├── interface.py        ← TwinEngine class (Newton's law solver)
+│   │   ├── physics_model.py    ← Pure physics equations (drag, grip, load)
+│   │   ├── parameters.py       ← PhysicsParameters dataclass (car specs)
+│   │   ├── mock_twin.py        ← Mock engine for testing
+│   │   ├── run_sample.py       ← Standalone sample runner
+│   │   └── __init__.py
+│   │
+│   ├── residual/               ← Actual-vs-Expected Residual Engine
+│   │   ├── residual_engine.py  ← ResidualEngine (derivative & residual calc)
+│   │   ├── features.py         ← Rolling window feature extraction
+│   │   ├── schemas.py          ← ResidualFrame, LapSummary, SessionReport
+│   │   ├── run_validation.py   ← Offline validation runner
+│   │   └── __init__.py
+│   │
+│   ├── confounders/            ← Confounder Analysis Engine
+│   │   ├── confounder_engine.py← ConfounderEngine (non-tyre factor eval)
+│   │   ├── rules.py            ← Deterministic confounder evaluation rules
+│   │   ├── schemas.py          ← ConfounderFrame, evaluation schemas
+│   │   ├── run_validation.py   ← Offline validation runner
+│   │   └── __init__.py
+│   │
+│   ├── tdi/                    ← Tyre Degradation Index Engine
+│   │   ├── tdi_engine.py       ← TDIEngine (severity scoring & trajectory)
+│   │   ├── scoring.py          ← TDI component weights & classification
+│   │   ├── trajectory.py       ← Temporal trajectory smoother/tracker
+│   │   ├── schemas.py          ← TDIFrame, TDIState, TDITrend enums
+│   │   ├── run_validation.py   ← Offline validation runner
+│   │   └── __init__.py
+│   │
+│   ├── ml/                     ← Machine Learning Baseline Model
+│   │   ├── baseline_model.py   ← RandomForest / GradientBoosting model
+│   │   ├── features.py         ← 40+ physics-informed feature extraction
+│   │   ├── dataset_builder.py  ← Training dataset construction
+│   │   ├── dataset_discovery.py← Automated replay file discovery
+│   │   ├── splits.py           ← Temporal train/test splitting
+│   │   ├── evaluation.py       ← Model evaluation metrics
+│   │   ├── run_training.py     ← End-to-end training pipeline
+│   │   └── __init__.py
+│   │
+│   ├── telemetry/              ← Telemetry Ingestion Layer
+│   │   ├── fastf1_adapter.py   ← FastF1 → canonical TelemetryFrame converter
+│   │   ├── adapter.py          ← Abstract TelemetryAdapter interface
+│   │   ├── download.py         ← FastF1 session download utility
+│   │   └── __init__.py
+│   │
+│   ├── replay/                 ← Replay Engine
+│   │   ├── engine.py           ← Sequential frame replay from JSON files
+│   │   ├── generator.py        ← Replay data generation from FastF1
+│   │   ├── cli.py              ← CLI for replay management
+│   │   └── __init__.py
+│   │
+│   ├── blender/                ← Blender Digital Twin Bridge
+│   │   ├── bridge.py           ← BlenderBridge (payload formatter)
+│   │   ├── schemas.py          ← BlenderFramePayload Pydantic models
+│   │   └── __init__.py
+│   │
+│   └── schemas/                ← Shared Pydantic Data Models
+│       ├── telemetry.py        ← TelemetryFrame, VehicleState, TyreState, etc.
+│       └── twin.py             ← TwinEngineOutput schema
+│
+├── frontend/                   ← React + TypeScript + Vite Frontend
+│   ├── index.html              ← HTML entry point
+│   ├── package.json            ← Dependencies (React 19, Three.js, Tailwind 4)
+│   ├── vite.config.ts          ← Vite config (proxy to backend:8000)
+│   ├── src/
+│   │   ├── main.tsx            ← React entry point
+│   │   ├── App.tsx             ← App wrapper with ErrorBoundary
+│   │   ├── index.css           ← Global CSS / Tailwind imports
+│   │   ├── pages/
+│   │   │   └── DashboardPage.tsx ← Main engineering command center page
+│   │   ├── components/
+│   │   │   ├── TopBar.tsx           ← Session info, speed, gear, DRS, mode toggle
+│   │   │   ├── DigitalTwinCanvas.tsx← Three.js 3D car rendering canvas
+│   │   │   ├── GlobalTDICard.tsx    ← Large TDI gauge with state/trend/confidence
+│   │   │   ├── WhyPanel.tsx         ← Evidence & counter-evidence explainability
+│   │   │   ├── ConfoundersPanel.tsx ← Active confounder flags display
+│   │   │   ├── TyreIntelligencePanel.tsx ← Corner-level tyre inspection
+│   │   │   ├── TDITrajectoryChart.tsx    ← Physics vs AI vs Fusion time-series
+│   │   │   ├── ResidualChart.tsx         ← Residual & evidence quality chart
+│   │   │   ├── ReplayControlBar.tsx      ← Play/pause/seek/speed controls
+│   │   │   └── ErrorBoundary.tsx         ← React error boundary
+│   │   ├── hooks/
+│   │   │   └── useTelemetryWebSocket.ts  ← WebSocket hook with reconnect
+│   │   ├── services/
+│   │   │   ├── api.ts                ← REST API client (fetch wrapper)
+│   │   │   └── demoSimulation.ts     ← Demo mode wheel state simulator
+│   │   ├── three/
+│   │   │   └── RaceCarScene.ts       ← Full Three.js procedural race car (797 lines)
+│   │   └── types/
+│   │       └── telemetry.ts          ← TypeScript type definitions
+│   └── public/                       ← Static assets
+│
+├── blender/                    ← Blender 3D Digital Twin Integration
+│   ├── Formula_2_Car_DigitalTwin_V7_Mechanical_Thermal.blend  ← 3D car model (9 MB)
+│   ├── tyretrace_live_bridge.py   ← Live WebSocket bridge script (runs inside Blender)
+│   └── README.md                  ← Blender integration documentation
+│
+├── f1_model/                   ← Standalone F1 Car 3D Model
+│   └── Formula 2 Car High Poly.blend ← High-poly reference model (7 MB)
+│
+├── data/                       ← Data Directory
+│   ├── ml/
+│   │   ├── baseline_model.joblib       ← Trained ML model artifact (920 KB)
+│   │   ├── temporal_features.csv       ← Feature dataset (1.3 MB)
+│   │   └── temporal_features.json      ← Feature dataset JSON (6.6 MB)
+│   └── replay/
+│       ├── demo_session.json           ← Demo replay session
+│       ├── f1_2023_monza_q_ver.json    ← Main replay: 2023 Monza Qualifying VER (1.7 MB)
+│       ├── f1_2023_monza_q_ver_confounders.json  ← Pre-computed confounders (2.3 MB)
+│       ├── f1_2023_monza_q_ver_residuals.json    ← Pre-computed residuals (429 KB)
+│       └── f1_2023_monza_q_ver_tdi.json          ← Pre-computed TDI scores (770 KB)
+│
+├── docs/                       ← Project Documentation
+│   ├── API.md                  ← REST & WebSocket API reference
+│   ├── DEMO_SCRIPT.md          ← Demo walkthrough script
+│   └── FINAL_DEMO_SCRIPT.md   ← Final demo presentation script
+│
+├── tests/                      ← Comprehensive Test Suite (21 test files)
+│   ├── test_api.py             ← API endpoint tests
+│   ├── test_adapters.py        ← Telemetry adapter tests
+│   ├── test_blender_bridge.py  ← Blender bridge unit tests
+│   ├── test_blender_integration.py ← Blender integration tests (11 tests)
+│   ├── test_confounder_engine.py   ← Confounder engine tests
+│   ├── test_end_to_end_validation.py ← Full pipeline validation
+│   ├── test_fastf1_adapter.py  ← FastF1 adapter tests
+│   ├── test_ml_baseline.py     ← ML model tests
+│   ├── test_ml_dataset.py      ← Dataset builder tests
+│   ├── test_ml_features.py     ← Feature extraction tests
+│   ├── test_ml_splits.py       ← Train/test split tests
+│   ├── test_pipeline.py        ← Unified pipeline tests
+│   ├── test_replay.py          ← Replay engine tests
+│   ├── test_replay_controller.py ← Replay controller tests
+│   ├── test_residual_engine.py ← Residual engine tests
+│   ├── test_robustness.py      ← Edge case & robustness tests
+│   ├── test_schemas.py         ← Schema validation tests
+│   ├── test_state_consistency.py ← State consistency tests
+│   ├── test_tdi_engine.py      ← TDI engine tests
+│   ├── test_twin_engine.py     ← Physics twin tests
+│   └── test_websocket.py       ← WebSocket tests
+│
+├── PHASE5_REPORT.md            ← Phase 5: Confounder Engine
+├── PHASE6_REPORT.md            ← Phase 6: TDI Engine
+├── PHASE7_REPORT.md            ← Phase 7: ML Model
+├── PHASE8_REPORT.md            ← Phase 8: REST API & Dashboard
+├── PHASE9_REPORT.md            ← Phase 9: Replay System
+├── PHASE10_REPORT.md           ← Phase 10: 3D Digital Twin Canvas
+├── PHASE11_REPORT.md           ← Phase 11: Blender Integration
+├── PHASE11_STATE_CONSISTENCY_REPORT.md ← State consistency audit
+├── README.md                   ← Project README
+├── pytest.ini                  ← Pytest configuration
+└── .gitignore                  ← Git ignore rules
+
+================================================================================
+  4. TECHNOLOGY STACK
+================================================================================
+
+BACKEND:
+  • Python 3.12
+  • FastAPI — Async REST API framework
+  • Uvicorn — ASGI server
+  • Pydantic v2 — Data validation & serialization
+  • NumPy — Numerical computing
+  • Pandas — Data manipulation
+  • scikit-learn — Machine learning (RandomForestRegressor)
+  • joblib — Model serialization
+  • FastF1 — Official F1 telemetry Python library
+
+FRONTEND:
+  • React 19 — UI framework
+  • TypeScript 6 — Type-safe JavaScript
+  • Vite 8 — Build tool & dev server
+  • Three.js 0.185 — 3D WebGL rendering
+  • Tailwind CSS 4 — Utility-first CSS
+  • Lucide React — Icon library
+  • Vitest — Testing framework
+
+3D INTEGRATION:
+  • Blender 4.x/5.x/6.x — Photorealistic 3D rendering
+  • websockets (Python) — Blender WebSocket client
+  • bpy.app.timers — Thread-safe Blender scene updates
+
+TESTING:
+  • pytest — Backend test framework
+  • Vitest + @testing-library/react — Frontend tests
+
+================================================================================
+  5. API ENDPOINTS (REST & WebSocket)
+================================================================================
+
+Base URL:       http://localhost:8000
+WebSocket URL:  ws://localhost:8000/ws/telemetry
+
+SYSTEM & SESSION:
+  GET  /api/health       — System health check
+  GET  /api/session      — Active session metadata (event, driver, lap, mode)
+
+LIVE STATE:
+  GET  /api/telemetry    — Latest telemetry frame
+  GET  /api/physics      — Physics twin force balance output
+  GET  /api/residual     — Actual vs Expected residual
+  GET  /api/confounders  — Active confounder analysis
+  GET  /api/tdi          — TDI scores (physics, AI, fused) with explainability
+  GET  /api/tyres        — Four-wheel degradation availability
+
+REPLAY CONTROLS:
+  POST /api/replay/start   — Start continuous replay
+  POST /api/replay/pause   — Pause playback
+  POST /api/replay/resume  — Resume playback
+  POST /api/replay/stop    — Stop replay
+  POST /api/replay/reset   — Reset to frame 0
+  POST /api/replay/seek    — Seek to specific frame {frame_index: N}
+  POST /api/replay/speed   — Set playback speed {speed: 2.0}
+  GET  /api/replay/status  — Current replay state
+
+HISTORY & ANALYTICS:
+  GET  /api/history/tdi?limit=300      — TDI trajectory time-series
+  GET  /api/history/residual?limit=300 — Residual history time-series
+  GET  /api/laps                       — Available lap numbers
+  GET  /api/laps/{lap_number}          — Lap-level summary
+
+COMPONENT SELECTION & MODE:
+  POST /api/component/select — Select tyre/component for Blender sync
+  GET  /api/component/selected — Get current selection
+  POST /api/mode             — Switch data mode (REPLAY / DEMO_SIMULATION)
+  GET  /api/mode             — Get current data mode
+
+WEBSOCKET STREAMING:
+  ws://localhost:8000/ws/telemetry
+  - Pushes real-time frame updates (~20 Hz) containing:
+    telemetry, physics, residual, confounders, tdi, ai, blender payload
+  - Accepts client messages: tyre_select, component_select, set_mode, ping
+
+================================================================================
+  6. FRONTEND DASHBOARD COMPONENTS
+================================================================================
+
+The React dashboard is a single-page engineering command center:
+
+  1. TopBar
+     - Session info (event, driver, lap, compound, tyre age)
+     - Live speed (km/h), gear, DRS indicator
+     - WebSocket connection status
+     - Data mode toggle (REPLAY ↔ DEMO SIMULATION)
+     - Reconnect button
+
+  2. Digital Twin Canvas (Three.js)
+     - Interactive 3D race car with procedural geometry
+     - Four clickable wheels with hover & selection highlighting
+     - Speed-coupled wheel rotation animation
+     - DRS rear wing flap animation
+     - Mode-aware tyre visualization:
+       • REPLAY: Neutral dark slick tyres
+       • DEMO_SIMULATION: Color-coded degradation heatmap
+         (Green → Amber → Orange → Red)
+     - Smooth camera transitions between overview and corner-focus views
+
+  3. Global TDI Card
+     - Large central degradation gauge (0-100)
+     - Physics TDI, AI TDI, and Final Fused TDI
+     - Degradation state badge (HEALTHY → CRITICAL)
+     - Trend indicator (RISING / STABLE / FALLING)
+     - Confidence score
+     - Model reliability score
+
+  4. Why Panel (Explainability)
+     - Dynamic evidence list (reasons supporting degradation)
+     - Dynamic counter-evidence list (reasons attenuating confidence)
+     - Trend context
+
+  5. Confounders Panel
+     - Active confounder flags with visual indicators:
+       DRS, Heavy Braking, High Speed, Transient, Rain, Data Quality
+     - Non-tyre explanation score bar
+     - Tyre evidence quality bar
+
+  6. Tyre Intelligence Panel
+     - Per-corner tyre inspection (FL, FR, RL, RR)
+     - In REPLAY mode: shows "UNAVAILABLE" with explanation
+     - In DEMO mode: shows simulated per-wheel TDI values
+     - Tyre age and compound display
+
+  7. TDI Trajectory Chart
+     - Dual time-series: Physics TDI vs AI TDI vs Fusion TDI
+     - Rolling 300-point history
+     - Real-time updating
+
+  8. Residual Chart
+     - Raw residual time-series
+     - Tyre evidence quality overlay
+     - Confounder score overlay
+
+  9. Replay Control Bar
+     - Play / Pause / Resume buttons
+     - Reset button
+     - Frame seek slider
+     - Playback speed selector (0.25x - 10x)
+     - Frame counter and progress bar
+
+================================================================================
+  7. DATA MODES
+================================================================================
+
+  REPLAY (Default):
+  - Replays real historical F1 telemetry from FastF1
+  - Currently configured: 2023 Italian Grand Prix (Monza), Qualifying, 
+    Max Verstappen (VER)
+  - Four-wheel corner degradation: UNAVAILABLE (FastF1 limitation)
+  - All data is real — nothing is simulated or fabricated
+  - Pipeline processes real acceleration residuals against physics model
+
+  DEMO_SIMULATION:
+  - Activated via UI toggle or POST /api/mode
+  - Same real telemetry replay, BUT four-wheel corner TDI values are simulated
+  - Simulated corner distribution: FL ≈ TDI×1.15, FR ≈ TDI×0.95, 
+    RL ≈ TDI×0.85, RR ≈ TDI×0.80
+  - Enables color-coded tyre visualization in Three.js and Blender
+  - Clearly marked as simulated — for demonstration purposes only
+
+================================================================================
+  8. BLENDER 3D DIGITAL TWIN INTEGRATION
+================================================================================
+
+  Blender File: blender/Formula_2_Car_DigitalTwin_V7_Mechanical_Thermal.blend
+  Bridge Script: blender/tyretrace_live_bridge.py
+
+  Architecture:
+  - Networking Thread: Persistent WebSocket to ws://localhost:8000/ws/telemetry
+    with auto-reconnect exponential backoff
+  - Thread-Safe Queue: Bounded FIFO queue for validated frames
+  - Main Thread Timer: bpy.app.timers polling at 40 Hz (25ms) for safe scene updates
+
+  Features:
+  - Speed-coupled wheel rotation (ω = v / R_wheel, R_wheel = 0.5975 m)
+  - Verified rotation axis: local Z Euler (left wheels negative, right positive)
+  - Bidirectional tyre selection sync with React dashboard
+  - Cyan emission highlight (#00F0FF) on selected tyre
+  - Camera alignment to corner-specific views (CAM_Wheel_FL_Close, etc.)
+  - 3D HUD overlay text: TDI, speed, gear, DRS, lap, sequence number
+  - Mode-aware degradation visualization:
+    REPLAY: neutral tyre appearance
+    DEMO: gradient heatmap (green → amber → orange → red)
+  - Non-destructive: no permanent changes to .blend file
+
+  Wheel Layout (from .blend inspection):
+  - Wheel_FL: X≈+2.47m, Y≈+1.39m, Z≈+0.59m
+  - Wheel_FR: X≈+2.47m, Y≈-1.39m, Z≈+0.59m
+  - Wheel_RL: X≈-3.10m, Y≈+1.39m, Z≈+0.59m
+  - Wheel_RR: X≈-3.10m, Y≈-1.39m, Z≈+0.59m
+
+================================================================================
+  9. PHYSICS EQUATIONS (REFERENCE)
+================================================================================
+
+  Aerodynamic Drag:
+    F_drag = 0.5 × ρ × Cd × A × v²
+
+  Rolling Resistance:
+    F_rolling = Crr × m × g
+
+  Vertical Load:
+    Fz = m × g + F_aero_downforce
+
+  Longitudinal Load Transfer:
+    ΔFz = (m × ax × h_cg) / L_wheelbase
+
+  Expected Acceleration:
+    a_expected = (F_traction − F_drag − F_rolling − F_brake) / m
+
+  Effective Grip:
+    μ_eff = μ₀ × (1 − D) × f_temp × f_pressure × f_slip
+
+  Tyre Thermal Model:
+    m_t × cp × dT/dt = (Fx × v_slip_x + Fy × v_slip_y) − hA × (T − T_ambient)
+
+  Pressure-Temperature (Ideal Gas):
+    P₂ = P₁ × (T₂ / T₁)
+
+  Residual:
+    r_ax = a_actual − a_expected
+    r_normalized = r_ax / max(|a_expected|, ε)
+
+  TDI Fusion:
+    Final_TDI = α × Physics_TDI + (1 − α) × AI_TDI   (α = 0.60)
+
+================================================================================
+  10. HOW TO RUN THE PROJECT
+================================================================================
+
+  PREREQUISITES:
+  - Python 3.12+
+  - Node.js 18+ / npm
+  - (Optional) Blender 4.x+ for 3D digital twin
+
+  BACKEND:
+  --------
+  Terminal 1:
+    cd tyre-degradation-intelligence/backend
+    uvicorn main:app --reload
+
+  NOTE: The full-featured backend with all engines uses:
+    cd tyre-degradation-intelligence
+    uvicorn backend.api.app:app --host 0.0.0.0 --port 8000 --reload
+  (Run from the project ROOT, not the backend directory)
+
+  FRONTEND:
+  ---------
+  Terminal 2:
+    cd tyre-degradation-intelligence/frontend
+    npm install          (first time only)
+    npm run dev
+  → Opens at http://localhost:5173
+
+  BLENDER (Optional):
+  -------------------
+  1. Open Blender
+  2. Open blender/Formula_2_Car_DigitalTwin_V7_Mechanical_Thermal.blend
+  3. Switch to Scripting workspace
+  4. Open blender/tyretrace_live_bridge.py
+  5. Run Script (Alt+P)
+  6. Switch to Layout, press N → TYRETRACE tab → Click Connect
+
+  TESTING:
+  --------
+  Backend tests:
+    cd tyre-degradation-intelligence
+    pytest tests/ -v
+
+  Frontend tests:
+    cd tyre-degradation-intelligence/frontend
+    npm test
+
+================================================================================
+  11. DEVELOPMENT PHASES (HISTORY)
+================================================================================
+
+  Phase 1-4: Foundation (Telemetry, Schemas, Physics Twin, Residual Engine)
+  Phase 5:   Confounder Analysis Engine — deterministic non-tyre factor evaluation
+  Phase 6:   TDI Engine — tyre degradation severity scoring & trajectory
+  Phase 7:   ML Baseline Model — Random Forest on physics-informed features
+  Phase 8:   REST API & Real-Time Dashboard — FastAPI + React + WebSocket
+  Phase 9:   Replay System — session replay with playback controls
+  Phase 10:  3D Digital Twin Canvas — Three.js interactive race car
+  Phase 11:  Blender Integration — Photorealistic 3D twin connected to live stream
+
+================================================================================
+  12. KEY SCIENTIFIC POLICIES & LIMITATIONS
+================================================================================
+
+  1. TDI is an INFERRED severity index, NOT physical tread depth or rubber loss.
+  2. TDI is NOT a failure probability or guaranteed prediction.
+  3. Residual ≠ degradation. It is an unexplained physics discrepancy.
+  4. Component weights are engineering assumptions (MODEL PARAMETER — DEMO).
+  5. FastF1 does NOT provide: tyre temperature, tyre pressure, wheel speeds, 
+     slip angles, or corner-specific loads.
+  6. Single-lap qualifying telemetry has no multi-lap tyre-age progression.
+  7. Longitudinal residuals contain aerodynamic model mismatch.
+  8. The system NEVER fabricates unavailable data — always explicit None/null.
+  9. In DEMO_SIMULATION mode, corner TDI values are clearly marked as simulated.
+  10. AI model is a transparent pseudo-label regressor, not a causal model.
+
+================================================================================
+  13. SAMPLE DATASET
+================================================================================
+
+  Primary Replay Dataset:
+    Event:    2023 Italian Grand Prix (Monza)
+    Session:  Qualifying (Q)
+    Driver:   Max Verstappen (VER)
+    Compound: SOFT
+    Source:   FastF1 official telemetry
+
+  ML Training Data:
+    Features: 40+ temporal window features extracted from physics pipeline
+    Model:    Random Forest Regressor (100 trees, max_depth=6)
+    Target:   TDI pseudo-label (physics-derived baseline)
+    Storage:  data/ml/baseline_model.joblib (920 KB)
+
+================================================================================
+  14. CONTACT & REPOSITORY
+================================================================================
+
+  Project:    TrackShift / TYRETRACE
+  Repository: tyre-degradation-intelligence
+  Status:     Phase 11 Complete — Production-Ready Demo System
+  Tests:      139 backend + 20 frontend = 159 tests passing
+
+================================================================================
+  END OF PROJECT OVERVIEW
+================================================================================
