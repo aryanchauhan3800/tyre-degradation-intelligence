@@ -66,23 +66,3 @@ def test_blender_sequence_incrementation():
     bridge.reset()
     p3 = bridge.format_frame(telemetry={}, tdi_state={})
     assert p3.sequence == 1
-
-
-def test_blender_position_and_mode():
-    bridge = BlenderBridge(mode="REAL_TELEMETRY")
-    telemetry = {
-        "relative_distance": 0.15,
-        "vehicle": {
-            "speed_kph": 280.0,
-            "rpm": 11500.0,
-            "steer_angle_deg": -3.5,
-        }
-    }
-    payload = bridge.format_frame(telemetry=telemetry, tdi_state={"final_tdi": 20.0})
-    assert payload.mode == "REAL_TELEMETRY"
-    assert payload.vehicle.position is not None
-    assert len(payload.vehicle.position) == 3
-    assert payload.vehicle.heading is not None
-    assert payload.vehicle.rpm == 11500.0
-    assert payload.vehicle.steer_angle_deg == -3.5
-    assert payload.vehicle.lap_fraction is not None

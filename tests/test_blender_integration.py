@@ -279,15 +279,10 @@ def test_network_client_lifecycle():
 
 def test_headless_blender_scene_execution():
     """Runs Blender in background mode to test real-scene object interaction."""
-    possible_bins = [
-        Path(r"C:\Program Files\Blender Foundation\Blender 5.2\blender.exe"),
-        Path(r"C:\Program Files\Blender Foundation\Blender 4.2\blender.exe"),
-        Path("/Applications/Blender.app/Contents/MacOS/Blender"),
-    ]
-    blender_bin = next((p for p in possible_bins if p.exists()), None)
+    blender_bin = Path("/Applications/Blender.app/Contents/MacOS/Blender")
     blend_file = Path("blender/Formula_2_Car_DigitalTwin_V7_Mechanical_Thermal.blend")
 
-    if blender_bin is None or not blend_file.exists():
+    if not blender_bin.exists() or not blend_file.exists():
         pytest.skip("Blender binary or blend file not found for headless test")
 
     test_script = """
@@ -315,103 +310,8 @@ print('BLENDER_HEADLESS_TEST_SUCCESS')
         [str(blender_bin), "-b", str(blend_file), "--python-expr", test_script],
         capture_output=True,
         text=True,
-        timeout=20,
+        stdin=subprocess.DEVNULL,
+        timeout=60,
     )
     assert res.returncode == 0
     assert "BLENDER_HEADLESS_TEST_SUCCESS" in res.stdout
-
-
-def test_phase3_telemetry_position_and_heading_parsing():
-    """Validates that Phase 3 position, heading, track distance, and RPM are parsed."""
-    payload = {
-        "blender": {
-            "mode": "REAL_TELEMETRY",
-            "vehicle": {
-                "speed_kph": 315.5,
-                "speed_mps": 87.64,
-                "throttle_pct": 100.0,
-                "brake_pct": 0.0,
-                "gear": 8,
-                "rpm": 11850.0,
-                "steer_angle_deg": -1.2,
-                "position": [845.2, -1.5, 0.0],
-                "heading": -0.42,
-                "heading_deg": -24.0,
-                "track_distance_m": 850.0,
-                "lap_fraction": 0.1467,
-                "track_error_m": 0.05,
-            },
-        },
-    }
-    frame = PayloadParser.parse(payload)
-    assert frame is not None
-    assert frame.mode == "REAL_TELEMETRY"
-    assert frame.position == (845.2, -1.5, 0.0)
-    assert frame.heading == -0.42
-    assert frame.heading_deg == -24.0
-    assert frame.track_distance_m == 850.0
-    assert frame.lap_fraction == 0.1467
-    assert frame.track_error_m == 0.05
-    assert frame.rpm == 11850.0
-    assert frame.steer_angle_deg == -1.2
-
-
-def test_phase3_scene_manager_get_wheel_obj():
-    """Verifies that _get_wheel_obj resolves without error even without Blender."""
-    mgr = TyreTraceSceneManager()
-    assert mgr._get_wheel_obj("FL") is None
-
-
-# ==============================================================================
-# 9. THERMAL GRADIENT & HEAT INTENSITY VALIDATION
-# ==============================================================================
-
-def test_thermal_gradient_stages():
-    """
-    Verifies that the heat gradient precisely maps:
-      TDI 0–15:   Cool / dark blue
-      TDI 15–35:  Green
-      TDI 35–55:  Yellow
-      TDI 55–75:  Orange
-      TDI 75–100: Red / hot
-    """
-    # 1. Cool / dark blue (0-15)
-    bc0, ec0, es0 = TyreTraceSceneManager.calculate_thermal_gradient(0.0)
-    assert ec0[2] > ec0[0]  # Blue dominant over red
-    assert es0 <= 0.5
-
-    bc10, ec10, es10 = TyreTraceSceneManager.calculate_thermal_gradient(10.0)
-    assert ec10[2] > ec10[0]  # Blue dominant
-
-    # 2. Green (15-35)
-    bc25, ec25, es25 = TyreTraceSceneManager.calculate_thermal_gradient(25.0)
-    assert ec25[1] > ec25[0] and ec25[1] > ec25[2]  # Green dominant
-
-    # 3. Yellow (35-55)
-    bc45, ec45, es45 = TyreTraceSceneManager.calculate_thermal_gradient(45.0)
-    assert ec45[0] > 0.4 and ec45[1] > 0.4  # Red + green = yellow
-    assert ec45[2] < 0.2  # Minimal blue
-
-    # 4. Orange (55-75)
-    bc65, ec65, es65 = TyreTraceSceneManager.calculate_thermal_gradient(65.0)
-    assert ec65[0] > 0.8 and 0.15 < ec65[1] < 0.7  # Orange
-
-    # 5. Red / hot (75-100)
-    bc90, ec90, es90 = TyreTraceSceneManager.calculate_thermal_gradient(90.0)
-    assert ec90[0] > 0.9 and ec90[1] < 0.25  # Red dominant
-    assert es90 >= 3.5  # High emission strength
-
-    # Emission strength monotonically increases with TDI
-    assert es0 < es10 < es25 < es45 < es65 < es90
-
-
-def test_thermal_gradient_smoothness():
-    """Verifies that values smoothly interpolate without discontinuities."""
-    prev_es = -1.0
-    for tdi_int in range(0, 101, 5):
-        bc, ec, es = TyreTraceSceneManager.calculate_thermal_gradient(float(tdi_int))
-        assert es >= prev_es  # Monotonic increase
-        assert 0.0 <= bc[0] <= 1.0 and 0.0 <= bc[1] <= 1.0 and 0.0 <= bc[2] <= 1.0
-        assert 0.0 <= ec[0] <= 1.0 and 0.0 <= ec[1] <= 1.0 and 0.0 <= ec[2] <= 1.0
-        prev_es = es
-

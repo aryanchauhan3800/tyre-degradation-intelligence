@@ -233,7 +233,3 @@ class UnifiedIntelligencePipeline:
         self.data_mode = mode
         self.blender_bridge.data_mode = mode
 
-    def set_mode(self, mode: str) -> None:
-        """Sets digital twin operational mode (REAL_TELEMETRY or TEST_MODE)."""
-        self.blender_bridge.mode = mode
-

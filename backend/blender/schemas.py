@@ -19,14 +19,6 @@ class BlenderVehicleState(BaseModel):
     brake_pct: float = Field(..., description="Brake input [0..100]")
     gear: int = Field(..., description="Current gear index")
     drs_active: bool = Field(..., description="DRS wing open state")
-    rpm: Optional[float] = Field(None, description="Engine rotational speed in RPM")
-    steer_angle_deg: Optional[float] = Field(None, description="Steering wheel angle in degrees")
-    position: Optional[list] = Field(None, description="3D world position in Blender [x, y, z]")
-    heading: Optional[float] = Field(None, description="Heading angle in radians around world Z")
-    heading_deg: Optional[float] = Field(None, description="Heading angle in degrees")
-    track_distance_m: Optional[float] = Field(None, description="Distance along racing line in meters")
-    lap_fraction: Optional[float] = Field(None, description="Normalized progress along lap [0..1]")
-    track_error_m: Optional[float] = Field(0.0, description="Deviation from expected racing line in meters")
 
 
 class BlenderCornerSlot(BaseModel):
@@ -58,4 +50,3 @@ class BlenderFramePayload(BaseModel):
     degradation_state: str = Field(..., description="Classified degradation state")
     selected_component: Optional[str] = Field(None, description="Currently focused telemetry component")
     data_mode: str = Field("REPLAY", description="REPLAY or DEMO_SIMULATION")
-    mode: str = Field("REAL_TELEMETRY", description="TEST_MODE or REAL_TELEMETRY")

@@ -10,7 +10,6 @@ from backend.blender.schemas import (
     BlenderTyresState,
     BlenderVehicleState,
 )
-from backend.telemetry.track_mapper import TelemetryTrackMapper
 
 
 class BlenderBridge:
@@ -19,23 +18,10 @@ class BlenderBridge:
     Decoupled from Blender execution; does NOT require Blender installation to run or test.
     """
 
-    def __init__(
-        self,
-        data_mode: str = "REPLAY",
-        mode: str = "REAL_TELEMETRY",
-        track_mapper: Optional[TelemetryTrackMapper] = None,
-    ):
+    def __init__(self, data_mode: str = "REPLAY"):
         self.data_mode = data_mode
-        self.mode = mode
-        self._track_mapper = track_mapper
         self._sequence: int = 0
         self.selected_component: Optional[str] = None
-
-    @property
-    def track_mapper(self) -> TelemetryTrackMapper:
-        if self._track_mapper is None:
-            self._track_mapper = TelemetryTrackMapper()
-        return self._track_mapper
 
     def format_frame(
         self,
@@ -57,12 +43,6 @@ class BlenderBridge:
         drs_raw = veh_data.get("drs")
         drs_active = bool(drs_raw in (1, 8, 10, 12, 14)) if drs_raw is not None else False
 
-        rpm = float(veh_data["rpm"]) if veh_data.get("rpm") is not None else None
-        steer = float(veh_data["steer_angle_deg"]) if veh_data.get("steer_angle_deg") is not None else None
-
-        # Map track coordinates
-        track_info = self.track_mapper.map_telemetry_frame(telemetry)
-
         vehicle_state = BlenderVehicleState(
             speed_kph=round(speed_kph, 1),
             speed_mps=round(speed_mps, 2),
@@ -70,14 +50,6 @@ class BlenderBridge:
             brake_pct=round(brake, 1),
             gear=gear,
             drs_active=drs_active,
-            rpm=round(rpm, 1) if rpm is not None else None,
-            steer_angle_deg=round(steer, 2) if steer is not None else None,
-            position=track_info.get("position"),
-            heading=track_info.get("heading"),
-            heading_deg=track_info.get("heading_deg"),
-            track_distance_m=track_info.get("track_distance_m"),
-            lap_fraction=track_info.get("lap_fraction"),
-            track_error_m=track_info.get("track_error_m", 0.0),
         )
 
         global_tdi = float(tdi_state.get("final_tdi", tdi_state.get("tdi", 0.0)))
@@ -118,7 +90,6 @@ class BlenderBridge:
             degradation_state=state_str,
             selected_component=active_comp,
             data_mode=self.data_mode,
-            mode=self.mode,
         )
 
     def reset(self) -> None:

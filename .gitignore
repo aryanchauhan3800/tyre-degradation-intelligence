@@ -19,17 +19,8 @@ htmlcov/
 # FastF1 download cache
 data/cache/
 
-# Node / Frontend dependencies & build output
-node_modules/
-**/node_modules/
-dist/
-**/dist/
-*.local
 
-# Blender raw working files (>100MB exceeds GitHub push limits)
-*.blend
-*.blend1
-*.blend2
-
-# Backup / scratch files
-*.bak*
+# Large assets
+blender/*.blend
+blender/*.blend1
+frontend/public/*.mp4
