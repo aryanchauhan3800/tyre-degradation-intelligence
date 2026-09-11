@@ -201,14 +201,19 @@ export function calculateTyreCornerState(
   // 4. Thermal Model (FLIR 3-zone surface + core)
   // Ambient & track base
   const trackTemp = telemetry?.environment?.track_temp_c ?? 38.0;
-  // F1 tyres run at 95°C-112°C working equilibrium on track
-  const baseTireTemp = Math.max(88.0, trackTemp + 52.0); // base heated working temp ~90-95°C
+  
+  // Real-physics speed-dependent thermal curve:
+  // At 0-40 km/h (slow/stationary): Tyre stays in normal cool operating window (~48°C - 58°C, Emerald Green / Teal).
+  // At high speed (180 - 320 km/h): Friction, rolling deformation, and load elevate temperatures up to 105°C - 125°C+ (Crimson Red / White Hot).
+  // When slowing down: Temperature dissipates rapidly down to ~50°C (Red disappears).
+  const speedRatio = Math.min(1.2, speedKph / 250.0);
+  const baseTireTemp = Math.max(45.0, (trackTemp + 12.0) + Math.pow(speedRatio, 1.3) * 58.0);
 
   // Dynamic heat from friction, slip, braking, and TDI
-  const speedHeating = (speedKph / 320) * 16.0;
+  const speedHeating = Math.pow(speedRatio, 1.5) * 18.0;
   const brakeHeating = isFront ? (brakePct / 100) * 28.0 : (brakePct / 100) * 14.0;
   const tractionHeating = !isFront ? (throttlePct / 100) * 18.0 : 0;
-  const tdiHeatOffset = (effectiveTdi / 100) * 14.0;
+  const tdiHeatOffset = (effectiveTdi / 100) * 12.0;
 
   const centerTemp = Math.round(baseTireTemp + speedHeating + brakeHeating * 0.45 + tractionHeating * 0.5 + tdiHeatOffset);
 

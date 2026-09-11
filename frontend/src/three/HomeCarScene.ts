@@ -264,7 +264,6 @@ export class HomeCarScene {
 
         /* Auto-center & scale to a sensible size */
         const box = new THREE.Box3().setFromObject(model);
-        const center = box.getCenter(new THREE.Vector3());
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = 5.5 / maxDim;

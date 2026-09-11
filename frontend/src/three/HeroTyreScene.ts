@@ -27,6 +27,7 @@ import type {
   TyreVisMode,
 } from '../types/telemetry';
 import { calculateTyreCornerState } from '../utils/tyreCalculations';
+import { TyreThermalSimulation } from '../utils/TyreThermalSimulation';
 import {
   thermalVertexShaderChunk,
   thermalVertexShaderAssign,
@@ -88,27 +89,44 @@ export class HeroTyreScene {
   public predictiveHoloRing: THREE.LineLoop | null = null;
   public trackMesh: THREE.Mesh | null = null;
   public trackTexture: THREE.CanvasTexture | null = null;
+  public kerbTexture: THREE.CanvasTexture | null = null;
+  public turfTexture: THREE.CanvasTexture | null = null;
+  public yellowLineMesh: THREE.Mesh | null = null;
   public motionBlurMaterial: THREE.MeshBasicMaterial | null = null;
   public allWheelMaterials: THREE.MeshStandardMaterial[] = [];
+
+  // Physics Thermal Engine
+  public thermalSim = new TyreThermalSimulation('FR');
+  private lastTelemetryData: {
+    speedKph: number;
+    dataMode: DataMode;
+    fourWheelStates?: FourWheelTyres | null;
+    telemetryFrame?: TelemetryFrame | null;
+    physicsOutput?: PhysicsTwinOutput | null;
+    tdiResponse?: TDIStateResponse | null;
+  } = { speedKph: 0, dataMode: 'REPLAY' };
 
   // Thermal Shader Uniforms
   public thermalUniforms = {
     uThermalActive: { value: 0.0 },
-    uInnerTemp: { value: 0.0 },
-    uCenterTemp: { value: 0.0 },
-    uOuterTemp: { value: 0.0 },
-    uSurfaceTemp: { value: 0.0 },
+    uInnerShoulderTemp: { value: 25.0 },
+    uInnerTreadTemp: { value: 25.0 },
+    uCenterTreadTemp: { value: 25.0 },
+    uOuterTreadTemp: { value: 25.0 },
+    uOuterShoulderTemp: { value: 25.0 },
+    uSurfaceTemp: { value: 25.0 },
+    uContactPatchHeat: { value: 0.0 },
+    uWheelAngle: { value: 0.0 },
   };
 
   // Uniform Lerping Targets (Smooth continuous updates)
-  private currentInnerTemp = 0.0;
-  private currentCenterTemp = 0.0;
-  private currentOuterTemp = 0.0;
-  private currentSurfaceTemp = 0.0;
-  private targetInnerTemp = 0.0;
-  private targetCenterTemp = 0.0;
-  private targetOuterTemp = 0.0;
-  private targetSurfaceTemp = 0.0;
+  private currentInnerShoulderTemp = 25.0;
+  private currentInnerTreadTemp = 25.0;
+  private currentCenterTreadTemp = 25.0;
+  private currentOuterTreadTemp = 25.0;
+  private currentOuterShoulderTemp = 25.0;
+  private currentSurfaceTemp = 25.0;
+  private currentContactPatchHeat = 0.0;
 
   // Active state - THERMAL IS ACTIVE BY DEFAULT, FROZEN BY DEFAULT MATCHING REFERENCE
   private activeCorner: TyreCorner = 'FR';
@@ -215,6 +233,10 @@ export class HeroTyreScene {
     // 7. Track & Floor System
     this.setupFloorGrid();
 
+    // 8. Atmospheric fog for realistic depth falloff — road fades into the sky
+    // well before the plane's far edge, creating an endless-road illusion
+    this.scene.fog = new THREE.Fog(0xdfe6ef, 7.0, 26.0);
+
     // 8. Load GLB Tyre Asset
     this.loadTyreAsset();
 
@@ -257,26 +279,40 @@ export class HeroTyreScene {
     canvas.height = 1024;
     const ctx = canvas.getContext('2d')!;
 
-    // Base bitumen tarmac color
-    ctx.fillStyle = '#1e2229';
+    // Base weathered bitumen tarmac (medium-dark race grey)
+    ctx.fillStyle = '#24282f';
     ctx.fillRect(0, 0, 1024, 1024);
 
-    // Realistic aggregate stone chip simulation
-    const stoneCount = 45000;
+    // 1. Large-scale weathering mottling — irregular tonal patches from ageing & sweeping
+    for (let i = 0; i < 26; i++) {
+      const x = Math.random() * 1024;
+      const y = Math.random() * 1024;
+      const r = 90 + Math.random() * 190;
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      const dark = Math.random() > 0.5;
+      g.addColorStop(0, dark ? 'rgba(10, 12, 16, 0.10)' : 'rgba(196, 206, 218, 0.05)');
+      g.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      ctx.fillStyle = g;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    // 2. Aggregate stone chips — basalt / granite / quartz mix
+    const stoneCount = 60000;
     for (let i = 0; i < stoneCount; i++) {
       const x = Math.random() * 1024;
       const y = Math.random() * 1024;
-      const size = Math.random() * 2.4 + 0.6;
+      const size = Math.random() * 1.9 + 0.5;
       const tone = Math.random();
 
-      // Mixture of dark basalt, mid-gray granite, and occasional light quartz flecks
       let color: string;
-      if (tone > 0.85) {
-        color = 'rgba(160, 174, 192, 0.4)'; // Quartz / light aggregate
-      } else if (tone > 0.45) {
-        color = 'rgba(74, 85, 104, 0.35)'; // Mid granite
+      if (tone > 0.92) {
+        color = 'rgba(178, 188, 200, 0.42)'; // Light quartz flecks
+      } else if (tone > 0.55) {
+        color = 'rgba(92, 100, 112, 0.38)'; // Mid granite
       } else {
-        color = 'rgba(15, 18, 24, 0.5)'; // Dark basalt / bitumen
+        color = 'rgba(14, 16, 21, 0.5)'; // Dark basalt / bitumen
       }
       ctx.fillStyle = color;
       ctx.beginPath();
@@ -284,32 +320,70 @@ export class HeroTyreScene {
       ctx.fill();
     }
 
-    // Heavy rubbered racing groove (rubber laid down by F1 slicks)
-    const rubberGrad = ctx.createLinearGradient(0, 200, 0, 824);
-    rubberGrad.addColorStop(0, 'rgba(12, 14, 18, 0)');
-    rubberGrad.addColorStop(0.3, 'rgba(10, 12, 16, 0.55)');
-    rubberGrad.addColorStop(0.5, 'rgba(6, 8, 11, 0.7)');
-    rubberGrad.addColorStop(0.7, 'rgba(10, 12, 16, 0.55)');
-    rubberGrad.addColorStop(1, 'rgba(12, 14, 18, 0)');
-    ctx.fillStyle = rubberGrad;
-    ctx.fillRect(0, 200, 1024, 624);
-
-    // Deceleration tyre scrub marks / braking streaks
-    ctx.strokeStyle = 'rgba(10, 12, 15, 0.45)';
-    ctx.lineWidth = 14;
-    for (let j = 0; j < 8; j++) {
-      const yOffset = 300 + j * 60 + (Math.random() * 10 - 5);
+    // 3. Transverse asphalt expansion joints / tar seam repairs crossing the road,
+    // as seen on real circuit tarmac slabs
+    const seamXs = [180, 540, 880];
+    for (const sx of seamXs) {
+      const wobble = Math.random() * 8 - 4;
+      ctx.strokeStyle = 'rgba(8, 10, 14, 0.55)';
+      ctx.lineWidth = 4.5;
       ctx.beginPath();
-      ctx.moveTo(0, yOffset);
-      ctx.bezierCurveTo(340, yOffset + 15, 680, yOffset - 15, 1024, yOffset);
+      ctx.moveTo(sx, 0);
+      ctx.bezierCurveTo(sx + wobble, 341, sx - wobble, 682, sx + wobble, 1024);
+      ctx.stroke();
+      // Sunlit raised edge of the repair
+      ctx.strokeStyle = 'rgba(150, 158, 170, 0.14)';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(sx + 3.5, 0);
+      ctx.bezierCurveTo(sx + 3.5 + wobble, 341, sx + 3.5 - wobble, 682, sx + 3.5 + wobble, 1024);
       ctx.stroke();
     }
 
+    // 4. Layered braking / traction skid marks — varied width, alpha and length
+    for (let j = 0; j < 12; j++) {
+      const yOffset = 120 + Math.random() * 780;
+      const yWobble = 10 + Math.random() * 22;
+      ctx.strokeStyle = `rgba(8, 10, 14, ${0.18 + Math.random() * 0.3})`;
+      ctx.lineWidth = 5 + Math.random() * 16;
+      ctx.beginPath();
+      const x0 = Math.random() * 300;
+      const x1 = x0 + 280 + Math.random() * 500;
+      ctx.moveTo(x0, yOffset);
+      ctx.bezierCurveTo((x0 + x1) * 0.4, yOffset + yWobble, (x0 + x1) * 0.7, yOffset - yWobble, x1, yOffset + (Math.random() * 8 - 4));
+      ctx.stroke();
+    }
+
+    // 5. Soft central rubbering — subtle; the glossy macro racing-line strip sits on top
+    const rubberGrad = ctx.createLinearGradient(0, 330, 0, 694);
+    rubberGrad.addColorStop(0, 'rgba(12, 14, 18, 0)');
+    rubberGrad.addColorStop(0.25, 'rgba(10, 12, 16, 0.30)');
+    rubberGrad.addColorStop(0.5, 'rgba(6, 8, 11, 0.42)');
+    rubberGrad.addColorStop(0.75, 'rgba(10, 12, 16, 0.30)');
+    rubberGrad.addColorStop(1, 'rgba(12, 14, 18, 0)');
+    ctx.fillStyle = rubberGrad;
+    ctx.fillRect(0, 330, 1024, 364);
+
+    // 6. Filled patch repairs — slightly different tone rectangles with darker border
+    for (let p = 0; p < 2; p++) {
+      const px = 60 + Math.random() * 700;
+      const py = 60 + Math.random() * 700;
+      const pw = 120 + Math.random() * 200;
+      const ph = 90 + Math.random() * 160;
+      ctx.fillStyle = 'rgba(52, 60, 70, 0.16)';
+      ctx.fillRect(px, py, pw, ph);
+      ctx.strokeStyle = 'rgba(10, 12, 16, 0.35)';
+      ctx.lineWidth = 3;
+      ctx.strokeRect(px, py, pw, ph);
+    }
+
+    const maxAniso = this.renderer.capabilities.getMaxAnisotropy();
     const tex = new THREE.CanvasTexture(canvas);
     tex.wrapS = THREE.RepeatWrapping;
     tex.wrapT = THREE.RepeatWrapping;
+    tex.colorSpace = THREE.SRGBColorSpace;
     tex.repeat.set(4, 4);
-    tex.anisotropy = 8;
+    tex.anisotropy = maxAniso;
     return tex;
   }
 
@@ -335,10 +409,79 @@ export class HeroTyreScene {
       ctx.fill();
     }
 
+    // Recessed expansion joints aligned with the albedo seams
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.45)';
+    ctx.lineWidth = 3;
+    for (const sx of [90, 270, 440]) {
+      ctx.beginPath();
+      ctx.moveTo(sx, 0);
+      ctx.lineTo(sx, 512);
+      ctx.stroke();
+    }
+
     const tex = new THREE.CanvasTexture(canvas);
     tex.wrapS = THREE.RepeatWrapping;
     tex.wrapT = THREE.RepeatWrapping;
     tex.repeat.set(4, 4);
+    return tex;
+  }
+
+  private createAsphaltRoughnessMap(): THREE.CanvasTexture {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 512;
+    const ctx = canvas.getContext('2d')!;
+
+    // Base roughness (~0.72): dusty weathered tarmac
+    ctx.fillStyle = '#b8b8b8';
+    ctx.fillRect(0, 0, 512, 512);
+
+    // Rubber-polished skid streaks are noticeably glossier than off-line tarmac
+    for (let j = 0; j < 8; j++) {
+      const yOffset = Math.random() * 512;
+      ctx.strokeStyle = `rgba(40, 40, 40, ${0.25 + Math.random() * 0.3})`;
+      ctx.lineWidth = 4 + Math.random() * 12;
+      ctx.beginPath();
+      const x0 = Math.random() * 200;
+      ctx.moveTo(x0, yOffset);
+      ctx.lineTo(x0 + 250 + Math.random() * 250, yOffset + (Math.random() * 20 - 10));
+      ctx.stroke();
+    }
+
+    // Central rubbered band slightly smoother overall
+    const bandGrad = ctx.createLinearGradient(0, 128, 0, 384);
+    bandGrad.addColorStop(0, 'rgba(80, 80, 80, 0)');
+    bandGrad.addColorStop(0.5, 'rgba(80, 80, 80, 0.45)');
+    bandGrad.addColorStop(1, 'rgba(80, 80, 80, 0)');
+    ctx.fillStyle = bandGrad;
+    ctx.fillRect(0, 128, 512, 256);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.RepeatWrapping;
+    tex.wrapT = THREE.RepeatWrapping;
+    tex.repeat.set(4, 4);
+    return tex;
+  }
+
+  private createRacingLineAlphaMap(): THREE.CanvasTexture {
+    const canvas = document.createElement('canvas');
+    canvas.width = 64;
+    canvas.height = 256;
+    const ctx = canvas.getContext('2d')!;
+
+    // Opaque polished core fading to transparent at the edges of the ribbon
+    const grad = ctx.createLinearGradient(0, 0, 0, 256);
+    grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
+    grad.addColorStop(0.22, 'rgba(255, 255, 255, 0.55)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 255, 1)');
+    grad.addColorStop(0.78, 'rgba(255, 255, 255, 0.55)');
+    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 64, 256);
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.wrapS = THREE.ClampToEdgeWrapping;
+    tex.wrapT = THREE.ClampToEdgeWrapping;
     return tex;
   }
 
@@ -422,18 +565,29 @@ export class HeroTyreScene {
   }
 
   private setupFloorGrid(): void {
+    // Full-length endless road: 90m along the rolling direction so the far edge
+    // sits beyond the fog falloff and is never visible. Lateral width 24m easily
+    // covers the camera frustum. Tiles stay physically sized: asphalt 6m, kerb 2.4m, turf 1.2m.
+    const ROAD_LENGTH = 90.0;
+
     // 1. Ultra-Realistic Bitumen Asphalt Tarmac Ground Plane with aggregate bump and rubbering
     const asphaltTex = this.createAsphaltTexture();
     const asphaltBump = this.createAsphaltBumpMap();
+    const asphaltRough = this.createAsphaltRoughnessMap();
+    this.trackTexture = asphaltTex;
+    asphaltTex.repeat.set(ROAD_LENGTH / 6.0, 4);
+    asphaltBump.repeat.set(ROAD_LENGTH / 6.0, 4);
+    asphaltRough.repeat.set(ROAD_LENGTH / 6.0, 4);
 
-    const floorGeo = new THREE.PlaneGeometry(24.0, 24.0);
+    const floorGeo = new THREE.PlaneGeometry(ROAD_LENGTH, 24.0);
     const floorMat = new THREE.MeshStandardMaterial({
-      color: 0x9098a6,
+      color: 0xaeb4bc,
       map: asphaltTex,
       bumpMap: asphaltBump,
-      bumpScale: 0.018,
-      roughness: 0.82,
-      metalness: 0.12,
+      bumpScale: 0.02,
+      roughnessMap: asphaltRough,
+      roughness: 1.0,
+      metalness: 0.05,
     });
     const floorMesh = new THREE.Mesh(floorGeo, floorMat);
     floorMesh.rotation.x = -Math.PI / 2;
@@ -441,36 +595,61 @@ export class HeroTyreScene {
     floorMesh.receiveShadow = true;
     this.scene.add(floorMesh);
 
-    // 2. Realistic 3D Raised Chamfered Racing Kerb (Apex Rumble Strip)
-    const kerbGeo = new THREE.BoxGeometry(4.8, 0.024, 0.48);
+    // 1b. Polished rubbered RACING LINE — the dark, glossy ideal-line ribbon that every
+    // real F1 circuit carries; subtly reflective under broadcast lighting
+    const racingLineGeo = new THREE.PlaneGeometry(ROAD_LENGTH, 1.6);
+    const racingLineMat = new THREE.MeshStandardMaterial({
+      color: 0x0a0c10,
+      roughness: 0.34,
+      metalness: 0.0,
+      transparent: true,
+      alphaMap: this.createRacingLineAlphaMap(),
+      depthWrite: false,
+    });
+    const racingLineMesh = new THREE.Mesh(racingLineGeo, racingLineMat);
+    racingLineMesh.rotation.x = -Math.PI / 2;
+    racingLineMesh.position.set(0.08, -0.3335, 0);
+    racingLineMesh.receiveShadow = true;
+    this.scene.add(racingLineMesh);
+
+    // 2. Realistic 3D Raised Chamfered Racing Kerb — full-length trackside edge line,
+    // parallel to the rolling direction and clear of the tyre contact line (tyre spans z ∈ [-0.17, 0.17]).
+    const kerbGeo = new THREE.BoxGeometry(ROAD_LENGTH, 0.024, 0.48);
+    const kerbTex = this.createKerbTexture();
+    this.kerbTexture = kerbTex;
+    kerbTex.repeat.set(ROAD_LENGTH / 2.4, 1);
     const kerbMat = new THREE.MeshStandardMaterial({
-      map: this.createKerbTexture(),
+      map: kerbTex,
       roughness: 0.68,
       metalness: 0.05,
     });
     const kerbMesh = new THREE.Mesh(kerbGeo, kerbMat);
-    kerbMesh.position.set(-0.45, -0.322, -0.68);
-    kerbMesh.rotation.y = -Math.PI / 6.5; // ~28 degree angle
+    kerbMesh.position.set(0.08, -0.322, -1.15);
+    kerbMesh.rotation.y = 0; // parallel to the road so the tyre never rides the stripe
     kerbMesh.castShadow = true;
     kerbMesh.receiveShadow = true;
     this.scene.add(kerbMesh);
 
-    // 3. Astroturf / Run-off Verge directly behind the kerb
-    const turfGeo = new THREE.PlaneGeometry(4.8, 0.55);
+    // 3. Astroturf / Run-off Verge directly behind the kerb (full length, scrolls with the road)
+    const turfTex = this.createAstroturfTexture();
+    this.turfTexture = turfTex;
+    turfTex.repeat.set(ROAD_LENGTH / 1.2, 2);
+    const turfGeo = new THREE.PlaneGeometry(ROAD_LENGTH, 0.55);
     const turfMat = new THREE.MeshStandardMaterial({
-      map: this.createAstroturfTexture(),
+      map: turfTex,
       roughness: 0.92,
       metalness: 0.02,
     });
     const turfMesh = new THREE.Mesh(turfGeo, turfMat);
     turfMesh.rotation.x = -Math.PI / 2;
-    turfMesh.rotation.z = Math.PI / 6.5;
-    turfMesh.position.set(-0.68, -0.333, -1.05);
+    turfMesh.rotation.z = 0;
+    turfMesh.position.set(0.08, -0.333, -1.67);
     turfMesh.receiveShadow = true;
     this.scene.add(turfMesh);
 
-    // 4. Textured FIA Painted White Track Boundary Line
-    const lineGeo = new THREE.PlaneGeometry(8.0, 0.06);
+    // 4. Textured FIA Painted White Track Boundary Line (full road length; solid line
+    // is visually identical at any x, so no scrolling needed)
+    const lineGeo = new THREE.PlaneGeometry(ROAD_LENGTH, 0.06);
     const lineMat = new THREE.MeshStandardMaterial({
       color: 0xffffff,
       roughness: 0.45,
@@ -498,6 +677,7 @@ export class HeroTyreScene {
     yellowLine.position.set(-0.85, -0.332, 0.15);
     yellowLine.receiveShadow = true;
     this.scene.add(yellowLine);
+    this.yellowLineMesh = yellowLine;
 
     // 6. Tyre Contact Patch Rubber Imprint directly on the road
     const rubberGeo = new THREE.PlaneGeometry(0.42, 0.28);
@@ -677,10 +857,14 @@ export class HeroTyreScene {
   private setupThermalShader(mat: THREE.MeshStandardMaterial): void {
     mat.onBeforeCompile = (shader) => {
       shader.uniforms.uThermalActive = this.thermalUniforms.uThermalActive;
-      shader.uniforms.uInnerTemp = this.thermalUniforms.uInnerTemp;
-      shader.uniforms.uCenterTemp = this.thermalUniforms.uCenterTemp;
-      shader.uniforms.uOuterTemp = this.thermalUniforms.uOuterTemp;
+      shader.uniforms.uInnerShoulderTemp = this.thermalUniforms.uInnerShoulderTemp;
+      shader.uniforms.uInnerTreadTemp = this.thermalUniforms.uInnerTreadTemp;
+      shader.uniforms.uCenterTreadTemp = this.thermalUniforms.uCenterTreadTemp;
+      shader.uniforms.uOuterTreadTemp = this.thermalUniforms.uOuterTreadTemp;
+      shader.uniforms.uOuterShoulderTemp = this.thermalUniforms.uOuterShoulderTemp;
       shader.uniforms.uSurfaceTemp = this.thermalUniforms.uSurfaceTemp;
+      shader.uniforms.uContactPatchHeat = this.thermalUniforms.uContactPatchHeat;
+      shader.uniforms.uWheelAngle = this.thermalUniforms.uWheelAngle;
 
       shader.vertexShader = `
         ${thermalVertexShaderChunk}
@@ -757,6 +941,7 @@ export class HeroTyreScene {
 
   public selectTyre(corner: TyreCorner | null): void {
     this.activeCorner = corner || 'FR';
+    this.thermalSim.setCorner(this.activeCorner);
     const isLeft = this.activeCorner.endsWith('L');
 
     // F1 hub nut color: Red for Left (FL/RL), Blue for Right (FR/RR)
@@ -871,6 +1056,7 @@ export class HeroTyreScene {
   ): void {
     const hasData = Boolean(telemetryFrame || physicsOutput || tdiResponse);
     this.currentSpeedKph = hasData ? Math.max(0, speedKph) : 0;
+    this.lastTelemetryData = { speedKph, dataMode, fourWheelStates, telemetryFrame, physicsOutput, tdiResponse };
 
     const tyreState = calculateTyreCornerState(
       this.activeCorner,
@@ -881,16 +1067,7 @@ export class HeroTyreScene {
       dataMode
     );
 
-    // Dynamic temperature targets in degrees Celsius (strict 0 when no data)
-    const innerC = hasData ? (tyreState.thermal.inner_c ?? 0.0) : 0.0;
-    const centerC = hasData ? (tyreState.thermal.center_c ?? 0.0) : 0.0;
-    const outerC = hasData ? (tyreState.thermal.outer_c ?? 0.0) : 0.0;
     const surfaceC = hasData ? (tyreState.thermal.surface_c ?? 0.0) : 0.0;
-
-    this.targetInnerTemp = innerC;
-    this.targetCenterTemp = centerC;
-    this.targetOuterTemp = outerC;
-    this.targetSurfaceTemp = surfaceC;
 
     if (this.visMode === 'THERMAL' && hasData && surfaceC > 0) {
       this.thermalUniforms.uThermalActive.value = 1.0;
@@ -1072,17 +1249,47 @@ export class HeroTyreScene {
 
     const delta = this.clock.getDelta();
 
-    // 0. Smooth uniform lerping to avoid abrupt steps
-    const lerpRate = Math.min(1.0, delta * 6.0);
-    this.currentInnerTemp += (this.targetInnerTemp - this.currentInnerTemp) * lerpRate;
-    this.currentCenterTemp += (this.targetCenterTemp - this.currentCenterTemp) * lerpRate;
-    this.currentOuterTemp += (this.targetOuterTemp - this.currentOuterTemp) * lerpRate;
-    this.currentSurfaceTemp += (this.targetSurfaceTemp - this.currentSurfaceTemp) * lerpRate;
+    // 0. Physics Thermal Simulation Integration & Lerp Shader Uniforms
+    // Use effective speed = raw telemetry speed × pace multiplier
+    // so at 0.1x pace the tire runs cool (normal dark rubber) and
+    // at 1x-2x pace the tire heats up into red/white-hot (like in reality)
+    const effectiveSpeedKph = this.currentSpeedKph * Math.max(0, this.speedMultiplier);
+    const physState = this.thermalSim.update(
+      delta,
+      effectiveSpeedKph,
+      this.lastTelemetryData.telemetryFrame ?? null,
+      this.lastTelemetryData.physicsOutput ?? null,
+      this.lastTelemetryData.tdiResponse ?? null,
+      this.lastTelemetryData.fourWheelStates ?? null,
+      this.lastTelemetryData.dataMode
+    );
 
-    this.thermalUniforms.uInnerTemp.value = this.currentInnerTemp;
-    this.thermalUniforms.uCenterTemp.value = this.currentCenterTemp;
-    this.thermalUniforms.uOuterTemp.value = this.currentOuterTemp;
+    const lerpRate = Math.min(1.0, delta * 8.0);
+    this.currentInnerShoulderTemp += (physState.innerShoulder - this.currentInnerShoulderTemp) * lerpRate;
+    this.currentInnerTreadTemp += (physState.innerTread - this.currentInnerTreadTemp) * lerpRate;
+    this.currentCenterTreadTemp += (physState.centerTread - this.currentCenterTreadTemp) * lerpRate;
+    this.currentOuterTreadTemp += (physState.outerTread - this.currentOuterTreadTemp) * lerpRate;
+    this.currentOuterShoulderTemp += (physState.outerShoulder - this.currentOuterShoulderTemp) * lerpRate;
+    this.currentSurfaceTemp += (physState.surface - this.currentSurfaceTemp) * lerpRate;
+    this.currentContactPatchHeat += (physState.contactPatchHeatIntensity - this.currentContactPatchHeat) * lerpRate;
+
+    this.thermalUniforms.uInnerShoulderTemp.value = this.currentInnerShoulderTemp;
+    this.thermalUniforms.uInnerTreadTemp.value = this.currentInnerTreadTemp;
+    this.thermalUniforms.uCenterTreadTemp.value = this.currentCenterTreadTemp;
+    this.thermalUniforms.uOuterTreadTemp.value = this.currentOuterTreadTemp;
+    this.thermalUniforms.uOuterShoulderTemp.value = this.currentOuterShoulderTemp;
     this.thermalUniforms.uSurfaceTemp.value = this.currentSurfaceTemp;
+    this.thermalUniforms.uContactPatchHeat.value = this.currentContactPatchHeat;
+    this.thermalUniforms.uWheelAngle.value = this.wheelRotationAngle;
+
+    // Dynamic thermal overlay intensity: fade in/out based on real surface temp
+    // Below 35°C → 0.0 (normal dark rubber, no thermal colors)
+    // 35-55°C → gradual fade-in (faint thermal glow emerging)
+    // Above 55°C → 1.0 (full thermal visualization)
+    if (this.visMode === 'THERMAL') {
+      const thermalBlend = Math.min(1.0, Math.max(0.0, (this.currentSurfaceTemp - 35.0) / 20.0));
+      this.thermalUniforms.uThermalActive.value = thermalBlend;
+    }
 
     // 1. Concentric Real-Physics Wheel Roll around local Z-axis (Geometric Axle)
     // Formula: omega = v_mps / radius (r = 0.36m for F1 18-inch tyre)
@@ -1099,9 +1306,31 @@ export class HeroTyreScene {
         this.wheelRotationAngle -= omega * delta;
         this.spinGroup.rotation.z = this.wheelRotationAngle;
 
-        // Scroll high-speed asphalt track under tyre contact patch
+        // Scroll high-speed asphalt track under tyre contact patch (rolling-road conveyor).
+        // Road surface must move backwards (-X) at exactly the tread speed for a
+        // slip-free rolling contact: asphalt tile = 24m plane / 4 repeats = 6m,
+        // so offset rate = speedMps / 6.0 (increasing offset shifts texture toward -X).
         if (this.trackTexture) {
-          this.trackTexture.offset.x -= (speedMps / 8.0) * delta * scale;
+          this.trackTexture.offset.x += (speedMps / 6.0) * delta * scale;
+        }
+
+        // Kerb stripes drift backwards with the road (tile = ROAD 90m / 37.5 repeats = 2.4m)
+        if (this.kerbTexture) {
+          this.kerbTexture.offset.x += (speedMps / 2.4) * delta * scale;
+        }
+
+        // Astroturf verge streams past with the road (tile = 90m / 75 repeats = 1.2m)
+        if (this.turfTexture) {
+          this.turfTexture.offset.x += (speedMps / 1.2) * delta * scale;
+        }
+
+        // Yellow pit timing line recedes with the traffic flow, recycled ahead of the
+        // fog falloff so it streams past endlessly without visible pop-in
+        if (this.yellowLineMesh) {
+          this.yellowLineMesh.position.x -= speedMps * delta * scale;
+          if (this.yellowLineMesh.position.x < -25) {
+            this.yellowLineMesh.position.x = 25;
+          }
         }
 
         // Dynamic High-Speed Motion Blur
