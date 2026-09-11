@@ -19,3 +19,8 @@ htmlcov/
 # FastF1 download cache
 data/cache/
 
+
+# Large assets
+blender/*.blend
+blender/*.blend1
+frontend/public/*.mp4
