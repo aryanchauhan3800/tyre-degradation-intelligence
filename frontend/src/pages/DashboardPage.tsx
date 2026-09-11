@@ -394,6 +394,9 @@ export const DashboardPage: React.FC = () => {
 
   const currentVehicle: VehicleState | null =
     (frameState.telemetry?.vehicle || frameState.telemetry?.vehicle_state) ?? null;
+  const isConnected = Boolean(frameState.telemetry || frameState.physics || frameState.tdi);
+  const isPaused = Boolean(replayStatus?.paused || !replayStatus?.running);
+  const effectiveSpeedKph = (isConnected && !isPaused && currentVehicle?.speed_kph) ? currentVehicle.speed_kph : 0;
 
   // Active tyre state computed from backend telemetry & physics
   const activeTyreState = calculateTyreCornerState(
@@ -487,7 +490,7 @@ export const DashboardPage: React.FC = () => {
         <section className="col-span-12 md:col-span-8 lg:col-span-6 xl:col-span-7 flex flex-col gap-3">
           <div className="h-[520px] lg:h-[580px] xl:h-[630px] w-full">
             <DigitalTwinCanvas
-              speedKph={currentVehicle?.speed_kph ?? 287}
+              speedKph={effectiveSpeedKph}
               drs={frameState.canonicalDrsActive ? 8 : 0}
               dataMode={dataMode}
               fourWheelStates={frameState.fourWheelStates}
@@ -497,6 +500,8 @@ export const DashboardPage: React.FC = () => {
               selectedTyre={selectedTyre}
               visMode={visMode}
               onSelectVisMode={setVisMode}
+              isPaused={isPaused}
+              isConnected={isConnected}
             />
           </div>
         </section>

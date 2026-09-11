@@ -21,16 +21,19 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
   const { corner, label, compound, pressure_psi, thermal, wear, load, grip } = state;
   const [activeTab, setActiveTab] = useState<'TREAD' | 'SECTION'>('TREAD');
 
-  const surfaceTemp = thermal.surface_c || 97;
-  const innerTemp = thermal.inner_c || 110;
-  const centerTemp = thermal.center_c || 96;
-  const outerTemp = thermal.outer_c || 84;
-  const vertLoad = load.vertical_load_kn || 3.4;
-  const slipAngle = grip.slip_angle_deg || 0.4;
-  const slipRatio = grip.slip_ratio_pct || 0;
-  const gripPct = grip.available_grip_pct || 91;
-  const wearPct = wear.wear_pct || 42.5;
-  const healthPct = wear.health_pct || 57.5;
+  const surfaceTemp = typeof thermal.surface_c === 'number' ? thermal.surface_c : 0;
+  const innerTemp = typeof thermal.inner_c === 'number' ? thermal.inner_c : 0;
+  const centerTemp = typeof thermal.center_c === 'number' ? thermal.center_c : 0;
+  const outerTemp = typeof thermal.outer_c === 'number' ? thermal.outer_c : 0;
+  const vertLoad = typeof load.vertical_load_kn === 'number' ? load.vertical_load_kn : 0;
+  const slipAngle = typeof grip.slip_angle_deg === 'number' ? grip.slip_angle_deg : 0;
+  const slipRatio = typeof grip.slip_ratio_pct === 'number' ? grip.slip_ratio_pct : 0;
+  const gripPct = typeof grip.available_grip_pct === 'number' ? grip.available_grip_pct : 0;
+  const wearPct = typeof wear.wear_pct === 'number' ? wear.wear_pct : 0;
+  const healthPct = typeof wear.health_pct === 'number' ? wear.health_pct : 0;
+  const pressurePsi = typeof pressure_psi === 'number' ? pressure_psi : 0;
+
+  const isLive = surfaceTemp > 0 || healthPct > 0 || vertLoad > 0;
 
   return (
     <div className="bg-white border border-[#E2E8F0] rounded-xl p-2.5 shadow-sm flex flex-col justify-between gap-2 text-slate-800 select-none font-sans h-full">
@@ -57,9 +60,11 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
         </div>
 
         {/* Live F1 Sensors Pill */}
-        <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-[#F0FDF4] border border-[#DCFCE7] text-[10px] font-semibold text-slate-700 shadow-2xs">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#22C55E] animate-pulse" />
-          <span className="tracking-wide">LIVE F1 SENSORS</span>
+        <div className={`flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-semibold shadow-2xs ${
+          isLive ? 'bg-[#F0FDF4] border-[#DCFCE7] text-slate-700' : 'bg-slate-100 border-slate-200 text-slate-500'
+        }`}>
+          <span className={`w-1.5 h-1.5 rounded-full ${isLive ? 'bg-[#22C55E] animate-pulse' : 'bg-slate-400'}`} />
+          <span className="tracking-wide">{isLive ? 'LIVE F1 SENSORS' : 'OFFLINE'}</span>
         </div>
       </div>
 
@@ -82,7 +87,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
                 {surfaceTemp}°C
               </span>
               <span className="text-[10px] font-medium text-[#EF4444]">
-                ↑ +2.1°C
+                {isLive ? '↑ +2.1°C' : '+0.0°C'}
               </span>
             </div>
           </div>
@@ -99,7 +104,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
             </div>
             <div className="flex items-baseline justify-between mt-0.5">
               <span className="text-[15px] font-bold text-[#0F172A] leading-tight">
-                {pressure_psi || 23.3} PSI
+                {pressurePsi} PSI
               </span>
               <span className="text-[10px] font-medium text-slate-400">
                 - 0.0°
@@ -125,7 +130,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
                 {innerTemp}°C
               </span>
               <span className="text-[10px] font-medium text-[#EF4444]">
-                ↑ +1.8°C
+                {isLive ? '↑ +1.8°C' : '+0.0°C'}
               </span>
             </div>
           </div>
@@ -150,7 +155,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
                 {centerTemp}°C
               </span>
               <span className="text-[10px] font-medium text-[#EF4444]">
-                ↑ +1.9°C
+                {isLive ? '↑ +1.9°C' : '+0.0°C'}
               </span>
             </div>
           </div>
@@ -173,7 +178,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
                 {outerTemp}°C
               </span>
               <span className="text-[10px] font-medium text-[#EF4444]">
-                ↑ +1.5°C
+                {isLive ? '↑ +1.5°C' : '+0.0°C'}
               </span>
             </div>
           </div>
@@ -193,7 +198,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
                 {vertLoad} kN
               </span>
               <span className="text-[10px] font-medium text-[#2563EB]">
-                ↓ -0.2
+                {isLive ? '↓ -0.2' : '0.0'}
               </span>
             </div>
           </div>
@@ -266,7 +271,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
                 {gripPct}%
               </span>
               <span className="text-[10px] font-medium text-[#10B981]">
-                ↑ +2%
+                {isLive ? '↑ +2%' : '0%'}
               </span>
             </div>
           </div>
@@ -289,7 +294,7 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
                 {wearPct}%
               </span>
               <span className="text-[10px] font-medium text-[#EF4444]">
-                ↑ +0.8%
+                {isLive ? '↑ +0.8%' : '0%'}
               </span>
             </div>
           </div>
@@ -303,11 +308,11 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
             TYRE HEALTH
           </span>
           <div className="flex flex-col items-end leading-none">
-            <span className="text-[18px] font-bold text-[#10B981]">
+            <span className={`text-[18px] font-bold ${isLive ? 'text-[#10B981]' : 'text-slate-400'}`}>
               {healthPct}%
             </span>
-            <span className="text-[10px] font-bold text-[#10B981] tracking-wider mt-0.5">
-              STABLE
+            <span className={`text-[10px] font-bold tracking-wider mt-0.5 ${isLive ? 'text-[#10B981]' : 'text-slate-400'}`}>
+              {isLive ? 'STABLE' : 'OFFLINE'}
             </span>
           </div>
         </div>

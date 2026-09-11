@@ -7,7 +7,9 @@ interface RaceTelemetryProps {
   lap?: number;
 }
 
-export const RaceTelemetry: React.FC<RaceTelemetryProps> = ({ telemetry: _telemetry, lap: _lap }) => {
+export const RaceTelemetry: React.FC<RaceTelemetryProps> = ({ telemetry, lap: _lap }) => {
+  const isLive = Boolean(telemetry);
+
   return (
     <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 flex flex-col justify-between shadow-xs font-sans h-full">
       {/* Header */}
@@ -17,7 +19,7 @@ export const RaceTelemetry: React.FC<RaceTelemetryProps> = ({ telemetry: _teleme
           <span>RACE TELEMETRY</span>
         </div>
         <span className="text-[9px] px-2 py-0.5 rounded-full bg-slate-100 border border-slate-200 text-slate-600 font-semibold">
-          CANBUS · 20 Hz
+          {isLive ? 'CANBUS · 20 Hz' : 'OFFLINE'}
         </span>
       </div>
 
@@ -69,44 +71,44 @@ export const RaceTelemetry: React.FC<RaceTelemetryProps> = ({ telemetry: _teleme
             <line x1="333" y1="0" x2="333" y2="70" stroke="#f8fafc" strokeWidth="1" />
             <line x1="416" y1="0" x2="416" y2="70" stroke="#f8fafc" strokeWidth="1" />
 
-            {/* Channel 1: Surface Temp (Red curve) */}
+            {/* Channel 1: Surface Temp */}
             <path
-              d="M 0,46 Q 30,35 60,40 T 120,24 T 180,48 T 240,22 T 300,42 T 360,26 T 420,40 T 500,28"
+              d={isLive ? "M 0,46 Q 30,35 60,40 T 120,24 T 180,48 T 240,22 T 300,42 T 360,26 T 420,40 T 500,28" : "M 0,58 L 500,58"}
               stroke="#ef4444"
               strokeWidth="1.6"
-              className="opacity-95"
+              className={isLive ? "opacity-95" : "opacity-30"}
             />
 
-            {/* Channel 2: Pressure (Blue curve) */}
+            {/* Channel 2: Pressure */}
             <path
-              d="M 0,38 Q 40,48 90,32 T 180,44 T 270,24 T 360,44 T 450,32 T 500,36"
+              d={isLive ? "M 0,38 Q 40,48 90,32 T 180,44 T 270,24 T 360,44 T 450,32 T 500,36" : "M 0,58 L 500,58"}
               stroke="#3b82f6"
               strokeWidth="1.6"
-              className="opacity-90"
+              className={isLive ? "opacity-90" : "opacity-30"}
             />
 
-            {/* Channel 3: Vertical Load (Green curve) */}
+            {/* Channel 3: Vertical Load */}
             <path
-              d="M 0,54 Q 50,36 100,56 T 200,32 T 300,54 T 400,34 T 500,42"
+              d={isLive ? "M 0,54 Q 50,36 100,56 T 200,32 T 300,54 T 400,34 T 500,42" : "M 0,58 L 500,58"}
               stroke="#10b981"
               strokeWidth="1.6"
-              className="opacity-90"
+              className={isLive ? "opacity-90" : "opacity-30"}
             />
 
-            {/* Channel 4: Grip (Orange curve) */}
+            {/* Channel 4: Grip */}
             <path
-              d="M 0,28 Q 60,38 130,22 T 260,34 T 380,24 T 460,38 T 500,22"
+              d={isLive ? "M 0,28 Q 60,38 130,22 T 260,34 T 380,24 T 460,38 T 500,22" : "M 0,58 L 500,58"}
               stroke="#f97316"
               strokeWidth="1.6"
-              className="opacity-90"
+              className={isLive ? "opacity-90" : "opacity-30"}
             />
 
-            {/* Channel 5: Wear (Purple curve) */}
+            {/* Channel 5: Wear */}
             <path
-              d="M 0,58 Q 60,54 120,50 T 240,42 T 360,34 T 460,26 T 500,20"
+              d={isLive ? "M 0,58 Q 60,54 120,50 T 240,42 T 360,34 T 460,26 T 500,20" : "M 0,58 L 500,58"}
               stroke="#a855f7"
               strokeWidth="1.6"
-              className="opacity-90"
+              className={isLive ? "opacity-90" : "opacity-30"}
             />
           </svg>
         </div>

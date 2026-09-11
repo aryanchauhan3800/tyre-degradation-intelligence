@@ -50,6 +50,8 @@ interface DigitalTwinCanvasProps {
   selectedTyre: TyreCorner;
   visMode: TyreVisMode;
   onSelectVisMode: (mode: TyreVisMode) => void;
+  isPaused?: boolean;
+  isConnected?: boolean;
 }
 
 export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
@@ -63,6 +65,8 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
   selectedTyre,
   visMode,
   onSelectVisMode,
+  isPaused = false,
+  isConnected,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<HeroTyreScene | null>(null);
@@ -75,6 +79,9 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
     return p || 'HERO';
   });
 
+  const isConnectedEffective = isConnected ?? Boolean(telemetryFrame || physicsOutput || tdiResponse);
+  const isPausedEffective = Boolean(isPaused);
+
   // Compute live temperature for HUD displays
   const currentCornerState = calculateTyreCornerState(
     selectedTyre,
@@ -85,10 +92,45 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
     dataMode
   );
 
-  const surfaceC = currentCornerState.thermal.surface_c || 97;
-  const innerC = currentCornerState.thermal.inner_c || 110;
-  const centerC = currentCornerState.thermal.center_c || 96;
-  const outerC = currentCornerState.thermal.outer_c || 84;
+  const surfaceC = isConnectedEffective ? (currentCornerState.thermal.surface_c ?? 0) : 0;
+  const innerC = isConnectedEffective ? (currentCornerState.thermal.inner_c ?? 0) : 0;
+  const centerC = isConnectedEffective ? (currentCornerState.thermal.center_c ?? 0) : 0;
+  const outerC = isConnectedEffective ? (currentCornerState.thermal.outer_c ?? 0) : 0;
+  const hotSpotC = isConnectedEffective && surfaceC > 0 ? Math.max(innerC, centerC, outerC, surfaceC) : 0;
+  const contactPatchC = isConnectedEffective && surfaceC > 0 ? Math.round((innerC + centerC) / 2) : 0;
+
+  // Live Telemetry Car Marker state along Suzuka Track Map
+  const [carCoords, setCarCoords] = useState<{ x: number; y: number }>({ x: 182, y: 130 });
+  const trackPathRef = useRef<SVGPathElement>(null);
+  const trackProgressRef = useRef<number>(0.08);
+
+  useEffect(() => {
+    if (!isConnectedEffective || isPausedEffective || speedKph <= 0) return;
+    let animId: number;
+    let lastTime = performance.now();
+
+    const animateCar = (now: number) => {
+      const dt = Math.min(0.1, (now - lastTime) / 1000);
+      lastTime = now;
+      // Suzuka circuit length = 5807m
+      const lapDurationSec = 5807 / (Math.max(60, speedKph) / 3.6);
+      trackProgressRef.current = (trackProgressRef.current + (dt / lapDurationSec) * (speedMultiplier || 1.0)) % 1.0;
+
+      if (trackPathRef.current) {
+        try {
+          const totalLen = trackPathRef.current.getTotalLength();
+          const pt = trackPathRef.current.getPointAtLength(trackProgressRef.current * totalLen);
+          setCarCoords({ x: Math.round(pt.x), y: Math.round(pt.y) });
+        } catch {
+          // ignore
+        }
+      }
+      animId = requestAnimationFrame(animateCar);
+    };
+
+    animId = requestAnimationFrame(animateCar);
+    return () => cancelAnimationFrame(animId);
+  }, [isConnectedEffective, isPausedEffective, speedKph, speedMultiplier]);
 
   // Persistent refs for 60 FPS zero-overhead 3D annotation tracking
   const calloutRefs = useRef<{
@@ -213,16 +255,19 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
   // Sync speed mode and multiplier
   useEffect(() => {
     if (sceneRef.current) {
+      const shouldRoll = isConnectedEffective && !isPausedEffective && speedKph > 0 && speedMode !== 'FREEZE';
+      sceneRef.current.setRolling(shouldRoll);
       sceneRef.current.setSpeedMode(speedMode);
-      sceneRef.current.setSpeedMultiplier(speedMultiplier);
+      sceneRef.current.setSpeedMultiplier(shouldRoll ? speedMultiplier : 0.0);
     }
-  }, [speedMode, speedMultiplier]);
+  }, [speedMode, speedMultiplier, isConnectedEffective, isPausedEffective, speedKph]);
 
   // Sync incoming telemetry
   useEffect(() => {
     if (sceneRef.current) {
+      const effectiveSpeed = (isConnectedEffective && !isPausedEffective) ? Math.max(0, speedKph) : 0;
       sceneRef.current.updateTelemetry(
-        speedKph,
+        effectiveSpeed,
         drs,
         dataMode,
         fourWheelStates,
@@ -231,7 +276,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
         tdiResponse
       );
     }
-  }, [speedKph, drs, dataMode, fourWheelStates, telemetryFrame, physicsOutput, tdiResponse]);
+  }, [speedKph, drs, dataMode, fourWheelStates, telemetryFrame, physicsOutput, tdiResponse, isConnectedEffective, isPausedEffective]);
 
   const handleSelectCamera = (preset: CameraPreset) => {
     setActiveCameraPreset(preset);
@@ -269,42 +314,71 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
   return (
     <div className="relative w-full h-full min-h-[480px] rounded-2xl border border-slate-200/90 overflow-hidden flex flex-col shadow-xs select-none bg-[#f8fafc]">
       {/* Photorealistic Pitlane & Suzuka Racetrack Backdrop */}
-      <div className="absolute inset-0 pointer-events-none overflow-hidden">
-        {/* Soft daylight sky & blurred Suzuka grandstand / pitwall background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#e2e8f0] via-[#f1f5f9] to-[#cbd5e1] opacity-90" />
+      <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
+        {/* Soft daylight sky with realistic overcast motorsport horizon */}
+        <div className="absolute inset-0 bg-gradient-to-b from-[#e2e8f0] via-[#edf2f7] to-[#cbd5e1] opacity-95" />
         
-        {/* Distant Suzuka Pit Building & Grandstand Silhouette */}
-        <div className="absolute top-0 left-0 right-0 h-44 opacity-25 filter blur-[1px]">
-          <svg viewBox="0 0 1000 120" preserveAspectRatio="none" className="w-full h-full fill-slate-500">
-            {/* Grandstand canopy */}
-            <polygon points="0,60 120,40 250,42 400,35 600,38 750,32 900,36 1000,40 1000,120 0,120" />
-            {/* Pit gantry and floodlight masts */}
-            <rect x="180" y="15" width="4" height="60" />
-            <rect x="420" y="10" width="4" height="65" />
-            <rect x="680" y="12" width="4" height="63" />
-            <rect x="880" y="14" width="4" height="60" />
-            {/* Pit wall barrier */}
-            <rect x="0" y="80" width="1000" height="15" fill="#94a3b8" />
+        {/* Distant Suzuka Pit Building & Grandstand Architecture Silhouette */}
+        <div className="absolute top-0 left-0 right-0 h-48 opacity-30 filter blur-[0.8px]">
+          <svg viewBox="0 0 1200 140" preserveAspectRatio="none" className="w-full h-full">
+            <defs>
+              <linearGradient id="grandstandGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#64748b" stopOpacity="0.8" />
+                <stop offset="100%" stopColor="#334155" stopOpacity="0.95" />
+              </linearGradient>
+              <linearGradient id="canopyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stopColor="#94a3b8" />
+                <stop offset="100%" stopColor="#475569" />
+              </linearGradient>
+            </defs>
+            {/* Iconic curved grandstand roof canopy of Suzuka */}
+            <path d="M 0,65 Q 200,28 400,34 Q 600,22 800,32 Q 1000,25 1200,45 L 1200,140 L 0,140 Z" fill="url(#canopyGrad)" />
+            {/* Grandstand seating tiers */}
+            <path d="M 0,85 L 1200,85 L 1200,140 L 0,140 Z" fill="url(#grandstandGrad)" />
+            {/* Pit building garage doors & team VIP suites */}
+            {Array.from({ length: 24 }).map((_, i) => (
+              <g key={i} opacity="0.6">
+                <rect x={24 + i * 50} y="92" width="36" height="28" fill="#1e293b" rx="2" />
+                <rect x={26 + i * 50} y="94" width="32" height="10" fill="#38bdf8" opacity="0.4" />
+              </g>
+            ))}
+            {/* Pit gantry masts, floodlights & timing telemetry antennae */}
+            <rect x="160" y="8" width="4" height="78" fill="#334155" />
+            <polygon points="152,8 172,8 162,1" fill="#f8fafc" />
+            <rect x="380" y="6" width="4" height="80" fill="#334155" />
+            <polygon points="372,6 392,6 382,0" fill="#f8fafc" />
+            <rect x="680" y="10" width="4" height="76" fill="#334155" />
+            <polygon points="672,10 692,10 682,3" fill="#f8fafc" />
+            <rect x="940" y="8" width="4" height="78" fill="#334155" />
+            <polygon points="932,8 952,8 942,1" fill="#f8fafc" />
+            {/* Pit wall barrier with catch fence & Pirelli / FIA sponsor hoardings */}
+            <rect x="0" y="122" width="1200" height="18" fill="#0f172a" />
+            <rect x="0" y="120" width="1200" height="3" fill="#e2e8f0" />
+            <rect x="60" y="124" width="180" height="14" fill="#d90429" rx="1" />
+            <rect x="280" y="124" width="220" height="14" fill="#0284c7" rx="1" />
+            <rect x="540" y="124" width="180" height="14" fill="#d90429" rx="1" />
+            <rect x="760" y="124" width="200" height="14" fill="#0f172a" rx="1" />
+            <rect x="1000" y="124" width="160" height="14" fill="#d90429" rx="1" />
           </svg>
         </div>
 
         {/* Realistic Red & White Racing Kerbs in the midground */}
-        <div className="absolute top-36 left-0 right-0 h-10 overflow-hidden opacity-35 filter blur-[0.5px]">
+        <div className="absolute top-36 left-0 right-0 h-10 overflow-hidden opacity-40 filter blur-[0.5px]">
           <svg viewBox="0 0 1200 40" preserveAspectRatio="none" className="w-full h-full">
-            {Array.from({ length: 30 }).map((_, i) => (
+            {Array.from({ length: 32 }).map((_, i) => (
               <polygon
                 key={i}
-                points={`${i * 40},40 ${i * 40 + 20},0 ${i * 40 + 40},0 ${i * 40 + 20},40`}
+                points={`${i * 38},40 ${i * 38 + 20},0 ${i * 38 + 38},0 ${i * 38 + 18},40`}
                 fill={i % 2 === 0 ? '#E10600' : '#FFFFFF'}
               />
             ))}
           </svg>
         </div>
 
-        {/* Concrete Pitlane Tarmac Flooring */}
-        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-[#94a3b8]/40 via-[#cbd5e1]/30 to-transparent" />
+        {/* Concrete Pitlane Tarmac Flooring with perspective depth */}
+        <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-[#64748b]/35 via-[#94a3b8]/20 to-transparent" />
         {/* Subtle pit box grid marking line */}
-        <div className="absolute bottom-16 left-0 right-0 h-[1.5px] bg-white/40 shadow-xs" />
+        <div className="absolute bottom-16 left-0 right-0 h-[1.5px] bg-white/50 shadow-xs" />
       </div>
 
       {/* Top Header & Visual Mode Switcher Overlay */}
@@ -458,17 +532,17 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
           </div>
 
           {/* 6 Responsive Engineering Callout Badges (Always upright, dynamic 3D anchored) */}
-          {/* BADGE 1: HOT SPOT 118°C */}
+          {/* BADGE 1: HOT SPOT */}
           <div
             ref={(el) => { calloutRefs.current.badges['hotSpot'] = el; }}
             className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-red-500/90 shadow-lg shadow-red-950/40 text-center min-w-[78px]"
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">HOT SPOT</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#ef4444] leading-tight">118°C</div>
+            <div className="text-[17px] font-extrabold font-mono text-[#ef4444] leading-tight">{hotSpotC}°C</div>
           </div>
 
-          {/* BADGE 2: INNER SHOULDER 110°C */}
+          {/* BADGE 2: INNER SHOULDER */}
           <div
             ref={(el) => { calloutRefs.current.badges['innerShoulder'] = el; }}
             className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-orange-500/90 shadow-lg shadow-orange-950/40 text-center min-w-[86px]"
@@ -478,7 +552,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <div className="text-[17px] font-extrabold font-mono text-[#f97316] leading-tight">{innerC}°C</div>
           </div>
 
-          {/* BADGE 3: SURFACE TEMP 97°C */}
+          {/* BADGE 3: SURFACE TEMP */}
           <div
             ref={(el) => { calloutRefs.current.badges['surfaceTemp'] = el; }}
             className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-400/90 shadow-lg shadow-amber-950/40 text-center min-w-[86px]"
@@ -488,17 +562,17 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <div className="text-[17px] font-extrabold font-mono text-[#facc15] leading-tight">{surfaceC}°C</div>
           </div>
 
-          {/* BADGE 4: CONTACT PATCH 84°C */}
+          {/* BADGE 4: CONTACT PATCH */}
           <div
             ref={(el) => { calloutRefs.current.badges['contactPatch'] = el; }}
             className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/90 shadow-lg shadow-emerald-950/40 text-center min-w-[86px]"
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">CONTACT PATCH</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#10b981] leading-tight">{outerC}°C</div>
+            <div className="text-[17px] font-extrabold font-mono text-[#10b981] leading-tight">{contactPatchC}°C</div>
           </div>
 
-          {/* BADGE 5: TREAD CENTER 96°C */}
+          {/* BADGE 5: TREAD CENTER */}
           <div
             ref={(el) => { calloutRefs.current.badges['treadCenter'] = el; }}
             className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/90 shadow-lg shadow-emerald-950/40 text-center min-w-[86px]"
@@ -508,7 +582,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <div className="text-[17px] font-extrabold font-mono text-[#22c55e] leading-tight">{centerC}°C</div>
           </div>
 
-          {/* BADGE 6: OUTER SHOULDER 84°C */}
+          {/* BADGE 6: OUTER SHOULDER */}
           <div
             ref={(el) => { calloutRefs.current.badges['outerShoulder'] = el; }}
             className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-sky-500/90 shadow-lg shadow-sky-950/40 text-center min-w-[86px]"
@@ -532,54 +606,219 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
         {/* Velocity / Omega / Frozen Badges (Compact width to preserve clean negative space) */}
         <div className="text-[9.5px] font-mono text-slate-600 flex items-center space-x-1.5 mt-0.5 bg-white/95 backdrop-blur-md px-2 py-0.5 rounded-lg border border-slate-200 w-fit shadow-2xs max-w-[260px]">
           <span>
-            VELOCITY: <strong className="text-slate-900 font-bold">{Math.round(speedKph !== undefined && speedKph !== null ? Math.max(0, speedKph) : 287)} KM/H</strong>
+            VELOCITY: <strong className="text-slate-900 font-bold">{Math.round(isConnectedEffective && !isPausedEffective && speedKph ? Math.max(0, speedKph) : 0)} KM/H</strong>
           </span>
           <span className="text-slate-400">•</span>
           <span className="text-emerald-700 font-bold">
-            ω = {speedMultiplier === 0 || (speedKph !== undefined && speedKph <= 0) ? 0 : Math.round(((speedKph > 0 ? speedKph : 287) / 3.6 / 0.36) * speedMultiplier)} RAD/S
+            ω = {speedMultiplier === 0 || isPausedEffective || !isConnectedEffective || speedKph <= 0 ? 0 : Math.round(((speedKph > 0 ? speedKph : 0) / 3.6 / 0.36) * speedMultiplier)} RAD/S
           </span>
           <span className="text-slate-400">•</span>
           <span className={`px-1.5 py-0.2 rounded border text-[8.5px] font-bold tracking-wider ${
-            speedMultiplier === 0
+            speedMultiplier === 0 || isPausedEffective || !isConnectedEffective || speedKph <= 0
               ? 'bg-sky-50 border-sky-300 text-sky-700'
               : 'bg-emerald-50 border-emerald-200 text-emerald-800'
           }`}>
-            {speedMultiplier === 0 ? '❄ FROZEN' : speedMultiplier === 1.0 ? '🏎 REAL' : `${speedMultiplier}x`}
+            {!isConnectedEffective ? '⚡ OFFLINE' : isPausedEffective ? '⏸ PAUSED' : speedMultiplier === 0 ? '❄ FROZEN' : speedMultiplier === 1.0 ? '🏎 REAL' : `${speedMultiplier}x`}
           </span>
         </div>
 
-        {/* Suzuka Circuit Track Map & Session Telemetry */}
-        <div className="mt-3 flex flex-col pointer-events-none bg-white/90 backdrop-blur-sm p-2.5 rounded-xl border border-slate-200/80 shadow-2xs w-fit">
-          <div className="flex flex-col">
-            <span className="text-xs font-bold font-mono text-slate-800 tracking-wider">SUZUKA</span>
-            <span className="text-[9px] font-mono text-slate-400 -mt-0.5 tracking-wider">JAPAN</span>
+        {/* Realistic Suzuka Circuit Track Map & Session Telemetry */}
+        <div className="mt-2.5 flex flex-col pointer-events-auto bg-white/95 backdrop-blur-md p-2.5 rounded-2xl border border-slate-200/90 shadow-sm w-fit max-w-[275px]">
+          {/* Track Header */}
+          <div className="flex items-center justify-between border-b border-slate-100 pb-1 mb-1">
+            <div className="flex items-center space-x-1.5">
+              <span className="text-xs">🇯🇵</span>
+              <div className="flex flex-col">
+                <span className="text-[11px] font-black font-mono text-slate-900 tracking-wider leading-none">SUZUKA</span>
+                <span className="text-[7.5px] font-mono text-slate-400 tracking-tight leading-none mt-0.5">INTERNATIONAL CIRCUIT</span>
+              </div>
+            </div>
+            <div className="flex items-center space-x-1">
+              <span className="px-1.5 py-0.5 rounded bg-red-50 text-[#E10600] border border-red-200 text-[8.5px] font-mono font-bold">
+                5.807 KM
+              </span>
+              <span className="px-1.5 py-0.5 rounded bg-slate-100 text-slate-700 border border-slate-200 text-[8.5px] font-mono font-bold">
+                18 TURNS
+              </span>
+            </div>
           </div>
 
-          {/* Detailed Figure-8 Suzuka Circuit Line Drawing */}
-          <div className="my-1.5">
-            <svg viewBox="0 0 160 90" className="w-36 h-20 stroke-slate-500 fill-none stroke-[2] stroke-linecap-round stroke-linejoin-round">
-              <path d="M 28,62 C 14,58 14,40 26,34 C 40,28 52,22 68,16 C 82,12 104,14 122,24 C 138,34 144,48 136,60 C 126,74 108,78 94,72 C 80,66 74,54 64,44 C 54,34 44,46 36,60 C 32,66 22,64 28,62 Z" />
-              {/* Start/Finish Line */}
-              <line x1="24" y1="32" x2="32" y2="36" stroke="#E10600" strokeWidth="2.5" />
+          {/* Detailed Figure-8 Suzuka Circuit Drawing */}
+          <div className="relative my-0.5 bg-gradient-to-b from-slate-50 to-slate-100/70 rounded-xl p-1 border border-slate-200/70 shadow-inner overflow-hidden">
+            {/* Sector Legend Pills */}
+            <div className="absolute top-1 left-1.5 flex items-center space-x-1.5 text-[7.5px] font-mono font-bold select-none z-10">
+              <span className="flex items-center space-x-0.5 text-cyan-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-500 inline-block"></span>
+                <span>S1</span>
+              </span>
+              <span className="flex items-center space-x-0.5 text-amber-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-amber-500 inline-block"></span>
+                <span>S2</span>
+              </span>
+              <span className="flex items-center space-x-0.5 text-pink-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-pink-500 inline-block"></span>
+                <span>S3</span>
+              </span>
+            </div>
+
+            {/* Circuit SVG */}
+            <svg viewBox="0 0 260 170" className="w-[245px] h-[135px] select-none overflow-visible">
+              <defs>
+                <filter id="bridgeShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feDropShadow dx="1" dy="1.5" stdDeviation="1.5" floodColor="#0f172a" floodOpacity="0.45" />
+                </filter>
+                <linearGradient id="tarmacRibbon" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#1e293b" />
+                  <stop offset="100%" stopColor="#0f172a" />
+                </linearGradient>
+              </defs>
+
+              {/* 1. Track Runoff / Gravel halo */}
+              <path
+                d="M 182,130 L 196,86 C 200,74 212,65 226,72 C 238,78 240,94 232,106 C 224,116 214,122 218,132 C 222,142 232,146 226,154 C 220,160 208,158 202,148 C 196,138 188,132 178,134 C 166,136 154,142 146,152 C 140,160 148,166 156,162 C 162,158 164,148 158,140 C 152,130 136,118 122,108 C 106,96 86,90 84,106 C 82,118 96,126 108,122 C 120,118 128,102 118,84 C 110,70 92,52 74,40 C 58,28 36,24 24,38 C 12,52 18,72 38,82 C 54,90 72,86 88,74 C 106,62 134,92 152,112 C 164,124 176,132 188,118 C 196,108 194,88 178,78 C 168,72 160,76 164,86 C 168,96 174,108 182,130 Z"
+                fill="none"
+                stroke="#cbd5e1"
+                strokeWidth="10"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                opacity="0.6"
+              />
+
+              {/* 2. Main Track Tarmac Ribbon */}
+              <path
+                ref={trackPathRef}
+                d="M 182,130 L 196,86 C 200,74 212,65 226,72 C 238,78 240,94 232,106 C 224,116 214,122 218,132 C 222,142 232,146 226,154 C 220,160 208,158 202,148 C 196,138 188,132 178,134 C 166,136 154,142 146,152 C 140,160 148,166 156,162 C 162,158 164,148 158,140 C 152,130 136,118 122,108 C 106,96 86,90 84,106 C 82,118 96,126 108,122 C 120,118 128,102 118,84 C 110,70 92,52 74,40 C 58,28 36,24 24,38 C 12,52 18,72 38,82 C 54,90 72,86 88,74 C 106,62 134,92 152,112 C 164,124 176,132 188,118 C 196,108 194,88 178,78 C 168,72 160,76 164,86 C 168,96 174,108 182,130 Z"
+                fill="none"
+                stroke="url(#tarmacRibbon)"
+                strokeWidth="5.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+
+              {/* 3. Underpass lower segment dark shadow indicator */}
+              <path
+                d="M 158,140 C 152,130 136,118 122,108"
+                fill="none"
+                stroke="#0f172a"
+                strokeWidth="6"
+                strokeLinecap="round"
+              />
+
+              {/* 4. The Crossover Flyover Bridge structure (crossing over at x:138, y:98) */}
+              <g filter="url(#bridgeShadow)">
+                {/* Bridge Deck Base */}
+                <path
+                  d="M 126,84 L 148,108"
+                  fill="none"
+                  stroke="#334155"
+                  strokeWidth="8"
+                  strokeLinecap="butt"
+                />
+                {/* Bridge Tarmac Surface */}
+                <path
+                  d="M 126,84 L 148,108"
+                  fill="none"
+                  stroke="#0f172a"
+                  strokeWidth="5.5"
+                  strokeLinecap="butt"
+                />
+                {/* Bridge White Concrete Parapet Guardrails */}
+                <line x1="123" y1="87" x2="145" y2="111" stroke="#f8fafc" strokeWidth="1.2" />
+                <line x1="129" y1="81" x2="151" y2="105" stroke="#f8fafc" strokeWidth="1.2" />
+              </g>
+
+              {/* 5. Sector Overlays */}
+              {/* Sector 1 (Pit Straight through Dunlop) */}
+              <path
+                d="M 182,130 L 196,86 C 200,74 212,65 226,72 C 238,78 240,94 232,106 C 224,116 214,122 218,132 C 222,142 232,146 226,154 C 220,160 208,158 202,148 C 196,138 188,132 178,134 C 166,136 154,142 146,152"
+                fill="none"
+                stroke="#06b6d4"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeOpacity="0.9"
+              />
+              {/* Sector 2 (Degners through Spoon) */}
+              <path
+                d="M 146,152 C 140,160 148,166 156,162 C 162,158 164,148 158,140 C 152,130 136,118 122,108 C 106,96 86,90 84,106 C 82,118 96,126 108,122 C 120,118 128,102 118,84 C 110,70 92,52 74,40 C 58,28 36,24 24,38 C 12,52 18,72 38,82 C 54,90 72,86 88,74"
+                fill="none"
+                stroke="#eab308"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeOpacity="0.9"
+              />
+              {/* Sector 3 (Back Straight through 130R, Casio, Finish) */}
+              <path
+                d="M 88,74 C 106,62 134,92 152,112 C 164,124 176,132 188,118 C 196,108 194,88 178,78 C 168,72 160,76 164,86 C 168,96 174,108 182,130"
+                fill="none"
+                stroke="#ec4899"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeOpacity="0.9"
+              />
+
+              {/* 6. DRS Zone 1 (Main Straight) & DRS Zone 2 (Back Straight) */}
+              <line x1="184" y1="125" x2="194" y2="92" stroke="#22c55e" strokeWidth="2.5" strokeDasharray="3,2" />
+              <line x1="102" y1="66" x2="128" y2="88" stroke="#22c55e" strokeWidth="2.5" strokeDasharray="3,2" />
+
+              {/* 7. Start/Finish Line with Checkered Gantry Line */}
+              <line x1="180" y1="124" x2="188" y2="126" stroke="#ffffff" strokeWidth="3" />
+              <line x1="180" y1="124" x2="188" y2="126" stroke="#E10600" strokeWidth="1.5" strokeDasharray="2,2" />
+
+              {/* 8. Apex Kerbs at iconic corners */}
+              {/* T1 Apex Kerb */}
+              <path d="M 230,73 C 236,78 238,88 234,96" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeDasharray="2.5,2.5" />
+              {/* S-Curves Apex Kerb */}
+              <path d="M 216,130 C 219,136 224,140 220,146" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeDasharray="2.5,2.5" />
+              {/* Hairpin Apex Kerb */}
+              <path d="M 82,102 C 80,110 86,116 94,114" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeDasharray="2.5,2.5" />
+              {/* Spoon Apex Kerb */}
+              <path d="M 22,46 C 16,56 18,68 30,76" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeDasharray="2.5,2.5" />
+              {/* 130R Apex Kerb */}
+              <path d="M 194,102 C 192,90 186,84 176,78" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeDasharray="2.5,2.5" />
+              {/* Casio Chicane Apex Kerb */}
+              <path d="M 162,75 C 158,78 160,84 165,88" fill="none" stroke="#dc2626" strokeWidth="2.2" strokeDasharray="2.5,2.5" />
+
+              {/* 9. Iconic Corner Label Badges */}
+              <g className="text-[7px] font-mono font-bold select-none">
+                <text x="198" y="102" fill="#0f172a" className="font-extrabold">130R</text>
+                <text x="12" y="32" fill="#0f172a">SPOON</text>
+                <text x="56" y="118" fill="#0f172a">HAIRPIN</text>
+                <text x="226" y="140" fill="#0f172a">S-CURVES</text>
+                <text x="144" y="174" fill="#0f172a">DEGNER</text>
+                <text x="142" y="70" fill="#0f172a">CASIO</text>
+                <text x="190" y="136" fill="#e10600" className="text-[6.5px]">S/F</text>
+              </g>
+
+              {/* 10. Live Telemetry Car Marker */}
+              <g transform={`translate(${carCoords.x}, ${carCoords.y})`}>
+                {/* Radar pulse ring when connected and running */}
+                {isConnectedEffective && !isPausedEffective && speedKph > 0 && (
+                  <circle r="6" fill="none" stroke="#ef4444" strokeWidth="1.2" className="animate-ping opacity-75" />
+                )}
+                {/* Outer halo */}
+                <circle r="3.8" fill="#ffffff" stroke="#e10600" strokeWidth="1.2" />
+                {/* Core vehicle dot */}
+                <circle r="2" fill="#e10600" />
+              </g>
             </svg>
           </div>
 
           {/* Session Data Table */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-0.5 text-[9px] font-mono">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8.5px] font-mono border-t border-slate-100 pt-1 mt-0.5">
             <span className="text-slate-500 font-medium">TRACK TEMP</span>
-            <span className="text-slate-800 font-bold text-right">32°C</span>
+            <span className="text-slate-800 font-bold text-right">{isConnectedEffective && telemetryFrame?.environment?.track_temp_c !== undefined ? `${telemetryFrame.environment.track_temp_c}°C` : '0°C'}</span>
 
             <span className="text-slate-500 font-medium">AIR TEMP</span>
-            <span className="text-slate-800 font-bold text-right">28°C</span>
+            <span className="text-slate-800 font-bold text-right">{isConnectedEffective && telemetryFrame?.environment?.air_temp_c !== undefined ? `${telemetryFrame.environment.air_temp_c}°C` : '0°C'}</span>
 
             <span className="text-slate-500 font-medium">HUMIDITY</span>
-            <span className="text-slate-800 font-bold text-right">54%</span>
+            <span className="text-slate-800 font-bold text-right">{isConnectedEffective && telemetryFrame?.environment?.humidity_pct !== undefined ? `${telemetryFrame.environment.humidity_pct}%` : '0%'}</span>
 
             <span className="text-slate-500 font-medium">SESSION</span>
-            <span className="text-slate-800 font-bold text-right">FP2</span>
+            <span className="text-slate-800 font-bold text-right">{isConnectedEffective ? 'FP2' : 'OFFLINE'}</span>
 
             <span className="text-slate-500 font-medium">LAP</span>
-            <span className="text-slate-800 font-bold text-right">12/56</span>
+            <span className="text-slate-800 font-bold text-right">{isConnectedEffective && telemetryFrame?.lap ? `${telemetryFrame.lap}/56` : '0/56'}</span>
           </div>
         </div>
       </div>

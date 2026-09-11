@@ -103,6 +103,58 @@ export function calculateTyreCornerState(
   defaultAgeLaps = 12,
   defaultCompound = 'C3 (MEDIUM)'
 ): CalculatedTyreCornerState {
+  // When no backend telemetry or physics data is present (disconnected or backend is off),
+  // return strict zeroed values with no dummy/synthetic numbers.
+  const hasBackendData = Boolean(telemetry || physics || tdiRes);
+  if (!hasBackendData) {
+    return {
+      corner,
+      label: CORNER_LABELS[corner],
+      compound: defaultCompound,
+      age_laps: 0,
+      pressure_psi: 0,
+      thermal: {
+        inner_c: 0,
+        center_c: 0,
+        outer_c: 0,
+        surface_c: 0,
+        core_c: 0,
+        is_estimated: false,
+      },
+      wear: {
+        wear_pct: 0,
+        health_pct: 0,
+        wear_rate_mm_lap: 0,
+        remaining_laps: 0,
+        tread_depth_mm: 0,
+      },
+      load: {
+        vertical_load_kn: 0,
+        longitudinal_load_kn: 0,
+        lateral_load_kn: 0,
+        contact_patch_pct: 0,
+      },
+      grip: {
+        grip_coeff: 0,
+        grip_loss_pct: 0,
+        slip_ratio_pct: 0,
+        slip_angle_deg: 0,
+        available_grip_pct: 0,
+      },
+      prediction: {
+        current_health_pct: 0,
+        predicted_health_5_laps: 0,
+        predicted_degradation_pct: 0,
+        remaining_competitive_laps: 0,
+        pit_window_lap_start: 0,
+        pit_window_lap_end: 0,
+        prediction_curve: [],
+      },
+      tdi: 0,
+      is_measured: false,
+    };
+  }
+
   const veh = telemetry?.vehicle || telemetry?.vehicle_state;
   const speedKph = veh?.speed_kph ?? 0;
   const speedMps = veh?.speed_mps ?? speedKph / 3.6;
@@ -114,7 +166,7 @@ export function calculateTyreCornerState(
   const isLeft = corner.endsWith('L');
 
   // 1. Resolve Effective TDI for this corner
-  const fallbackGlobalTdi = tdiRes?.final_tdi ?? 42.5;
+  const fallbackGlobalTdi = tdiRes?.final_tdi ?? 0;
   const cornerSlot = fourWheelStates ? fourWheelStates[corner] : null;
   const effectiveTdi = cornerSlot && typeof cornerSlot.tdi === 'number'
     ? cornerSlot.tdi
@@ -122,7 +174,7 @@ export function calculateTyreCornerState(
 
   // 2. Vertical Load Fz (kN)
   // Check backend physics twin vertical loads
-  let fz_kn = 4.2; // nominal static corner load ~4200 N
+  let fz_kn = speedKph > 0 ? 4.2 : 0; // nominal static corner load ~4200 N when moving
   const vLoads = physics?.forces?.vertical_loads_n;
   if (vLoads) {
     if (corner === 'FL' && vLoads.front_left) fz_kn = vLoads.front_left / 1000;

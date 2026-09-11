@@ -110,7 +110,7 @@ export const ReplayControlBar: React.FC<ReplayControlBarProps> = ({
       {/* Center: Timeline Scrubbing Slider matching LAP 12 / 56 & 18:24 / 1:32:17 */}
       <div className="flex-1 min-w-[320px] max-w-2xl flex items-center space-x-4 px-2">
         <span className="text-xs font-mono text-slate-800 whitespace-nowrap font-bold">
-          LAP <strong className="text-slate-900 font-black ml-1">{currentLap || 12}</strong>
+          LAP <strong className="text-slate-900 font-black ml-1">{currentLap || 0}</strong>
           <span className="text-slate-400 font-normal mx-1">/</span>
           <span className="text-slate-700 font-bold">56</span>
         </span>
@@ -127,9 +127,9 @@ export const ReplayControlBar: React.FC<ReplayControlBarProps> = ({
         </div>
 
         <div className="text-xs font-mono whitespace-nowrap font-bold">
-          <span className="text-[#E10600] font-black">{formattedTime || '18:24'}</span>
+          <span className="text-[#E10600] font-black">{formattedTime || '00:00'}</span>
           <span className="text-slate-400 font-normal mx-1">/</span>
-          <span className="text-slate-500 font-semibold">1:32:17</span>
+          <span className="text-slate-500 font-semibold">{totalFrames > 0 ? '1:32:17' : '00:00'}</span>
         </div>
       </div>
 

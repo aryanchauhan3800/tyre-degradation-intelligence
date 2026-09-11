@@ -121,6 +121,9 @@ export const PhyEnginePage: React.FC<PhyEnginePageProps> = ({
 }) => {
   const currentVehicle: VehicleState | null =
     (frameState.telemetry?.vehicle || frameState.telemetry?.vehicle_state) ?? null;
+  const isConnected = Boolean(frameState.telemetry || frameState.physics || frameState.tdi);
+  const isPaused = Boolean(replayStatus?.paused || !replayStatus?.running);
+  const effectiveSpeedKph = (isConnected && !isPaused && currentVehicle?.speed_kph) ? currentVehicle.speed_kph : 0;
 
   return (
     <div className="w-full flex-1 flex flex-col justify-between overflow-x-hidden font-sans select-none">
@@ -140,8 +143,8 @@ export const PhyEnginePage: React.FC<PhyEnginePageProps> = ({
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80'
             }`}
           >
-            <Box className="w-3 h-3" />
-            <span>3D Digital Twin</span>
+            <Box className="w-3.5 h-3.5" />
+            <span>3D DIGITAL TWIN</span>
           </button>
 
           <button
@@ -152,35 +155,44 @@ export const PhyEnginePage: React.FC<PhyEnginePageProps> = ({
                 : 'bg-slate-100 text-slate-700 hover:bg-slate-200/80'
             }`}
           >
-            <Camera className="w-3 h-3" />
-            <span>Image Page (Optical & FLIR)</span>
-            <span className="px-1.5 py-0.2 rounded-full bg-amber-100 text-amber-800 text-[10px] font-bold">
-              SCANNER
-            </span>
+            <Camera className="w-3.5 h-3.5" />
+            <span>IMAGE PAGE</span>
           </button>
         </div>
 
-        {/* CENTER: Track & Environment Conditions matching reference */}
-        <div className="hidden lg:flex items-center space-x-4 text-xs text-slate-700">
-          <div className="flex items-center space-x-1.5 font-semibold">
-            <span className="text-slate-500 font-normal">Track:</span>
-            <span className="text-slate-900 uppercase tracking-wide font-bold">SUZUKA</span>
-            <span className="inline-flex items-center justify-center w-4 h-3 bg-white border border-slate-300 rounded-[2px] overflow-hidden shadow-2xs">
-              <span className="w-1.5 h-1.5 bg-red-600 rounded-full" />
+        {/* Dynamic Context Header Pills */}
+        <div className="hidden lg:flex items-center space-x-3 text-xs">
+          <div className="flex items-center space-x-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+            <span className="text-slate-500 font-normal">Circuit:</span>
+            <strong className="text-slate-900 font-semibold">
+              {session?.event || 'Suzuka International Racing Course'}
+            </strong>
+          </div>
+          <div className="flex items-center space-x-1">
+            <span className="text-slate-500 font-normal">Session:</span>
+            <span className="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-800 font-mono font-bold text-[10px]">
+              {isConnected ? (session?.session || 'FP2') : 'OFFLINE'}
             </span>
           </div>
           <div className="flex items-center space-x-1">
             <span className="text-slate-500 font-normal">Ambient</span>
-            <strong className="text-slate-900 font-semibold">28°C</strong>
+            <strong className="text-slate-900 font-semibold">
+              {isConnected && frameState.telemetry?.environment?.air_temp_c !== undefined ? `${frameState.telemetry.environment.air_temp_c}°C` : '0°C'}
+            </strong>
           </div>
           <div className="flex items-center space-x-1">
             <span className="text-slate-500 font-normal">Track</span>
-            <strong className="text-slate-900 font-semibold">32°C</strong>
+            <strong className="text-slate-900 font-semibold">
+              {isConnected && frameState.telemetry?.environment?.track_temp_c !== undefined ? `${frameState.telemetry.environment.track_temp_c}°C` : '0°C'}
+            </strong>
           </div>
           <div className="flex items-center space-x-1">
             <Wind className="w-3.5 h-3.5 text-slate-400" />
             <span className="text-slate-500 font-normal">Wind</span>
-            <strong className="text-slate-900 font-semibold">3.2 m/s</strong>
+            <strong className="text-slate-900 font-semibold">
+              {isConnected && frameState.telemetry?.environment?.wind_speed_mps !== undefined ? `${frameState.telemetry.environment.wind_speed_mps} m/s` : '0 m/s'}
+            </strong>
           </div>
         </div>
 
@@ -266,7 +278,7 @@ export const PhyEnginePage: React.FC<PhyEnginePageProps> = ({
               <section className="col-span-1 md:col-span-8 lg:col-span-1 flex flex-col min-w-0 h-full">
                 <div className="w-full h-full min-h-[460px] flex flex-col">
                   <DigitalTwinCanvas
-                    speedKph={currentVehicle?.speed_kph ?? 287}
+                    speedKph={effectiveSpeedKph}
                     drs={frameState.canonicalDrsActive ? 8 : 0}
                     dataMode={dataMode}
                     fourWheelStates={frameState.fourWheelStates}
@@ -276,6 +288,8 @@ export const PhyEnginePage: React.FC<PhyEnginePageProps> = ({
                     selectedTyre={selectedTyre}
                     visMode={visMode}
                     onSelectVisMode={onSelectVisMode}
+                    isPaused={isPaused}
+                    isConnected={isConnected}
                   />
                 </div>
               </section>
@@ -297,7 +311,7 @@ export const PhyEnginePage: React.FC<PhyEnginePageProps> = ({
               {/* Card 3: Race Telemetry */}
               <RaceTelemetry
                 telemetry={frameState.telemetry}
-                lap={frameState.telemetry?.lap ?? 27}
+                lap={isConnected ? (frameState.telemetry?.lap ?? 0) : 0}
               />
             </section>
 

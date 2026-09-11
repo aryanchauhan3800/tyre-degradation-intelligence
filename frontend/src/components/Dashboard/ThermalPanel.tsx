@@ -7,9 +7,10 @@ interface ThermalPanelProps {
 }
 
 export const ThermalPanel: React.FC<ThermalPanelProps> = ({ thermal }) => {
-  const innerC = thermal.inner_c || 110;
-  const centerC = thermal.center_c || 96;
-  const outerC = thermal.outer_c || 84;
+  const innerC = typeof thermal.inner_c === 'number' ? thermal.inner_c : 0;
+  const centerC = typeof thermal.center_c === 'number' ? thermal.center_c : 0;
+  const outerC = typeof thermal.outer_c === 'number' ? thermal.outer_c : 0;
+  const isLive = innerC > 0 || centerC > 0 || outerC > 0;
 
   return (
     <div className="bg-white border border-slate-200/90 rounded-xl p-2.5 flex flex-col justify-between shadow-xs font-sans h-full">
@@ -32,7 +33,7 @@ export const ThermalPanel: React.FC<ThermalPanelProps> = ({ thermal }) => {
           
           <div className="flex items-baseline justify-between mt-0.5">
             <span className="text-sm font-bold text-slate-900">{innerC}°C</span>
-            <span className="text-[10px] font-medium text-red-600">↑ +1.8°C</span>
+            <span className="text-[10px] font-medium text-red-600">{isLive ? '↑ +1.8°C' : '+0.0°C'}</span>
           </div>
 
           {/* 3D Ribbed Red Tyre Tread Section */}
@@ -68,7 +69,7 @@ export const ThermalPanel: React.FC<ThermalPanelProps> = ({ thermal }) => {
           
           <div className="flex items-baseline justify-between mt-0.5">
             <span className="text-sm font-bold text-slate-900">{centerC}°C</span>
-            <span className="text-[10px] font-medium text-red-600">↑ +1.9°C</span>
+            <span className="text-[10px] font-medium text-red-600">{isLive ? '↑ +1.9°C' : '+0.0°C'}</span>
           </div>
 
           {/* 3D Ribbed Green Tyre Tread Section */}
@@ -104,7 +105,7 @@ export const ThermalPanel: React.FC<ThermalPanelProps> = ({ thermal }) => {
           
           <div className="flex items-baseline justify-between mt-0.5">
             <span className="text-sm font-bold text-slate-900">{outerC}°C</span>
-            <span className="text-[10px] font-medium text-red-600">↑ +1.5°C</span>
+            <span className="text-[10px] font-medium text-red-600">{isLive ? '↑ +1.5°C' : '+0.0°C'}</span>
           </div>
 
           {/* 3D Ribbed Blue Tyre Tread Section */}

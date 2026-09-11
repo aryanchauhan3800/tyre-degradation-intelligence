@@ -87,7 +87,7 @@ function buildUnifiedFrameState(
       ? conf.tyre_age_laps
       : typeof tel?.tyres?.fl?.tyre_life_laps === 'number'
         ? tel.tyres.fl.tyre_life_laps
-        : 12;
+        : 0;
 
   const canonicalCompound = conf?.compound || tel?.tyres?.fl?.compound || 'C3 (MEDIUM)';
 
@@ -417,7 +417,7 @@ export function App() {
         <Navbar
           activeTab={activeTab}
           onSelectTab={setActiveTab}
-          lap={frameState.telemetry?.lap ?? 27}
+          lap={frameState.telemetry?.lap ?? 0}
           dataMode={dataMode}
           connectionStatus={wsStatus}
           onToggleDataMode={toggleDataMode}
@@ -434,7 +434,7 @@ export function App() {
               telemetry={frameState.telemetry}
               fourWheelStates={frameState.fourWheelStates}
               selectedTyre={selectedTyre}
-              lap={frameState.telemetry?.lap ?? 27}
+              lap={frameState.telemetry?.lap ?? 0}
             />
           )}
 

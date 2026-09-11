@@ -94,8 +94,8 @@ export const TyrePositionSelector: React.FC<TyrePositionSelectorProps> = ({
         {/* 4 Interactive Corner Buttons */}
         {corners.map((c) => {
           const isSelected = selectedCorner === c.id;
-          const temp = temperatures && temperatures[c.id] !== undefined ? temperatures[c.id] : (c.id.startsWith('F') ? 97 : 96);
-          const health = healths && healths[c.id] !== undefined ? healths[c.id] : 57.5;
+          const temp = temperatures && temperatures[c.id] !== undefined ? temperatures[c.id] : 0;
+          const health = healths && healths[c.id] !== undefined ? healths[c.id] : 0;
 
           return (
             <button
@@ -111,7 +111,7 @@ export const TyrePositionSelector: React.FC<TyrePositionSelectorProps> = ({
                 {c.label}
               </span>
               <span className="text-[9px] text-slate-500 leading-none mt-0.5 font-medium">{temp}°C</span>
-              <span className="text-[9px] text-emerald-600 font-semibold leading-none mt-0.5">{health}%</span>
+              <span className={`text-[9px] font-semibold leading-none mt-0.5 ${health > 0 ? 'text-emerald-600' : 'text-slate-400'}`}>{health}%</span>
             </button>
           );
         })}

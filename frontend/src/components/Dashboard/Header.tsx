@@ -62,7 +62,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* LAP XX */}
         <div className="px-3 py-1 rounded bg-[#0d121c] border border-[#202c42] text-xs text-slate-200">
           <span className="text-slate-500 font-bold mr-1">LAP</span>
-          <strong className="text-white font-bold text-sm">{lap || 27}</strong>
+          <strong className="text-white font-bold text-sm">{lap || 0}</strong>
         </div>
 
         {/* RACE MODE badge / toggle */}

@@ -4,6 +4,7 @@ Provides the unified REST API, WebSocket streaming gateway, and Replay Controlle
 """
 
 from contextlib import asynccontextmanager
+import json
 import logging
 from typing import Optional
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect

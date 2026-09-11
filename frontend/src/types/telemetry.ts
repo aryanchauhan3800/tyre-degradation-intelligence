@@ -98,6 +98,7 @@ export interface EnvironmentState {
   air_temp_c?: number | null;
   track_temp_c?: number | null;
   humidity_pct?: number | null;
+  wind_speed_mps?: number | null;
   rainfall?: boolean | null;
 }
 
