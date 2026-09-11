@@ -86,15 +86,15 @@ export const TDITrajectoryChart: React.FC<TDITrajectoryChartProps> = ({
   const hoveredPoint = hoverIndex !== null && displayedPoints[hoverIndex] ? displayedPoints[hoverIndex] : null;
 
   return (
-    <div className="bg-[#0e1118] border border-[#202738] rounded-lg p-3 flex flex-col justify-between shadow-md">
+    <div className="bg-white border border-slate-200 rounded-lg p-3 flex flex-col justify-between shadow-sm text-slate-800">
       {/* Header & Controls */}
-      <div className="flex items-center justify-between border-b border-[#1b2233] pb-1.5 mb-1.5">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-1.5">
         <div className="flex items-center space-x-2">
-          <LineChart className="w-4 h-4 text-purple-400" />
-          <span className="text-xs font-mono font-bold tracking-wider text-slate-200 uppercase">
+          <LineChart className="w-4 h-4 text-red-600" />
+          <span className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
             TDI Trajectory Analysis
           </span>
-          <span className="text-[10px] font-mono text-slate-500">
+          <span className="text-[10px] font-mono text-slate-500 font-semibold">
             ({displayedPoints.length} points)
           </span>
         </div>
@@ -103,29 +103,29 @@ export const TDITrajectoryChart: React.FC<TDITrajectoryChartProps> = ({
           {/* Legend */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-1">
-              <span className="w-2.5 h-0.5 bg-cyan-400 inline-block" />
-              <span className="text-slate-400">Physics</span>
+              <span className="w-2.5 h-0.5 bg-sky-500 inline-block" />
+              <span className="text-slate-600 font-medium">Physics</span>
             </div>
             <div className="flex items-center space-x-1">
-              <span className="w-2.5 h-0.5 bg-amber-400 inline-block stroke-dash" />
-              <span className="text-slate-400">AI</span>
+              <span className="w-2.5 h-0.5 bg-amber-500 inline-block stroke-dash" />
+              <span className="text-slate-600 font-medium">AI</span>
             </div>
             <div className="flex items-center space-x-1">
-              <span className="w-2.5 h-1 bg-purple-400 inline-block" />
-              <span className="text-purple-300 font-bold">Fusion</span>
+              <span className="w-2.5 h-1 bg-red-600 inline-block" />
+              <span className="text-red-700 font-bold">Fusion</span>
             </div>
           </div>
 
           {/* Zoom Buttons */}
-          <div className="flex items-center space-x-1 bg-[#121622] p-0.5 rounded border border-[#1e2639]">
+          <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded border border-slate-200">
             {[50, 150, 300, 0].map((range) => (
               <button
                 key={range}
                 onClick={() => setZoomRange(range)}
-                className={`px-1.5 py-0.5 rounded cursor-pointer ${
+                className={`px-1.5 py-0.5 rounded cursor-pointer font-bold ${
                   zoomRange === range
-                    ? 'bg-cyan-950 text-cyan-300 font-bold border border-cyan-500/40'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {range === 0 ? 'ALL' : `${range}P`}
@@ -153,7 +153,7 @@ export const TDITrajectoryChart: React.FC<TDITrajectoryChartProps> = ({
                   y1={y}
                   x2={width - padding.right}
                   y2={y}
-                  stroke={val === 50 ? '#2a354c' : '#171d2b'}
+                  stroke={val === 50 ? '#cbd5e1' : '#e2e8f0'}
                   strokeDasharray={val === 50 ? '4,4' : undefined}
                   strokeWidth="1"
                 />
@@ -161,7 +161,7 @@ export const TDITrajectoryChart: React.FC<TDITrajectoryChartProps> = ({
                   x={padding.left - 6}
                   y={y + 3}
                   textAnchor="end"
-                  className="fill-slate-500 font-mono text-[9px]"
+                  className="fill-slate-400 font-mono text-[9px]"
                 >
                   {val}
                 </text>

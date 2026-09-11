@@ -69,15 +69,15 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
   const badge = getStateBadge(state);
 
   return (
-    <div className="bg-[#0e1118] border border-[#202738] rounded-lg p-4 flex flex-col justify-between shadow-lg relative overflow-hidden">
+    <div className="bg-white border border-slate-200 rounded-lg p-4 flex flex-col justify-between shadow-sm relative overflow-hidden text-slate-800">
       {/* Background Subtle Accent Glow */}
-      <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl pointer-events-none" />
+      <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-full blur-2xl pointer-events-none" />
 
       {/* Card Header */}
-      <div className="flex items-center justify-between border-b border-[#1b2233] pb-2">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-2">
         <div className="flex items-center space-x-2">
-          <Activity className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-mono font-bold tracking-wider text-slate-200 uppercase">
+          <Activity className="w-4 h-4 text-red-600" />
+          <span className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
             Global TDI Intelligence
           </span>
         </div>
@@ -91,18 +91,18 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
       {/* Central Large TDI Hero Display */}
       <div className="my-3 flex items-center justify-between">
         <div>
-          <span className="text-[10px] font-mono text-slate-500 tracking-wider block">
+          <span className="text-[10px] font-mono text-slate-500 font-bold tracking-wider block">
             FUSED DEGRADATION INDEX
           </span>
           <div className="flex items-baseline space-x-2">
-            <span className="text-5xl font-black font-mono text-slate-100 tracking-tight tabular-nums">
+            <span className="text-5xl font-black font-mono text-slate-900 tracking-tight tabular-nums">
               {(typeof finalTdi === 'number' && !isNaN(finalTdi) ? finalTdi : 0).toFixed(1)}
             </span>
-            <span className="text-xs font-mono text-slate-400">/ 100</span>
+            <span className="text-xs font-mono text-slate-400 font-bold">/ 100</span>
           </div>
 
           <div className="flex items-center space-x-2 mt-1">
-            <span className="text-xs font-mono font-bold text-slate-300">
+            <span className="text-xs font-mono font-bold text-slate-700">
               {trend}
             </span>
             {getTrendIcon(trend)}
@@ -112,18 +112,18 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
         {/* Confidence & Reliability Stats */}
         <div className="text-right space-y-2">
           <div>
-            <span className="text-[10px] font-mono text-slate-500 block uppercase">
+            <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold">
               SYSTEM CONFIDENCE
             </span>
-            <span className="text-lg font-bold font-mono text-cyan-400 tabular-nums">
+            <span className="text-lg font-bold font-mono text-sky-600 tabular-nums">
               {confidencePct}%
             </span>
           </div>
           <div>
-            <span className="text-[10px] font-mono text-slate-500 block uppercase">
+            <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold">
               MODEL RELIABILITY
             </span>
-            <span className="text-xs font-mono text-slate-400 tabular-nums">
+            <span className="text-xs font-mono text-slate-600 font-bold tabular-nums">
               {reliabilityPct}%
             </span>
           </div>
@@ -131,41 +131,41 @@ export const GlobalTDICard: React.FC<GlobalTDICardProps> = ({ tdiData }) => {
       </div>
 
       {/* Tri-Split Provenance Cards */}
-      <div className="grid grid-cols-3 gap-2 text-center font-mono pt-2 border-t border-[#1b2233]">
+      <div className="grid grid-cols-3 gap-2 text-center font-mono pt-2 border-t border-slate-200">
         {/* Physics Twin */}
-        <div className="bg-[#121622] p-2 rounded border border-[#1e2639]">
-          <div className="flex items-center justify-center space-x-1 text-slate-400 mb-0.5">
-            <Atom className="w-3 h-3 text-cyan-400" />
-            <span className="text-[10px] uppercase">Physics</span>
+        <div className="bg-slate-50 p-2 rounded border border-slate-200">
+          <div className="flex items-center justify-center space-x-1 text-slate-600 mb-0.5">
+            <Atom className="w-3 h-3 text-sky-600" />
+            <span className="text-[10px] uppercase font-bold">Physics</span>
           </div>
-          <span className="text-base font-bold text-cyan-300 tabular-nums">
+          <span className="text-base font-bold text-sky-700 tabular-nums">
             {(typeof physicsTdi === 'number' && !isNaN(physicsTdi) ? physicsTdi : 0).toFixed(1)}
           </span>
-          <span className="text-[9px] text-slate-500 block mt-0.5">Deterministic</span>
+          <span className="text-[9px] text-slate-500 block mt-0.5 font-medium">Deterministic</span>
         </div>
 
         {/* AI Temporal Baseline */}
-        <div className="bg-[#121622] p-2 rounded border border-[#1e2639]">
-          <div className="flex items-center justify-center space-x-1 text-slate-400 mb-0.5">
-            <Brain className="w-3 h-3 text-amber-400" />
-            <span className="text-[10px] uppercase">AI Model</span>
+        <div className="bg-slate-50 p-2 rounded border border-slate-200">
+          <div className="flex items-center justify-center space-x-1 text-slate-600 mb-0.5">
+            <Brain className="w-3 h-3 text-amber-600" />
+            <span className="text-[10px] uppercase font-bold">AI Model</span>
           </div>
-          <span className="text-base font-bold text-amber-300 tabular-nums">
+          <span className="text-base font-bold text-amber-600 tabular-nums">
             {(typeof aiTdi === 'number' && !isNaN(aiTdi) ? aiTdi : 0).toFixed(1)}
           </span>
-          <span className="text-[9px] text-slate-500 block mt-0.5">Random Forest</span>
+          <span className="text-[9px] text-slate-500 block mt-0.5 font-medium">Random Forest</span>
         </div>
 
         {/* Fused Intelligence */}
-        <div className="bg-[#151a29] p-2 rounded border border-cyan-500/30 shadow-[0_0_8px_rgba(0,240,255,0.1)]">
-          <div className="flex items-center justify-center space-x-1 text-cyan-300 mb-0.5">
-            <ShieldCheck className="w-3 h-3 text-purple-400" />
-            <span className="text-[10px] uppercase font-semibold">Fusion</span>
+        <div className="bg-red-50 p-2 rounded border border-red-200">
+          <div className="flex items-center justify-center space-x-1 text-red-700 mb-0.5">
+            <ShieldCheck className="w-3 h-3 text-red-600" />
+            <span className="text-[10px] uppercase font-bold">Fusion</span>
           </div>
-          <span className="text-base font-black text-white tabular-nums">
+          <span className="text-base font-black text-red-700 tabular-nums">
             {(typeof finalTdi === 'number' && !isNaN(finalTdi) ? finalTdi : 0).toFixed(1)}
           </span>
-          <span className="text-[9px] text-purple-300 block mt-0.5">α=0.60 Phys</span>
+          <span className="text-[9px] text-red-600 block mt-0.5 font-medium">α=0.60 Phys</span>
         </div>
       </div>
     </div>

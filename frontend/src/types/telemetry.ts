@@ -5,6 +5,10 @@
 
 export type DataMode = 'REPLAY' | 'DEMO_SIMULATION';
 
+export type TyreVisMode = 'NORMAL' | 'THERMAL' | 'WEAR' | 'LOAD' | 'GRIP' | 'PREDICTION';
+
+export type CameraPreset = 'HERO' | 'FRONT' | 'REAR' | 'TOP' | 'LEFT' | 'RIGHT' | 'TYRE_FOCUS';
+
 export type ConnectionStatus = 'CONNECTED' | 'CONNECTING' | 'DISCONNECTED' | 'ERROR';
 
 export type TDIState =
@@ -17,6 +21,63 @@ export type TDIState =
 export type TDITrend = 'STABLE' | 'RISING' | 'FALLING' | 'SPIKE' | 'UNKNOWN';
 
 export type TyreCorner = 'FL' | 'FR' | 'RL' | 'RR';
+
+export interface TyreThermalState {
+  inner_c: number;
+  center_c: number;
+  outer_c: number;
+  surface_c: number;
+  core_c: number;
+  is_estimated: boolean;
+}
+
+export interface TyreWearState {
+  wear_pct: number;
+  health_pct: number;
+  wear_rate_mm_lap: number;
+  remaining_laps: number;
+  tread_depth_mm: number;
+}
+
+export interface TyreLoadState {
+  vertical_load_kn: number;
+  longitudinal_load_kn: number;
+  lateral_load_kn: number;
+  contact_patch_pct: number;
+}
+
+export interface TyreGripState {
+  grip_coeff: number;
+  grip_loss_pct: number;
+  slip_ratio_pct: number;
+  slip_angle_deg: number;
+  available_grip_pct: number;
+}
+
+export interface TyrePredictionState {
+  current_health_pct: number;
+  predicted_health_5_laps: number;
+  predicted_degradation_pct: number;
+  remaining_competitive_laps: number;
+  pit_window_lap_start: number;
+  pit_window_lap_end: number;
+  prediction_curve: { lap: number; health_pct: number; tdi: number }[];
+}
+
+export interface CalculatedTyreCornerState {
+  corner: TyreCorner;
+  label: string;
+  compound: string;
+  age_laps: number;
+  pressure_psi: number;
+  thermal: TyreThermalState;
+  wear: TyreWearState;
+  load: TyreLoadState;
+  grip: TyreGripState;
+  prediction: TyrePredictionState;
+  tdi: number;
+  is_measured: boolean;
+}
 
 export interface VehicleState {
   speed_kph: number;

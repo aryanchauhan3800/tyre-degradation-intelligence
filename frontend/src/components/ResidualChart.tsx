@@ -93,15 +93,15 @@ export const ResidualChart: React.FC<ResidualChartProps> = ({ history }) => {
   const hoveredPoint = hoverIndex !== null && displayedPoints[hoverIndex] ? displayedPoints[hoverIndex] : null;
 
   return (
-    <div className="bg-[#0e1118] border border-[#202738] rounded-lg p-3 flex flex-col justify-between shadow-md">
+    <div className="bg-white border border-slate-200 rounded-lg p-3 flex flex-col justify-between shadow-sm text-slate-800">
       {/* Header & Controls */}
-      <div className="flex items-center justify-between border-b border-[#1b2233] pb-1.5 mb-1.5">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-1.5 mb-1.5">
         <div className="flex items-center space-x-2">
-          <Activity className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-mono font-bold tracking-wider text-slate-200 uppercase">
+          <Activity className="w-4 h-4 text-red-600" />
+          <span className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
             Residual & Confounder Dynamics
           </span>
-          <span className="text-[10px] font-mono text-slate-500">
+          <span className="text-[10px] font-mono text-slate-500 font-semibold">
             ({displayedPoints.length} points)
           </span>
         </div>
@@ -110,33 +110,33 @@ export const ResidualChart: React.FC<ResidualChartProps> = ({ history }) => {
           {/* Legend */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center space-x-1">
-              <span className="w-2.5 h-0.5 bg-rose-400 inline-block" />
-              <span className="text-slate-400">r_ax (m/s²)</span>
+              <span className="w-2.5 h-0.5 bg-rose-500 inline-block" />
+              <span className="text-slate-600 font-medium">r_ax (m/s²)</span>
             </div>
             <div className="flex items-center space-x-1">
-              <span className="w-2.5 h-0.5 bg-cyan-400 inline-block stroke-dash" />
-              <span className="text-slate-400">Norm Res</span>
+              <span className="w-2.5 h-0.5 bg-sky-500 inline-block stroke-dash" />
+              <span className="text-slate-600 font-medium">Norm Res</span>
             </div>
             <div className="flex items-center space-x-1">
-              <span className="w-2.5 h-1 bg-emerald-400 inline-block" />
-              <span className="text-emerald-300 font-bold">Q_tyre</span>
+              <span className="w-2.5 h-1 bg-emerald-600 inline-block" />
+              <span className="text-emerald-700 font-bold">Q_tyre</span>
             </div>
             <div className="flex items-center space-x-1">
-              <span className="w-2.5 h-1 bg-amber-400 inline-block" />
-              <span className="text-amber-300 font-bold">S_conf</span>
+              <span className="w-2.5 h-1 bg-amber-500 inline-block" />
+              <span className="text-amber-700 font-bold">S_conf</span>
             </div>
           </div>
 
           {/* Zoom Buttons */}
-          <div className="flex items-center space-x-1 bg-[#121622] p-0.5 rounded border border-[#1e2639]">
+          <div className="flex items-center space-x-1 bg-slate-100 p-0.5 rounded border border-slate-200">
             {[50, 150, 300, 0].map((range) => (
               <button
                 key={range}
                 onClick={() => setZoomRange(range)}
-                className={`px-1.5 py-0.5 rounded cursor-pointer ${
+                className={`px-1.5 py-0.5 rounded cursor-pointer font-bold ${
                   zoomRange === range
-                    ? 'bg-cyan-950 text-cyan-300 font-bold border border-cyan-500/40'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'bg-red-600 text-white shadow-xs'
+                    : 'text-slate-600 hover:text-slate-900'
                 }`}
               >
                 {range === 0 ? 'ALL' : `${range}P`}
@@ -164,15 +164,15 @@ export const ResidualChart: React.FC<ResidualChartProps> = ({ history }) => {
                   y1={y}
                   x2={width - padding.right}
                   y2={y}
-                  stroke={val === 0 ? '#384866' : '#171d2b'}
-                  strokeDasharray={val === 0 ? undefined : '2,2'}
+                  stroke={val === 0 ? '#94a3b8' : '#e2e8f0'}
+                  strokeDasharray={val === 0 ? undefined : '3,3'}
                   strokeWidth={val === 0 ? '1.5' : '1'}
                 />
                 <text
                   x={padding.left - 6}
                   y={y + 3}
                   textAnchor="end"
-                  className="fill-slate-500 font-mono text-[9px]"
+                  className="fill-slate-400 font-mono text-[9px]"
                 >
                   {val > 0 ? `+${val}` : val}
                 </text>

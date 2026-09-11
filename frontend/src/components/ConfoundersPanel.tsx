@@ -84,16 +84,16 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
   ];
 
   return (
-    <div className="bg-[#0e1118] border border-[#202738] rounded-lg p-3.5 flex flex-col justify-between shadow-md">
+    <div className="bg-white border border-slate-200 rounded-lg p-3.5 flex flex-col justify-between shadow-sm text-slate-800">
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-[#1b2233] pb-2 mb-2.5">
+      <div className="flex items-center justify-between border-b border-slate-200 pb-2 mb-2.5">
         <div className="flex items-center space-x-1.5">
-          <Filter className="w-4 h-4 text-cyan-400" />
-          <span className="text-xs font-mono font-bold tracking-wider text-slate-200 uppercase">
+          <Filter className="w-4 h-4 text-red-600" />
+          <span className="text-xs font-mono font-bold tracking-wider text-slate-900 uppercase">
             Confounder Engine
           </span>
         </div>
-        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-[#161d2b] border border-[#28354d] text-slate-400">
+        <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-slate-600 font-semibold">
           DETERMINISTIC
         </span>
       </div>
@@ -107,29 +107,29 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
               key={item.label}
               className={`p-2 rounded border font-mono transition-all ${
                 item.active
-                  ? 'bg-amber-950/40 border-amber-500/50 shadow-[0_0_8px_rgba(245,158,11,0.15)]'
-                  : 'bg-[#121622] border-[#1e2639]'
+                  ? 'bg-amber-50 border-amber-300'
+                  : 'bg-slate-50 border-slate-200'
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-bold text-slate-200 flex items-center space-x-1">
-                  <Icon className={`w-3 h-3 ${item.active ? 'text-amber-400' : 'text-slate-500'}`} />
+                <span className="text-[11px] font-bold text-slate-900 flex items-center space-x-1">
+                  <Icon className={`w-3 h-3 ${item.active ? 'text-amber-600' : 'text-slate-400'}`} />
                   <span>{item.label}</span>
                 </span>
                 <span
                   className={`text-[9px] px-1.5 py-0.2 rounded font-semibold ${
                     item.active
-                      ? 'bg-amber-500 text-black font-bold'
-                      : 'bg-[#192030] text-slate-500'
+                      ? 'bg-amber-500 text-white font-bold'
+                      : 'bg-slate-200 text-slate-500'
                   }`}
                 >
                   {item.active ? 'ACTIVE' : 'INACTIVE'}
                 </span>
               </div>
               <div className="flex items-center justify-between mt-1 text-[9px]">
-                <span className="text-slate-500 truncate max-w-[130px]">{item.desc}</span>
+                <span className="text-slate-500 truncate max-w-[130px] font-medium">{item.desc}</span>
                 {item.active && (
-                  <span className="text-[8px] font-semibold text-amber-300 uppercase tracking-tighter shrink-0 ml-1">
+                  <span className="text-[8px] font-bold text-amber-700 uppercase tracking-tighter shrink-0 ml-1">
                     {item.classification}
                   </span>
                 )}
@@ -140,25 +140,25 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
       </div>
 
       {/* Dual Evidence Scores: Non-Tyre Explanation vs Tyre Evidence Quality */}
-      <div className="space-y-2.5 pt-2 border-t border-[#1b2233] font-mono text-xs">
+      <div className="space-y-2.5 pt-2 border-t border-slate-200 font-mono text-xs">
         {/* Non-Tyre Explanation Score */}
         <div>
           <div className="flex justify-between items-baseline mb-1">
-            <span className="text-[10px] text-slate-400 uppercase">
+            <span className="text-[10px] text-slate-500 uppercase font-semibold">
               NON-TYRE EXPLANATION (S_conf)
             </span>
             <span
               className={`font-bold tabular-nums ${
-                nonTyreScore > 0.4 ? 'text-amber-400' : 'text-slate-300'
+                nonTyreScore > 0.4 ? 'text-amber-600' : 'text-slate-700'
               }`}
             >
               {(typeof nonTyreScore === 'number' && !isNaN(nonTyreScore) ? nonTyreScore : 0).toFixed(2)}
             </span>
           </div>
-          <div className="w-full h-2 bg-[#171d2b] rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
             <div
               className={`h-full transition-all duration-150 ${
-                nonTyreScore > 0.4 ? 'bg-amber-400' : 'bg-slate-500'
+                nonTyreScore > 0.4 ? 'bg-amber-500' : 'bg-slate-400'
               }`}
               style={{ width: `${Math.min(100, Math.max(0, (nonTyreScore || 0) * 100))}%` }}
             />
@@ -168,21 +168,21 @@ export const ConfoundersPanel: React.FC<ConfoundersPanelProps> = ({ confounders 
         {/* Tyre Evidence Quality */}
         <div>
           <div className="flex justify-between items-baseline mb-1">
-            <span className="text-[10px] text-slate-400 uppercase">
+            <span className="text-[10px] text-slate-500 uppercase font-semibold">
               TYRE EVIDENCE QUALITY (Q_tyre)
             </span>
             <span
               className={`font-bold tabular-nums ${
-                tyreEvidenceQuality >= 0.7 ? 'text-emerald-400' : 'text-amber-400'
+                tyreEvidenceQuality >= 0.7 ? 'text-emerald-600' : 'text-amber-600'
               }`}
             >
               {(typeof tyreEvidenceQuality === 'number' && !isNaN(tyreEvidenceQuality) ? tyreEvidenceQuality : 1).toFixed(2)}
             </span>
           </div>
-          <div className="w-full h-2 bg-[#171d2b] rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
             <div
               className={`h-full transition-all duration-150 ${
-                tyreEvidenceQuality >= 0.7 ? 'bg-emerald-400' : 'bg-amber-400'
+                tyreEvidenceQuality >= 0.7 ? 'bg-emerald-500' : 'bg-amber-500'
               }`}
               style={{ width: `${Math.min(100, Math.max(0, (tyreEvidenceQuality || 0) * 100))}%` }}
             />

@@ -23,8 +23,15 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
 
 # Ensure user site-packages are available inside Blender's embedded Python
-if hasattr(site, "USER_SITE") and site.USER_SITE and site.USER_SITE not in sys.path:
-    sys.path.append(site.USER_SITE)
+for p in [
+    getattr(site, "USER_SITE", None),
+    os.path.expanduser("~/Library/Python/3.14/lib/python/site-packages"),
+    os.path.expanduser("~/.local/lib/python3.14/site-packages"),
+    os.path.expanduser("~/Library/Python/3.11/lib/python/site-packages"),
+    os.path.expanduser("~/Library/Python/3.10/lib/python/site-packages"),
+]:
+    if p and os.path.exists(p) and p not in sys.path:
+        sys.path.append(p)
 
 # Check for Blender environment
 try:
@@ -175,11 +182,33 @@ class PayloadParser:
         # 6. Selected Component
         selected_component = blender.get("selected_component") or data.get("selected_component")
 
+        # Handle timestamp (could be numeric float or ISO-8601 string)
+        ts_raw = data.get("timestamp") or telemetry.get("timestamp", 0.0)
+        ts_sec = 0.0
+        ts_iso = str(blender.get("timestamp_iso") or telemetry.get("timestamp_iso") or "")
+        if isinstance(ts_raw, (int, float)):
+            ts_sec = float(ts_raw)
+        elif isinstance(ts_raw, str):
+            try:
+                ts_sec = float(ts_raw)
+            except ValueError:
+                ts_iso = ts_raw
+                try:
+                    ts_sec = float(telemetry.get("timestamp", 0.0))
+                except (ValueError, TypeError):
+                    ts_sec = 0.0
+
+        lap_val = blender.get("lap") or telemetry.get("lap", 1)
+        try:
+            lap = int(lap_val)
+        except (ValueError, TypeError):
+            lap = 1
+
         return TyreTraceFrame(
             sequence=int(data.get("sequence", blender.get("sequence", 0))),
-            timestamp_sec=float(data.get("timestamp", 0.0)),
-            timestamp_iso=str(blender.get("timestamp_iso", "")),
-            lap=int(blender.get("lap", 1)),
+            timestamp_sec=ts_sec,
+            timestamp_iso=ts_iso,
+            lap=lap,
             data_mode=mode_upper,
             speed_kph=round(speed_kph, 1),
             speed_mps=round(speed_mps, 2),
@@ -212,7 +241,7 @@ class TyreTraceNetworkClient:
     Deposits parsed frames into a thread-safe Queue consumed by Blender's main timer.
     """
 
-    def __init__(self, url: str = "ws://localhost:8000/ws/telemetry", max_queue: int = 5):
+    def __init__(self, url: str = "ws://127.0.0.1:8000/ws/telemetry", max_queue: int = 5):
         self.url = url
         self.max_queue = max_queue
         self.frame_queue: queue.Queue[TyreTraceFrame] = queue.Queue(maxsize=max_queue)
@@ -226,7 +255,8 @@ class TyreTraceNetworkClient:
 
     def start(self) -> None:
         if self._thread and self._thread.is_alive():
-            return
+            self._stop_event.set()
+            self._thread.join(timeout=1.0)
         self._stop_event.clear()
         self._thread = threading.Thread(target=self._run_loop, name="TyreTraceNetWorker", daemon=True)
         self._thread.start()
@@ -242,18 +272,17 @@ class TyreTraceNetworkClient:
 
     def _run_loop(self) -> None:
         """Main network execution thread with auto-reconnect backoff."""
-        # Attempt importing websockets
         try:
             import asyncio
             import websockets
             has_websockets = True
-        except ImportError:
+        except Exception as e:
             has_websockets = False
+            logger.warning(f"websockets package import failed: {e}; using HTTP polling fallback.")
 
         if has_websockets:
             self._run_asyncio_websockets()
         else:
-            logger.warning("websockets package not available; using HTTP polling fallback.")
             self._run_http_fallback()
 
     def _run_asyncio_websockets(self) -> None:
@@ -287,8 +316,10 @@ class TyreTraceNetworkClient:
                                             pass
                                     self.frame_queue.put_nowait(frame)
                             except asyncio.TimeoutError:
-                                # Normal timeout, send ping
-                                await ws.send("ping")
+                                try:
+                                    await ws.send("ping")
+                                except Exception:
+                                    break
                             except websockets.ConnectionClosed:
                                 break
                 except Exception as e:
@@ -303,6 +334,8 @@ class TyreTraceNetworkClient:
         asyncio.set_event_loop(loop)
         try:
             loop.run_until_complete(_client_coroutine())
+        except Exception as e:
+            logger.debug(f"Asyncio loop exception: {e}")
         finally:
             loop.close()
 
@@ -386,6 +419,102 @@ class TyreTraceSceneManager:
         self._hud_text_obj_name = "TYRETRACE_HUD"
         self._cache_original_materials()
 
+        # Check for Formula 1 2022 model (tire_front, tire_rear)
+        self.is_ferrari_f1 = False
+        if IN_BLENDER:
+            if bpy.data.objects.get("tire_front") or bpy.data.objects.get("tire_rear"):
+                self.is_ferrari_f1 = True
+                self._setup_ferrari_thermal_materials()
+
+    def _setup_ferrari_thermal_materials(self) -> None:
+        """Sets up high-fidelity motorsport FLIR thermal shader node networks for F1 tyres."""
+        if not IN_BLENDER:
+            return
+
+        def setup_thermal_mat(mat_name: str, base_mat_name: str):
+            mat = bpy.data.materials.get(mat_name)
+            if not mat:
+                base_mat = bpy.data.materials.get(base_mat_name)
+                if base_mat:
+                    mat = base_mat.copy()
+                    mat.name = mat_name
+                else:
+                    mat = bpy.data.materials.new(name=mat_name)
+                    mat.use_nodes = True
+            
+            nodes = mat.node_tree.nodes
+            links = mat.node_tree.links
+            bsdf = next((n for n in nodes if n.type == 'BSDF_PRINCIPLED'), None)
+            if not bsdf:
+                return mat
+
+            tdi_node = nodes.get("TDI_Input")
+            if not tdi_node:
+                tdi_node = nodes.new(type='ShaderNodeValue')
+                tdi_node.name = "TDI_Input"
+                tdi_node.label = "TDI Input (0-100)"
+                tdi_node.location = (bsdf.location.x - 700, bsdf.location.y - 250)
+                tdi_node.outputs[0].default_value = 15.0
+
+            div_node = nodes.get("TDI_Norm")
+            if not div_node:
+                div_node = nodes.new(type='ShaderNodeMath')
+                div_node.name = "TDI_Norm"
+                div_node.operation = 'DIVIDE'
+                div_node.location = (bsdf.location.x - 520, bsdf.location.y - 250)
+                div_node.inputs[1].default_value = 100.0
+                links.new(tdi_node.outputs[0], div_node.inputs[0])
+
+            ramp_node = nodes.get("Thermal_ColorRamp")
+            if not ramp_node:
+                ramp_node = nodes.new(type='ShaderNodeValToRGB')
+                ramp_node.name = "Thermal_ColorRamp"
+                ramp_node.location = (bsdf.location.x - 320, bsdf.location.y - 250)
+                elements = ramp_node.color_ramp.elements
+                elements[0].position = 0.0
+                elements[0].color = (0.02, 0.03, 0.05, 1.0)
+                e1 = elements.new(0.22)
+                e1.color = (0.05, 0.85, 0.30, 1.0)
+                e2 = elements.new(0.45)
+                e2.color = (0.95, 0.75, 0.04, 1.0)
+                e3 = elements.new(0.70)
+                e3.color = (1.0, 0.30, 0.02, 1.0)
+                elements[1].position = 1.0
+                elements[1].color = (1.0, 0.02, 0.02, 1.0)
+                links.new(div_node.outputs[0], ramp_node.inputs['Fac'])
+
+            scale_node = nodes.get("Emission_Scale")
+            if not scale_node:
+                scale_node = nodes.new(type='ShaderNodeMath')
+                scale_node.name = "Emission_Scale"
+                scale_node.operation = 'MULTIPLY'
+                scale_node.location = (bsdf.location.x - 140, bsdf.location.y - 380)
+                scale_node.inputs[1].default_value = 2.4
+                links.new(div_node.outputs[0], scale_node.inputs[0])
+
+            links.new(ramp_node.outputs['Color'], bsdf.inputs['Emission Color'])
+            links.new(scale_node.outputs['Value'], bsdf.inputs['Emission Strength'])
+            return mat
+
+        mat_front = setup_thermal_mat("Tyre_Thermal_Front", "Tyre Thread ")
+        mat_rear = setup_thermal_mat("Tyre_Thermal_Rear", "Tyre Thread ")
+
+        tf = bpy.data.objects.get("tire_front")
+        tr = bpy.data.objects.get("tire_rear")
+        if tf and mat_front:
+            tf.material_slots[0].material = mat_front
+        if tr and mat_rear:
+            tr.material_slots[0].material = mat_rear
+
+    def _set_ferrari_tdi(self, mat_name: str, tdi: float) -> None:
+        if not IN_BLENDER:
+            return
+        mat = bpy.data.materials.get(mat_name)
+        if mat and mat.node_tree:
+            node = mat.node_tree.nodes.get("TDI_Input")
+            if node:
+                node.outputs[0].default_value = float(tdi)
+
     def _cache_original_materials(self) -> None:
         """Stores baseline material properties so they can be restored cleanly."""
         if not IN_BLENDER:
@@ -429,27 +558,33 @@ class TyreTraceSceneManager:
 
     def _update_wheel_rotation(self, speed_mps: float, dt: float) -> None:
         """
-        Rotates Wheel_FL, Wheel_FR, Wheel_RL, Wheel_RR based on vehicle speed.
-        Verified rotation axis in Formula_2_Car_DigitalTwin_V7_Mechanical_Thermal.blend:
-        Axis is rotation_euler.z.
-        Left wheels (FL, RL) roll forward with negative delta (-= dtheta).
-        Right wheels (FR, RR) roll forward with positive delta (+= dtheta).
+        Rotates wheel meshes based on vehicle speed.
+        Supports both Formula 2 model (Wheel_*) and Formula 1 model (tire_*, rim_*).
         """
         if abs(speed_mps) < 0.01:
             return
 
-        # dtheta = (v / R) * dt
+        if self.is_ferrari_f1:
+            # Formula 1 model: bounding wheel radius ~1.217m, axis is rotation_euler.z
+            wheel_radius = 1.217
+            omega = speed_mps / wheel_radius
+            dtheta = omega * dt
+            for name in ("tire_front", "tire_rear", "rim_front", "rim_rear"):
+                obj = bpy.data.objects.get(name)
+                if obj:
+                    obj.rotation_euler.z += dtheta
+            return
+
+        # Formula 2 model fallback
         omega = speed_mps / self.WHEEL_RADIUS_M
         dtheta = omega * dt
 
-        # Left wheels: rot_euler.z -= dtheta
         for corner in ("FL", "RL"):
             obj_name = self.WHEEL_OBJECTS.get(corner)
             obj = bpy.data.objects.get(obj_name)
             if obj:
                 obj.rotation_euler.z -= dtheta
 
-        # Right wheels: rot_euler.z += dtheta
         for corner in ("FR", "RR"):
             obj_name = self.WHEEL_OBJECTS.get(corner)
             obj = bpy.data.objects.get(obj_name)
@@ -495,6 +630,32 @@ class TyreTraceSceneManager:
           50–75: High (orange)
           75–100: Critical (red)
         """
+        if self.is_ferrari_f1:
+            # Map telemetry TDI to Ferrari front and rear thermal shaders
+            front_tdi = None
+            rear_tdi = None
+            fl_tdi = frame.corner_tdi.get("FL")
+            fr_tdi = frame.corner_tdi.get("FR")
+            rl_tdi = frame.corner_tdi.get("RL")
+            rr_tdi = frame.corner_tdi.get("RR")
+
+            if fl_tdi is not None or fr_tdi is not None:
+                front_tdi = ((fl_tdi or 0.0) + (fr_tdi or 0.0)) / (2.0 if (fl_tdi and fr_tdi) else 1.0)
+            if rl_tdi is not None or rr_tdi is not None:
+                rear_tdi = ((rl_tdi or 0.0) + (rr_tdi or 0.0)) / (2.0 if (rl_tdi and rr_tdi) else 1.0)
+
+            # Fallback to global_tdi if corner-specific simulated data is absent
+            if front_tdi is None and frame.global_tdi is not None:
+                front_tdi = frame.global_tdi
+            if rear_tdi is None and frame.global_tdi is not None:
+                rear_tdi = frame.global_tdi
+
+            if front_tdi is not None:
+                self._set_ferrari_tdi("Tyre_Thermal_Front", front_tdi)
+            if rear_tdi is not None:
+                self._set_ferrari_tdi("Tyre_Thermal_Rear", rear_tdi)
+            return
+
         if frame.data_mode != "DEMO_SIMULATION":
             # Real replay mode: keep tyres in neutral un-degraded visual state
             for corner in ("FL", "FR", "RL", "RR"):
@@ -548,7 +709,7 @@ class TyreTraceSceneManager:
     def _update_hud_overlay(self, frame: TyreTraceFrame) -> None:
         """Renders a small engineering text HUD directly in the 3D scene."""
         text_obj = bpy.data.objects.get(self._hud_text_obj_name)
-        tdi_str = f"{frame.global_tdi:.1f}" if frame.global_tdi is not None else "UNAVAILABLE"
+        tdi_str = f"{frame.global_tdi:.1f}%" if frame.global_tdi is not None else "UNAVAILABLE"
         conf_str = f"{int(frame.confidence * 100)}%" if frame.confidence > 0 else "LOW"
         
         hud_content = (
@@ -565,10 +726,14 @@ class TyreTraceSceneManager:
             try:
                 font_curve = bpy.data.curves.new(type="FONT", name="TyreTraceFont")
                 font_curve.body = hud_content
-                font_curve.size = 0.22
+                font_curve.size = 0.45 if self.is_ferrari_f1 else 0.22
                 new_obj = bpy.data.objects.new(self._hud_text_obj_name, font_curve)
-                new_obj.location = Vector((2.5, 0.0, 2.2))
-                new_obj.rotation_euler = Euler((math.radians(90), 0, math.radians(90)), 'XYZ')
+                if self.is_ferrari_f1:
+                    new_obj.location = Vector((4.5, -4.2, 1.6))
+                    new_obj.rotation_euler = Euler((math.radians(90), 0, math.radians(110)), 'XYZ')
+                else:
+                    new_obj.location = Vector((2.5, 0.0, 2.2))
+                    new_obj.rotation_euler = Euler((math.radians(90), 0, math.radians(90)), 'XYZ')
                 bpy.context.collection.objects.link(new_obj)
             except Exception:
                 pass
@@ -620,6 +785,9 @@ class TyreTraceSceneManager:
         """Restores all tyre materials and resets camera."""
         if not IN_BLENDER:
             return
+        if self.is_ferrari_f1:
+            self._set_ferrari_tdi("Tyre_Thermal_Front", 0.0)
+            self._set_ferrari_tdi("Tyre_Thermal_Rear", 0.0)
         for corner in ("FL", "FR", "RL", "RR"):
             self._restore_corner_materials(corner)
         cam = bpy.data.objects.get("Camera")
@@ -640,7 +808,7 @@ class TyreTraceBridgeEngine:
         self.is_running = False
         self._timer_handle = None
 
-    def start(self, url: str = "ws://localhost:8000/ws/telemetry") -> None:
+    def start(self, url: str = "ws://127.0.0.1:8000/ws/telemetry") -> None:
         if self.is_running:
             return
         self.net_client.url = url
@@ -648,9 +816,8 @@ class TyreTraceBridgeEngine:
         self.is_running = True
 
         if IN_BLENDER and bpy.app.timers:
-            if self._timer_handle is None or not bpy.app.timers.is_registered(self._timer_callback):
-                bpy.app.timers.register(self._timer_callback, persistent=True)
-                self._timer_handle = self._timer_callback
+            if not bpy.app.timers.is_registered(_global_tyretrace_timer):
+                bpy.app.timers.register(_global_tyretrace_timer, persistent=True)
         logger.info("TyreTrace Blender bridge engine active.")
 
     def stop(self) -> None:
@@ -659,12 +826,11 @@ class TyreTraceBridgeEngine:
         self.is_running = False
         self.net_client.stop()
         if IN_BLENDER and bpy.app.timers:
-            if self._timer_handle and bpy.app.timers.is_registered(self._timer_callback):
+            if bpy.app.timers.is_registered(_global_tyretrace_timer):
                 try:
-                    bpy.app.timers.unregister(self._timer_callback)
+                    bpy.app.timers.unregister(_global_tyretrace_timer)
                 except Exception:
                     pass
-                self._timer_handle = None
         self.scene_mgr.reset_all()
         logger.info("TyreTrace Blender bridge engine stopped.")
 
@@ -688,6 +854,12 @@ class TyreTraceBridgeEngine:
                 logger.debug(f"Scene update error: {e}")
 
         return 0.025  # 25 ms interval
+
+
+def _global_tyretrace_timer() -> Optional[float]:
+    if _BRIDGE_INSTANCE and _BRIDGE_INSTANCE.is_running:
+        return _BRIDGE_INSTANCE._timer_callback()
+    return None
 
 
 # Global Bridge Instance
@@ -829,7 +1001,7 @@ if IN_BLENDER:
         bpy.types.Scene.tyretrace_ws_url = bpy.props.StringProperty(
             name="WebSocket URL",
             description="TYRETRACE live telemetry WebSocket endpoint",
-            default="ws://localhost:8000/ws/telemetry",
+            default="ws://127.0.0.1:8000/ws/telemetry",
         )
         for cls in classes:
             bpy.utils.register_class(cls)

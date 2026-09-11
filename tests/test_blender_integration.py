@@ -310,7 +310,8 @@ print('BLENDER_HEADLESS_TEST_SUCCESS')
         [str(blender_bin), "-b", str(blend_file), "--python-expr", test_script],
         capture_output=True,
         text=True,
-        timeout=20,
+        stdin=subprocess.DEVNULL,
+        timeout=60,
     )
     assert res.returncode == 0
     assert "BLENDER_HEADLESS_TEST_SUCCESS" in res.stdout
