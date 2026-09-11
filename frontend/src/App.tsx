@@ -130,8 +130,8 @@ function buildUnifiedFrameState(
 }
 
 export function App() {
-  // Navigation State - defaults to 'phyengine' matching mockup
-  const [activeTab, setActiveTab] = useState<ActiveNavTab>('phyengine');
+  // Navigation State - defaults to 'home' for cinematic landing page
+  const [activeTab, setActiveTab] = useState<ActiveNavTab>('home');
   const [phyEngineSubTab, setPhyEngineSubTab] = useState<'3d' | 'image'>('3d');
 
   // Session & Replay State
