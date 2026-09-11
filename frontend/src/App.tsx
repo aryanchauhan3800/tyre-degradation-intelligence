@@ -479,6 +479,11 @@ export function App() {
               onSelectTyre={handleSelectTyre}
               onNavigate={handleNavigate}
               lap={frameState.telemetry?.lap ?? 27}
+              physics={frameState.physics}
+              confounders={frameState.confounders}
+              tdi={frameState.tdi}
+              dataMode={dataMode}
+              session={session}
             />
           )}
 
