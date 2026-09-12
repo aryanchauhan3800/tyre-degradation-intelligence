@@ -19,6 +19,8 @@ import React, { useRef, useEffect, useState, useCallback } from 'react';
 import type { ActiveNavTab } from '../components/Navbar';
 import type { FourWheelTyres, TelemetryFrame, TyreCorner } from '../types/telemetry';
 import { HomeCarScene } from '../three/HomeCarScene';
+import projectExplanationVideo from '../assets/Untitled_Scene_09-10_19_21_42_20260911011354.mp4';
+import { Maximize2, Minimize2, Scaling, Volume2, VolumeX, X } from 'lucide-react';
 import './HomePage.css';
 
 /* ═══════════════════════════════════════════════════════════ */
@@ -73,6 +75,10 @@ function useInView(ref: React.RefObject<HTMLElement | null>, threshold = 0.2): b
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    if (typeof IntersectionObserver === 'undefined') {
+      setInView(true);
+      return;
+    }
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) setInView(true); },
       { threshold },
@@ -97,6 +103,7 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
 
   /* Section refs for IntersectionObserver */
   const videoSecRef = useRef<HTMLDivElement>(null);
+  const videoContainerRef = useRef<HTMLDivElement>(null);
   const problemSecRef = useRef<HTMLDivElement>(null);
   const twinSecRef = useRef<HTMLDivElement>(null);
   const healthSecRef = useRef<HTMLDivElement>(null);
@@ -110,6 +117,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   const [systemReady, setSystemReady] = useState(false);
   const [introPhase, setIntroPhase] = useState(0); // 0=loading, 1=redline, 2=text, 3=telemetry, 4=done
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [isFullView, setIsFullView] = useState(false);
+  const [fitMode, setFitMode] = useState<'contain' | 'cover'>('contain');
+  const [isMuted, setIsMuted] = useState(false);
   const [equationStep, setEquationStep] = useState(0); // 0-6
   const [equationConfused, setEquationConfused] = useState(false);
 
@@ -137,20 +147,25 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
     const container = heroCanvasRef.current;
     if (!container || sceneRef.current) return;
 
-    const scene = new HomeCarScene(container, {
-      onProgress: (pct) => setLoadPct(Math.round(pct)),
-      onLoaded: () => setModelReady(true),
-      onError: (msg) => {
-        console.warn('HomeCarScene error:', msg);
-        // Still let the page work without the model
-        setModelReady(true);
-      },
-    });
-
-    sceneRef.current = scene;
+    let scene: HomeCarScene | null = null;
+    try {
+      scene = new HomeCarScene(container, {
+        onProgress: (pct) => setLoadPct(Math.round(pct)),
+        onLoaded: () => setModelReady(true),
+        onError: (msg) => {
+          console.warn('HomeCarScene error:', msg);
+          // Still let the page work without the model
+          setModelReady(true);
+        },
+      });
+      sceneRef.current = scene;
+    } catch (err: unknown) {
+      console.warn('HomeCarScene WebGL initialization bypassed:', err);
+      setModelReady(true);
+    }
 
     return () => {
-      scene.dispose();
+      scene?.dispose();
       sceneRef.current = null;
     };
   }, []);
@@ -228,15 +243,65 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
   }, []);
 
   /* ═══════════════════════════════════════════════ */
-  /*  Video play handler                             */
+  /*  Video play & full-view handlers                */
   /* ═══════════════════════════════════════════════ */
 
   const handlePlayVideo = useCallback(() => {
     const v = videoRef.current;
     if (!v) return;
-    v.muted = true;
-    v.play().then(() => setVideoPlaying(true)).catch(() => {});
+    v.muted = isMuted;
+    v.play().then(() => setVideoPlaying(true)).catch(() => {
+      v.muted = true;
+      setIsMuted(true);
+      v.play().then(() => setVideoPlaying(true)).catch(() => {});
+    });
+  }, [isMuted]);
+
+  const toggleFullView = useCallback(() => {
+    setIsFullView((prev) => {
+      const next = !prev;
+      if (next) {
+        const v = videoRef.current;
+        if (v && v.paused) {
+          v.play().then(() => setVideoPlaying(true)).catch(() => {});
+        }
+      }
+      return next;
+    });
   }, []);
+
+  const toggleFitMode = useCallback(() => {
+    setFitMode((prev) => (prev === 'contain' ? 'cover' : 'contain'));
+  }, []);
+
+  const toggleMute = useCallback(() => {
+    const v = videoRef.current;
+    if (!v) return;
+    v.muted = !isMuted;
+    setIsMuted(!isMuted);
+  }, [isMuted]);
+
+  const toggleNativeFullscreen = useCallback(() => {
+    const el = videoContainerRef.current;
+    if (!el) return;
+    if (!document.fullscreenElement) {
+      el.requestFullscreen?.().catch(() => {});
+    } else {
+      document.exitFullscreen?.().catch(() => {});
+    }
+  }, []);
+
+  /* Close full-view on Escape key */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isFullView) {
+        setIsFullView(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isFullView]);
+
 
   const scrollToVideo = useCallback(() => {
     videoSecRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -368,9 +433,9 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
       {/*  3. VIDEO — "WHY TDR?"                      */}
       {/* ════════════════════════════════════════════ */}
 
-      <section ref={videoSecRef} className="home-section">
-        <div className="home-section-inner">
-          <div className={`home-reveal ${videoInView ? 'in-view' : ''}`}>
+      <section ref={videoSecRef} className="home-section home-video-section">
+        <div className="w-full flex flex-col items-center">
+          <div className={`home-reveal ${videoInView ? 'in-view' : ''} home-video-header`}>
             <div className="home-sec-label">PROJECT BRIEFING</div>
             <h2 className="home-sec-heading">WHY TDR?</h2>
             <p className="home-sec-sub">
@@ -378,26 +443,85 @@ export const HomePage: React.FC<HomePageProps> = ({ onNavigate }) => {
             </p>
           </div>
 
-          <div className={`home-video-frame home-reveal ${videoInView ? 'in-view' : ''}`}
-               style={{ transitionDelay: '0.3s' }}>
+          <div
+            ref={videoContainerRef}
+            className={`home-video-frame home-reveal ${videoInView ? 'in-view' : ''} ${isFullView ? 'full-view' : ''} ${fitMode === 'cover' ? 'fit-cover' : 'fit-contain'}`}
+            style={{ transitionDelay: '0.3s' }}
+          >
             {/* Technical corner labels */}
             <span className="home-video-label tl">REC ● 001</span>
-            <span className="home-video-label tr">TGR × F1</span>
+            <span className="home-video-label tr">FOM ^ F1</span>
             <span className="home-video-label bl">PROJECT EXPLANATION</span>
             <span className="home-video-label br">CLASSIFIED</span>
+
+            {/* Quick Action HUD Bar (Fit Screen, Fill/Fit 16:9, Audio, Fullscreen) */}
+            <div className="home-video-action-bar">
+              <button
+                type="button"
+                onClick={toggleFullView}
+                className={`home-video-btn ${isFullView ? 'active' : ''}`}
+                title={isFullView ? "Exit Fit Screen Full View (Esc)" : "Fit Screen Full View"}
+              >
+                {isFullView ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
+                <span>{isFullView ? "EXIT FULL VIEW" : "FIT SCREEN FULL VIEW"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleFitMode}
+                className="home-video-btn"
+                title={fitMode === 'contain' ? "Fill Frame (Crop to Fill)" : "Fit 16:9 Frame (Uncropped)"}
+              >
+                <Scaling size={13} />
+                <span>{fitMode === 'contain' ? "FILL" : "FIT 16:9"}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleMute}
+                className="home-video-btn"
+                title={isMuted ? "Unmute Audio" : "Mute Audio"}
+              >
+                {isMuted ? <VolumeX size={13} /> : <Volume2 size={13} />}
+              </button>
+
+              <button
+                type="button"
+                onClick={toggleNativeFullscreen}
+                className="home-video-btn"
+                title="Browser Native Fullscreen"
+              >
+                <Maximize2 size={13} />
+              </button>
+
+              {isFullView && (
+                <button
+                  type="button"
+                  onClick={() => setIsFullView(false)}
+                  className="home-video-btn close"
+                  title="Close Full View (Esc)"
+                >
+                  <X size={14} />
+                  <span>ESC</span>
+                </button>
+              )}
+            </div>
 
             {/* Scan line */}
             <div className="home-video-scanline" />
 
             <video
               ref={videoRef}
-              src="/front.mp4"
+              src={projectExplanationVideo}
               playsInline
-              muted
+              muted={isMuted}
               loop
+              controls={videoPlaying}
               preload="metadata"
-              style={{ display: 'block', width: '100%' }}
+              style={{ display: 'block', width: '100%', height: '100%' }}
               onPlay={() => setVideoPlaying(true)}
+              onPause={() => setVideoPlaying(false)}
+              onEnded={() => setVideoPlaying(false)}
             />
 
             {/* Play overlay (shown until video plays) */}

@@ -342,10 +342,10 @@ export function App() {
     }
   };
 
-  const handleSelectTyre = (corner: TyreCorner) => {
+  const handleSelectTyre = useCallback((corner: TyreCorner) => {
     setSelectedTyre(corner);
     api.selectTyre(corner).catch(() => { });
-  };
+  }, []);
 
   const toggleDataMode = (mode: DataMode) => {
     setDataMode(mode);

@@ -43,7 +43,7 @@ describe('Navigation and Multi-Page UI Component Tests', () => {
     expect(handleSelectTab).toHaveBeenCalledWith('info');
   });
 
-  it('renders HomePage with full-screen auto-looping video player', () => {
+  it('renders HomePage with project explanation video in briefing section', () => {
     const { container } = render(
       <HomePage
         onNavigate={vi.fn()}
@@ -56,8 +56,7 @@ describe('Navigation and Multi-Page UI Component Tests', () => {
 
     const video = container.querySelector('video');
     expect(video).toBeInTheDocument();
-    expect(video).toHaveAttribute('src', '/homepage_video.mp4');
-    expect(video).toHaveAttribute('autoplay');
+    expect(video).toHaveAttribute('src');
     expect(video).toHaveAttribute('loop');
   });
 
@@ -90,8 +89,8 @@ describe('Navigation and Multi-Page UI Component Tests', () => {
       />
     );
 
-    expect(screen.getByText(/OVERALL FLEET HEALTH & DEGRADATION INTELLIGENCE/i)).toBeInTheDocument();
-    expect(screen.getByText(/CHASSIS CORNERS TELEMETRY MATRIX/i)).toBeInTheDocument();
+    expect(screen.getByText(/SYSTEM HEALTH COMMAND CENTER/i)).toBeInTheDocument();
+    expect(screen.getByText(/TYRE HEALTH & CORNER SYNCHRONIZATION/i)).toBeInTheDocument();
     expect(screen.getByText(/PIT STOP WINDOW CALCULATOR/i)).toBeInTheDocument();
   });
 

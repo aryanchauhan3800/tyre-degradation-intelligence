@@ -13,6 +13,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import type { TyreCorner, TyreVisMode } from '../types/telemetry';
 
 export interface HealthCarSceneCallbacks {
@@ -38,6 +39,7 @@ export class HealthCarScene {
   private clock = new THREE.Clock();
   private animId: number | null = null;
   private isDestroyed = false;
+  private resizeObserver?: ResizeObserver;
 
   // Model & Wheel references
   private carGroup = new THREE.Group();
@@ -107,8 +109,9 @@ export class HealthCarScene {
     this.scene.background = new THREE.Color(0xf8fafc); // Clean motorsport light slate background
 
     // 2. Camera setup: Top-down slight isometric
-    const aspect = Math.max(0.1, container.clientWidth / container.clientHeight);
+    const aspect = Math.max(0.1, container.clientWidth / Math.max(1, container.clientHeight));
     this.camera = new THREE.PerspectiveCamera(36, aspect, 0.1, 100);
+    this.camera.up.set(0, 0, -1);
     this.camera.position.copy(this.DEFAULT_CAM_POS);
     this.camera.lookAt(this.DEFAULT_LOOK_AT);
 
@@ -123,23 +126,39 @@ export class HealthCarScene {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.25;
+    this.renderer.toneMappingExposure = 1.12;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(this.renderer.domElement);
+
+    // Setup HDRI Studio Environment Reflections (clean, natural daylight ambience)
+    try {
+      const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+      pmremGenerator.compileEquirectangularShader();
+      const roomEnv = new RoomEnvironment();
+      this.scene.environment = pmremGenerator.fromScene(roomEnv, 0.04).texture;
+      this.scene.environmentIntensity = 0.40;
+      pmremGenerator.dispose();
+    } catch (e) {
+      console.warn('HDRI environment initialization bypassed:', e);
+    }
 
     // 4. Setup Lighting, Grid, and Elements
     this.buildLighting();
     this.buildGroundAndGrid();
     this.buildScanLaser();
-    this.carGroup.rotation.y = Math.PI;
+    this.carGroup.rotation.y = 0;
     this.scene.add(this.carGroup);
 
-    // 5. Event Listeners
+    // 5. Event Listeners & Resize Observer
     this.onResize = this.onResize.bind(this);
     this.onPointerMove = this.onPointerMove.bind(this);
     this.onClick = this.onClick.bind(this);
 
     window.addEventListener('resize', this.onResize);
+    if (typeof ResizeObserver !== 'undefined') {
+      this.resizeObserver = new ResizeObserver(() => this.onResize());
+      this.resizeObserver.observe(this.container);
+    }
     this.container.addEventListener('mousemove', this.onPointerMove);
     this.container.addEventListener('click', this.onClick);
 
@@ -149,20 +168,20 @@ export class HealthCarScene {
   }
 
   /* ────────────────────────────────────────────── */
-  /*  Lighting Setup                                */
+  /*  Lighting Setup (Natural Motorsport Daylight)  */
   /* ────────────────────────────────────────────── */
   private buildLighting() {
-    // High-key clean ambient
-    this.ambientLight = new THREE.AmbientLight(0xffffff, 1.1);
+    // Clean, natural daylight ambient fill across the entire model
+    this.ambientLight = new THREE.AmbientLight(0xffffff, 0.90);
     this.scene.add(this.ambientLight);
 
-    // Balanced Hemisphere light for motorsport engineering studio
-    this.hemiLight = new THREE.HemisphereLight(0xffffff, 0xcfd8dc, 0.85);
+    // Sky-ground hemisphere fill for natural contrast
+    this.hemiLight = new THREE.HemisphereLight(0xffffff, 0xe2e8f0, 0.65);
     this.scene.add(this.hemiLight);
 
-    // Key studio overhead light
-    this.mainDirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-    this.mainDirLight.position.set(5, 14, 4);
+    // Main overhead key light (centered above to prevent asymmetric dark blackouts on the chassis)
+    this.mainDirLight = new THREE.DirectionalLight(0xffffff, 0.75);
+    this.mainDirLight.position.set(0.8, 16, 0.8);
     this.mainDirLight.castShadow = true;
     this.mainDirLight.shadow.mapSize.set(2048, 2048);
     this.mainDirLight.shadow.camera.near = 1;
@@ -174,48 +193,102 @@ export class HealthCarScene {
     this.mainDirLight.shadow.bias = -0.0003;
     this.scene.add(this.mainDirLight);
 
-    // Top direct light to highlight aero curves and sidepods
-    this.topDirLight = new THREE.DirectionalLight(0xfff5ee, 0.9);
-    this.topDirLight.position.set(0, 16, 0);
+    // Top direct fill illuminating cockpit, nosecone, and aero surfaces
+    this.topDirLight = new THREE.DirectionalLight(0xffffff, 0.55);
+    this.topDirLight.position.set(0, 18, 0);
     this.scene.add(this.topDirLight);
 
-    // Soft fill light from front-left
-    this.fillDirLight = new THREE.DirectionalLight(0xe2e8f0, 0.8);
-    this.fillDirLight.position.set(-6, 8, -5);
+    // Opposing fill light from rear-left to ensure zero harsh shadow blackouts
+    this.fillDirLight = new THREE.DirectionalLight(0xf1f5f9, 0.55);
+    this.fillDirLight.position.set(-0.8, 15, -0.8);
     this.scene.add(this.fillDirLight);
 
-    // Subtle TGR Red rim light
-    this.redRimLight = new THREE.PointLight(0xe10600, 2.4, 14);
-    this.redRimLight.position.set(-3.5, 2.0, -2.5);
+    // Subtle colored rim accents
+    this.redRimLight = new THREE.PointLight(0xe10600, 0.25, 14);
+    this.redRimLight.position.set(-4.5, 1.8, -3.0);
     this.scene.add(this.redRimLight);
 
-    // Subtle Technical Blue rim light
-    this.blueAccentLight = new THREE.PointLight(0x0284c7, 2.0, 14);
-    this.blueAccentLight.position.set(3.5, 2.0, 2.5);
+    this.blueAccentLight = new THREE.PointLight(0x0284c7, 0.20, 14);
+    this.blueAccentLight.position.set(4.5, 1.8, 3.0);
     this.scene.add(this.blueAccentLight);
   }
 
   /* ────────────────────────────────────────────── */
-  /*  Ground & Engineering Grid                     */
+  /*  Ground, Grid & Realistic Contact Shadows      */
   /* ────────────────────────────────────────────── */
+  private createContactShadowTexture(): THREE.CanvasTexture | null {
+    if (typeof document === 'undefined') return null;
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 1024;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return null;
+
+    ctx.clearRect(0, 0, 512, 1024);
+
+    const W = 512;
+    const H = 1024;
+    // Map world: X in [-2.25, 2.25] -> [0, W], Z in [-3.4, 2.8] -> [0, H]
+    const toCanvasX = (wx: number) => ((wx + 2.25) / 4.5) * W;
+    const toCanvasY = (wz: number) => ((wz + 3.4) / 6.2) * H;
+
+    // Broad chassis ambient occlusion shadow (subtle and feathered)
+    const bodyCx = toCanvasX(0);
+    const bodyCy = toCanvasY(-0.3);
+    const bodyGrad = ctx.createRadialGradient(bodyCx, bodyCy, 20, bodyCx, bodyCy, 220);
+    bodyGrad.addColorStop(0, 'rgba(0, 0, 0, 0.28)');
+    bodyGrad.addColorStop(0.5, 'rgba(0, 0, 0, 0.12)');
+    bodyGrad.addColorStop(0.85, 'rgba(0, 0, 0, 0.03)');
+    bodyGrad.addColorStop(1, 'rgba(0, 0, 0, 0.0)');
+
+    ctx.save();
+    ctx.translate(bodyCx, bodyCy);
+    ctx.scale(0.82, 1.95);
+    ctx.fillStyle = bodyGrad;
+    ctx.beginPath();
+    ctx.arc(0, 0, 190, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    const tex = new THREE.CanvasTexture(canvas);
+    tex.colorSpace = THREE.SRGBColorSpace;
+    return tex;
+  }
+
   private buildGroundAndGrid() {
-    // Shadow receiver plane
+    // 1. Realistic Ambient Occlusion Ground Contact Shadow (soft chassis ground occlusion)
+    const contactShadowTex = this.createContactShadowTexture();
+    if (contactShadowTex) {
+      const shadowGeo = new THREE.PlaneGeometry(4.5, 6.2);
+      const shadowMat = new THREE.MeshBasicMaterial({
+        map: contactShadowTex,
+        transparent: true,
+        opacity: 0.40,
+        depthWrite: false,
+      });
+      const contactShadow = new THREE.Mesh(shadowGeo, shadowMat);
+      contactShadow.rotation.x = -Math.PI / 2;
+      contactShadow.position.set(0, 0.001, -0.3);
+      this.scene.add(contactShadow);
+    }
+
+    // 2. Directional shadow receiver plane (soft, natural diffuse shadow directly underneath)
     const planeGeo = new THREE.PlaneGeometry(30, 30);
-    const planeMat = new THREE.ShadowMaterial({ opacity: 0.14 });
+    const planeMat = new THREE.ShadowMaterial({ opacity: 0.08 });
     const ground = new THREE.Mesh(planeGeo, planeMat);
     ground.rotation.x = -Math.PI / 2;
     ground.position.y = -0.005;
     ground.receiveShadow = true;
     this.scene.add(ground);
 
-    // Precision engineering grid
+    // 3. Precision engineering grid
     const gridHelper = new THREE.GridHelper(20, 40, 0xd1d5db, 0xe2e8f0);
     gridHelper.position.y = 0;
     (gridHelper.material as THREE.Material).transparent = true;
     (gridHelper.material as THREE.Material).opacity = 0.55;
     this.scene.add(gridHelper);
 
-    // Subtle red target calibration ring around center
+    // 4. Subtle red target calibration ring around center
     const ringGeo = new THREE.RingGeometry(3.6, 3.63, 64);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0xe10600,
@@ -307,23 +380,123 @@ export class HealthCarScene {
               this.bodyMesh = mesh;
             }
 
-            // Tune materials for premium engineering look
+            // Upgrade materials for photorealistic automotive rendering
             const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-            mats.forEach((m) => {
+            const isWheel = name.includes('Wheel');
+
+            const enhancedMats = mats.map((m) => {
               if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
                 const std = m as THREE.MeshStandardMaterial;
-                if (mesh === this.bodyMesh) {
-                  std.color.setHex(0x1a1c20); // Sleek titanium carbon chassis
-                  std.metalness = 0.55;
-                  std.roughness = 0.4;
+                const matName = (std.name || '').toLowerCase();
+
+                if (isWheel) {
+                  // Natural Pirelli Rubber & Wheel Aero Covers (natural matte, no blinding gloss)
+                  std.envMapIntensity = 0.30;
+                  std.roughness = 0.65;
+                  std.metalness = 0.02;
+                  if (std.map) {
+                    std.color.setHex(0xffffff);
+                    std.map.colorSpace = THREE.SRGBColorSpace;
+                  } else {
+                    std.color.setHex(0x1e2124); // Natural dark vulcanized rubber (not 0x000000)
+                  }
+                  (std as any)._origColor = std.color.clone();
+                  (std as any)._origRoughness = std.roughness;
+                  (std as any)._origMetalness = std.metalness;
+                  return std;
+                }
+
+                // Car Body Components: Physical automotive shading
+                const isBodyPaint = !!std.map || matName.includes('checkuered') || matName.includes('red');
+                const isCarbon = matName.includes('carbon');
+                const isMirror = matName.includes('mirror') && !matName.includes('checkuered');
+                const isGlass = matName.includes('glass');
+
+                if (isBodyPaint) {
+                  // Authentic Natural Satin Racing Finish (Kick Sauber C44 Stake Livery)
+                  // Roughness 0.48 gives authentic natural automotive satin sheen without harsh shiny toy glare
+                  const phys = new THREE.MeshPhysicalMaterial({
+                    map: std.map || null,
+                    color: std.map ? new THREE.Color(0xffffff) : new THREE.Color(0x282b30),
+                    roughness: 0.48, // Natural automotive satin finish
+                    metalness: 0.04, // Subtle carbon composite response
+                    clearcoat: 0.0, // Zero clearcoat - prevents fake shiny plastic gloss
+                    clearcoatRoughness: 0.0,
+                    ior: 1.46,
+                    sheen: 0.0,
+                    normalMap: std.normalMap || null,
+                    normalScale: std.normalScale || new THREE.Vector2(1, 1),
+                    envMapIntensity: 0.35, // Natural ambient environment response
+                  });
+                  if (phys.map) phys.map.colorSpace = THREE.SRGBColorSpace;
+                  (phys as any)._origColor = phys.color.clone();
+                  (phys as any)._origRoughness = phys.roughness;
+                  (phys as any)._origMetalness = phys.metalness;
+                  return phys;
+                } else if (isCarbon) {
+                  // Natural Matte Carbon Composite
+                  const phys = new THREE.MeshPhysicalMaterial({
+                    color: new THREE.Color(0x282b30), // Charcoal carbon composite (not pitch black void)
+                    roughness: 0.55,
+                    metalness: 0.02,
+                    clearcoat: 0.0,
+                    clearcoatRoughness: 0.0,
+                    normalMap: std.normalMap || null,
+                    normalScale: std.normalScale || new THREE.Vector2(0.8, 0.8),
+                    envMapIntensity: 0.30,
+                  });
+                  (phys as any)._origColor = phys.color.clone();
+                  (phys as any)._origRoughness = phys.roughness;
+                  (phys as any)._origMetalness = phys.metalness;
+                  return phys;
+                } else if (isMirror) {
+                  // Chrome Mirror
+                  return new THREE.MeshPhysicalMaterial({
+                    color: new THREE.Color(0xf1f5f9),
+                    roughness: 0.12,
+                    metalness: 0.85,
+                    envMapIntensity: 0.8,
+                  });
+                } else if (isGlass) {
+                  // Tinted Polycarbonate Screen
+                  return new THREE.MeshPhysicalMaterial({
+                    color: new THREE.Color(0x94a3b8),
+                    roughness: 0.25,
+                    metalness: 0.0,
+                    transmission: 0.75,
+                    ior: 1.50,
+                    transparent: true,
+                    opacity: 0.65,
+                    envMapIntensity: 0.4,
+                  });
                 } else {
-                  // Wheels / tyres
-                  std.color.setHex(0x111215); // Competition tyre rubber
+                  // Suspension arms, diffuser, and mechanical hardware
+                  std.envMapIntensity = 0.35;
+                  std.roughness = 0.50;
                   std.metalness = 0.15;
-                  std.roughness = 0.75;
+                  if (std.map) {
+                    std.color.setHex(0xffffff);
+                    std.map.colorSpace = THREE.SRGBColorSpace;
+                  } else {
+                    // Elevate pitch-black materials to natural dark slate/charcoal titanium
+                    if (std.color.r < 0.12 && std.color.g < 0.12 && std.color.b < 0.12) {
+                      std.color.setHex(0x282b30);
+                    }
+                  }
+                  (std as any)._origColor = std.color.clone();
+                  (std as any)._origRoughness = std.roughness;
+                  (std as any)._origMetalness = std.metalness;
+                  return std;
                 }
               }
+              return m;
             });
+
+            mesh.material = Array.isArray(mesh.material) ? enhancedMats : enhancedMats[0];
+            if (isWheel) {
+              const cornerKey = name.includes('FL') ? 'FL' : name.includes('FR') ? 'FR' : name.includes('RL') ? 'RL' : 'RR';
+              this.wheelOriginalMaterials[cornerKey] = mesh.material;
+            }
           }
         });
 
@@ -458,14 +631,26 @@ export class HealthCarScene {
         emissiveIntensity = Math.max(emissiveIntensity, 0.45);
       }
 
-      const mat = mesh.material as THREE.MeshStandardMaterial;
-      if (mat && mat.isMeshStandardMaterial) {
-        mat.color.copy(color);
-        mat.emissive.copy(emissive);
-        mat.emissiveIntensity = emissiveIntensity;
-        mat.roughness = roughness;
-        mat.metalness = metalness;
-      }
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+      mats.forEach((m) => {
+        if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
+          const std = m as THREE.MeshStandardMaterial;
+          if (this.currentVisMode === 'NORMAL') {
+            const origColor = (std as any)._origColor as THREE.Color | undefined;
+            if (origColor) {
+              std.color.copy(origColor);
+            }
+            std.roughness = (std as any)._origRoughness ?? roughness;
+            std.metalness = (std as any)._origMetalness ?? metalness;
+          } else {
+            std.color.copy(color);
+            std.roughness = roughness;
+            std.metalness = metalness;
+          }
+          std.emissive.copy(emissive);
+          std.emissiveIntensity = emissiveIntensity;
+        }
+      });
     });
   }
 
@@ -498,7 +683,17 @@ export class HealthCarScene {
       const mesh = this.wheelMeshes[corner];
       if (mesh) {
         const worldPos = new THREE.Vector3();
-        mesh.getWorldPosition(worldPos);
+        if (mesh.geometry) {
+          if (!mesh.geometry.boundingBox) mesh.geometry.computeBoundingBox();
+          if (mesh.geometry.boundingBox) {
+            mesh.geometry.boundingBox.getCenter(worldPos);
+            mesh.localToWorld(worldPos);
+          } else {
+            mesh.getWorldPosition(worldPos);
+          }
+        } else {
+          mesh.getWorldPosition(worldPos);
+        }
         worldPos.project(this.camera);
 
         const x = ((worldPos.x + 1) * width) / 2;
@@ -522,7 +717,7 @@ export class HealthCarScene {
 
     // Subtle parallax effect on car group
     if (!this.introActive) {
-      const targetRotY = Math.PI + this.mouse.x * 0.05;
+      const targetRotY = this.mouse.x * 0.05;
       const targetRotX = -this.mouse.y * 0.03;
       this.carGroup.rotation.y += (targetRotY - this.carGroup.rotation.y) * 0.06;
       this.carGroup.rotation.x += (targetRotX - this.carGroup.rotation.x) * 0.06;
@@ -562,6 +757,7 @@ export class HealthCarScene {
     if (!this.container || this.isDestroyed) return;
     const w = this.container.clientWidth;
     const h = this.container.clientHeight;
+    if (w <= 0 || h <= 0) return;
     this.camera.aspect = Math.max(0.1, w / h);
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
@@ -605,8 +801,13 @@ export class HealthCarScene {
       const corners: TyreCorner[] = ['FL', 'FR', 'RL', 'RR'];
       corners.forEach((c) => {
         const mesh = this.wheelMeshes[c];
-        if (mesh && (mesh.material as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
-          (mesh.material as THREE.MeshStandardMaterial).emissiveIntensity = pulse;
+        if (mesh) {
+          const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+          mats.forEach((m) => {
+            if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
+              (m as THREE.MeshStandardMaterial).emissiveIntensity = pulse;
+            }
+          });
         }
       });
     }
@@ -622,6 +823,7 @@ export class HealthCarScene {
   /* ────────────────────────────────────────────── */
   public destroy() {
     this.isDestroyed = true;
+    this.resizeObserver?.disconnect();
     if (this.animId !== null) {
       cancelAnimationFrame(this.animId);
     }
@@ -630,10 +832,18 @@ export class HealthCarScene {
     this.container.removeEventListener('mousemove', this.onPointerMove);
     this.container.removeEventListener('click', this.onClick);
 
+    if (this.bodyMesh) {
+      this.bodyMesh.geometry.dispose();
+    }
+
     if (this.renderer.domElement.parentElement) {
       this.renderer.domElement.parentElement.removeChild(this.renderer.domElement);
     }
 
     this.renderer.dispose();
+  }
+
+  public getBodyMesh(): THREE.Mesh | null {
+    return this.bodyMesh;
   }
 }

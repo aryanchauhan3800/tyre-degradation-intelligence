@@ -105,23 +105,35 @@ export const OverallHealthPage: React.FC<OverallHealthPageProps> = ({
   const wearDifferential = (frontAvgWear - rearAvgWear).toFixed(1);
   const isFrontBiased = frontAvgWear > rearAvgWear;
 
-  // Initialize and bind 3D Scene
+  // Keep stable reference to onSelectTyre callback
+  const onSelectTyreRef = useRef(onSelectTyre);
+  useEffect(() => {
+    onSelectTyreRef.current = onSelectTyre;
+  }, [onSelectTyre]);
+
+  // Initialize and bind 3D Scene once on mount
   useEffect(() => {
     if (!mountRef.current) return;
 
-    const scene = new HealthCarScene(mountRef.current, {
-      onTyreSelect: (c) => onSelectTyre(c),
-      onScreenPositionsUpdate: (positions) => setScreenPos(positions),
-      onLoaded: () => setIs3DLoaded(true),
-      onError: (msg) => setLoadError(msg),
-    });
-    sceneRef.current = scene;
+    let scene: HealthCarScene | null = null;
+    try {
+      scene = new HealthCarScene(mountRef.current, {
+        onTyreSelect: (c) => onSelectTyreRef.current(c),
+        onScreenPositionsUpdate: (positions) => setScreenPos(positions),
+        onLoaded: () => setIs3DLoaded(true),
+        onError: (msg) => setLoadError(msg),
+      });
+      sceneRef.current = scene;
+    } catch (err: unknown) {
+      console.warn('HealthCarScene WebGL initialization bypassed:', err);
+      setLoadError('3D WebGL context unavailable in current environment');
+    }
 
     return () => {
-      scene.destroy();
+      scene?.destroy();
       sceneRef.current = null;
     };
-  }, [onSelectTyre]);
+  }, []);
 
   // User interaction tracking for camera zoom (starts in full car overview)
   const [hasUserFocused, setHasUserFocused] = useState(false);

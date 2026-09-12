@@ -10,6 +10,7 @@
 
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
 /* ────────────────────────────────────────────── */
 /*  Types                                         */
@@ -77,8 +78,8 @@ export class HomeCarScene {
 
   /* ── Camera anchors ── */
   private readonly CAM_INITIAL = new THREE.Vector3(22, 9, 22);
-  private readonly CAM_HERO    = new THREE.Vector3(7.5, 2.8, 6.5);
-  private readonly CAM_LOOK    = new THREE.Vector3(0, 0.6, 0);
+  private readonly CAM_HERO = new THREE.Vector3(7.5, 2.8, 6.5);
+  private readonly CAM_LOOK = new THREE.Vector3(0, 0.6, 0);
 
   /* ── Callbacks ── */
   private cb: HomeCarSceneCallbacks;
@@ -113,9 +114,20 @@ export class HomeCarScene {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    this.renderer.toneMappingExposure = 1.1;
+    this.renderer.toneMappingExposure = 1.0;
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(this.renderer.domElement);
+
+    /* Setup HDRI Studio Environment Reflections (soft ambient response) */
+    try {
+      const pmrem = new THREE.PMREMGenerator(this.renderer);
+      pmrem.compileEquirectangularShader();
+      this.scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+      this.scene.environmentIntensity = 0.20;
+      pmrem.dispose();
+    } catch (e) {
+      console.warn('HomeCarScene HDRI initialization bypassed:', e);
+    }
 
     /* Setup scene elements */
     this.buildLighting();
@@ -217,7 +229,7 @@ export class HomeCarScene {
     const colors = new Float32Array(COUNT * 3);
 
     for (let i = 0; i < COUNT; i++) {
-      this.particlePositions[i * 3]     = (Math.random() - 0.5) * 70;
+      this.particlePositions[i * 3] = (Math.random() - 0.5) * 70;
       this.particlePositions[i * 3 + 1] = Math.random() * 18;
       this.particlePositions[i * 3 + 2] = (Math.random() - 0.5) * 70;
       this.particleSpeeds[i] = 0.002 + Math.random() * 0.006;
@@ -453,8 +465,8 @@ export class HomeCarScene {
 
     /* Scroll orbit */
     const scrollAng = this.scrollProg * Math.PI * 0.35;
-    const scrollR   = 8 + this.scrollProg * 3;
-    const scrollY   = 2.8 + this.scrollProg * 2.5;
+    const scrollR = 8 + this.scrollProg * 3;
+    const scrollY = 2.8 + this.scrollProg * 2.5;
 
     /* Mouse parallax */
     const mx = this.smoothMX * 0.8;
