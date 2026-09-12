@@ -29,6 +29,7 @@ from backend.api.schemas import (
     TDIStateResponse,
 )
 from backend.api.state import RuntimeState
+from backend.decision.schemas import StrategyDecision
 from backend.schemas.telemetry import TelemetryFrame
 
 
@@ -115,7 +116,17 @@ def create_router(state: RuntimeState, controller: ReplayController) -> APIRoute
             )
         return TDIStateResponse(**state.current_tdi)
 
-    # 8. Four-Wheel Tyre Availability
+    # 8. Decision Twin State
+    @router.get("/decision", response_model=StrategyDecision)
+    async def get_decision():
+        if state.current_decision is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="No strategy decision evaluated yet. Start the replay engine.",
+            )
+        return state.current_decision
+
+    # 9. Four-Wheel Tyre Availability
     @router.get("/tyres", response_model=FourWheelTyresResponse)
     async def get_tyres():
         # Strictly preserves unmeasured wheel-level telemetry as unavailable

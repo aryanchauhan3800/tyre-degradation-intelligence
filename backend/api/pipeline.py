@@ -17,6 +17,8 @@ from backend.blender.bridge import BlenderBridge
 from backend.blender.schemas import BlenderFramePayload
 from backend.confounders.confounder_engine import ConfounderEngine
 from backend.confounders.schemas import ConfounderFrame
+from backend.decision.decision_engine import DecisionEngine, DecisionTwinConfig
+from backend.decision.schemas import StrategyDecision
 from backend.ml.baseline_model import BaselineDegradationModel
 from backend.ml.features import extract_window_features
 from backend.residual.residual_engine import ResidualEngine
@@ -45,6 +47,7 @@ class PipelineResult:
     tdi_frame: TDIFrame
     model_reliability: float
     blender_payload: BlenderFramePayload
+    decision: StrategyDecision
 
 
 class UnifiedIntelligencePipeline:
@@ -59,6 +62,7 @@ class UnifiedIntelligencePipeline:
         fusion_alpha: float = 0.60,
         window_size: int = 15,
         data_mode: str = "REPLAY",
+        decision_twin_enabled: bool = True,
     ):
         self.fusion_alpha = fusion_alpha
         self.window_size = window_size
@@ -94,6 +98,9 @@ class UnifiedIntelligencePipeline:
         self.blender_bridge = BlenderBridge(data_mode=data_mode)
         self.selected_component: Optional[str] = None
 
+        # 7. Decision Twin (Strategic Tyre & Pit Decision Intelligence)
+        self.decision_engine = DecisionEngine(DecisionTwinConfig(enabled=decision_twin_enabled))
+
         # Rolling buffers for temporal window feature extraction
         self._tel_buffer: deque[TelemetryFrame] = deque(maxlen=window_size)
         self._res_buffer: deque[ResidualFrame] = deque(maxlen=window_size)
@@ -106,6 +113,7 @@ class UnifiedIntelligencePipeline:
         self.residual_engine.reset()
         self.confounder_engine.reset()
         self.tdi_engine.reset()
+        self.decision_engine.reset()
         self.blender_bridge.reset()
         self._tel_buffer.clear()
         self._res_buffer.clear()
@@ -199,7 +207,19 @@ class UnifiedIntelligencePipeline:
             2,
         )
 
-        # 7. Blender Payload Generation
+        # 7. Decision Twin (Phase 1 Strategy & Counterfactual Evaluation)
+        tdi_history_vals = [float(f.tdi) for f in self._tdi_buffer]
+        time_history_vals = [float(f.timestamp) for f in self._tel_buffer]
+        decision = self.decision_engine.evaluate(
+            telemetry_frame=frame,
+            tdi_frame=tdi_frame,
+            final_tdi=final_tdi,
+            confounder_frame=conf_frame,
+            tdi_history=tdi_history_vals,
+            time_history=time_history_vals,
+        )
+
+        # 8. Blender Payload Generation
         blender_payload = self.blender_bridge.format_frame(
             telemetry=frame.model_dump(),
             tdi_state={
@@ -221,6 +241,7 @@ class UnifiedIntelligencePipeline:
             tdi_frame=tdi_frame,
             model_reliability=round(model_reliability, 3),
             blender_payload=blender_payload,
+            decision=decision,
         )
 
     def set_selected_component(self, component: Optional[str]) -> None:
