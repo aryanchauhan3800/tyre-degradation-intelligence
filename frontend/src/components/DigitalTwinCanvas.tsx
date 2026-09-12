@@ -315,65 +315,8 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
     <div className="relative w-full h-full min-h-[480px] rounded-2xl border border-slate-200/90 overflow-hidden flex flex-col shadow-xs select-none bg-[#f8fafc]">
       {/* Photorealistic Pitlane & Suzuka Racetrack Backdrop */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden select-none">
-        {/* Soft daylight sky with realistic overcast motorsport horizon */}
+        {/* Soft daylight sky with clean open horizon */}
         <div className="absolute inset-0 bg-gradient-to-b from-[#e2e8f0] via-[#edf2f7] to-[#cbd5e1] opacity-95" />
-        
-        {/* Distant Suzuka Pit Building & Grandstand Architecture Silhouette */}
-        <div className="absolute top-0 left-0 right-0 h-48 opacity-30 filter blur-[0.8px]">
-          <svg viewBox="0 0 1200 140" preserveAspectRatio="none" className="w-full h-full">
-            <defs>
-              <linearGradient id="grandstandGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#64748b" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#334155" stopOpacity="0.95" />
-              </linearGradient>
-              <linearGradient id="canopyGrad" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#94a3b8" />
-                <stop offset="100%" stopColor="#475569" />
-              </linearGradient>
-            </defs>
-            {/* Iconic curved grandstand roof canopy of Suzuka */}
-            <path d="M 0,65 Q 200,28 400,34 Q 600,22 800,32 Q 1000,25 1200,45 L 1200,140 L 0,140 Z" fill="url(#canopyGrad)" />
-            {/* Grandstand seating tiers */}
-            <path d="M 0,85 L 1200,85 L 1200,140 L 0,140 Z" fill="url(#grandstandGrad)" />
-            {/* Pit building garage doors & team VIP suites */}
-            {Array.from({ length: 24 }).map((_, i) => (
-              <g key={i} opacity="0.6">
-                <rect x={24 + i * 50} y="92" width="36" height="28" fill="#1e293b" rx="2" />
-                <rect x={26 + i * 50} y="94" width="32" height="10" fill="#38bdf8" opacity="0.4" />
-              </g>
-            ))}
-            {/* Pit gantry masts, floodlights & timing telemetry antennae */}
-            <rect x="160" y="8" width="4" height="78" fill="#334155" />
-            <polygon points="152,8 172,8 162,1" fill="#f8fafc" />
-            <rect x="380" y="6" width="4" height="80" fill="#334155" />
-            <polygon points="372,6 392,6 382,0" fill="#f8fafc" />
-            <rect x="680" y="10" width="4" height="76" fill="#334155" />
-            <polygon points="672,10 692,10 682,3" fill="#f8fafc" />
-            <rect x="940" y="8" width="4" height="78" fill="#334155" />
-            <polygon points="932,8 952,8 942,1" fill="#f8fafc" />
-            {/* Pit wall barrier with catch fence & Pirelli / FIA sponsor hoardings */}
-            <rect x="0" y="122" width="1200" height="18" fill="#0f172a" />
-            <rect x="0" y="120" width="1200" height="3" fill="#e2e8f0" />
-            <rect x="60" y="124" width="180" height="14" fill="#d90429" rx="1" />
-            <rect x="280" y="124" width="220" height="14" fill="#0284c7" rx="1" />
-            <rect x="540" y="124" width="180" height="14" fill="#d90429" rx="1" />
-            <rect x="760" y="124" width="200" height="14" fill="#0f172a" rx="1" />
-            <rect x="1000" y="124" width="160" height="14" fill="#d90429" rx="1" />
-          </svg>
-        </div>
-
-        {/* Realistic Red & White Racing Kerbs in the midground */}
-        <div className="absolute top-36 left-0 right-0 h-10 overflow-hidden opacity-40 filter blur-[0.5px]">
-          <svg viewBox="0 0 1200 40" preserveAspectRatio="none" className="w-full h-full">
-            {Array.from({ length: 32 }).map((_, i) => (
-              <polygon
-                key={i}
-                points={`${i * 38},40 ${i * 38 + 20},0 ${i * 38 + 38},0 ${i * 38 + 18},40`}
-                fill={i % 2 === 0 ? '#E10600' : '#FFFFFF'}
-              />
-            ))}
-          </svg>
-        </div>
 
         {/* Concrete Pitlane Tarmac Flooring with perspective depth */}
         <div className="absolute bottom-0 left-0 right-0 h-[60%] bg-gradient-to-t from-[#64748b]/35 via-[#94a3b8]/20 to-transparent" />
@@ -622,10 +565,10 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
           </span>
         </div>
 
-        {/* Realistic Suzuka Circuit Track Map & Session Telemetry */}
-        <div className="mt-2.5 flex flex-col pointer-events-auto bg-white/95 backdrop-blur-md p-2.5 rounded-2xl border border-slate-200/90 shadow-sm w-fit max-w-[275px]">
+        {/* Realistic Suzuka Circuit Track Map & Session Telemetry (near-invisible glass over the moving road) */}
+        <div className="mt-2.5 flex flex-col pointer-events-auto bg-white/10 backdrop-blur-[3px] p-2.5 rounded-2xl border border-white/25 shadow-lg shadow-slate-900/10 w-fit max-w-[275px]">
           {/* Track Header */}
-          <div className="flex items-center justify-between border-b border-slate-100 pb-1 mb-1">
+          <div className="flex items-center justify-between border-b border-white/20 pb-1 mb-1">
             <div className="flex items-center space-x-1.5">
               <span className="text-xs">🇯🇵</span>
               <div className="flex flex-col">
@@ -643,8 +586,8 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             </div>
           </div>
 
-          {/* Detailed Figure-8 Suzuka Circuit Drawing */}
-          <div className="relative my-0.5 bg-gradient-to-b from-slate-50 to-slate-100/70 rounded-xl p-1 border border-slate-200/70 shadow-inner overflow-hidden">
+          {/* Detailed Figure-8 Suzuka Circuit Drawing (near-invisible glass, road shows through) */}
+          <div className="relative my-0.5 bg-white/10 rounded-xl p-1 border border-white/20 shadow-inner overflow-hidden">
             {/* Sector Legend Pills */}
             <div className="absolute top-1 left-1.5 flex items-center space-x-1.5 text-[7.5px] font-mono font-bold select-none z-10">
               <span className="flex items-center space-x-0.5 text-cyan-700">
@@ -804,7 +747,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
           </div>
 
           {/* Session Data Table */}
-          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8.5px] font-mono border-t border-slate-100 pt-1 mt-0.5">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 text-[8.5px] font-mono border-t border-white/20 pt-1 mt-0.5">
             <span className="text-slate-500 font-medium">TRACK TEMP</span>
             <span className="text-slate-800 font-bold text-right">{isConnectedEffective && telemetryFrame?.environment?.track_temp_c !== undefined ? `${telemetryFrame.environment.track_temp_c}°C` : '0°C'}</span>
 
@@ -838,35 +781,31 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <div className="flex flex-col justify-between text-[10px] font-mono leading-none h-36">
               <span className="text-red-600 font-bold flex items-center space-x-1">
                 <span className="text-slate-400">-</span>
-                <span>&gt; 120°C</span>
+                <span>&gt; 115°C</span>
               </span>
-              <span className="text-orange-600 font-semibold flex items-center space-x-1">
-                <span className="text-slate-400">-</span>
-                <span>110°C</span>
-              </span>
-              <span className="text-yellow-600 font-semibold flex items-center space-x-1">
+              <span className="text-red-500 font-semibold flex items-center space-x-1">
                 <span className="text-slate-400">-</span>
                 <span>100°C</span>
               </span>
-              <span className="text-emerald-600 font-semibold flex items-center space-x-1">
+              <span className="text-orange-600 font-semibold flex items-center space-x-1">
                 <span className="text-slate-400">-</span>
-                <span>90°C</span>
+                <span>85°C</span>
               </span>
-              <span className="text-teal-600 font-semibold flex items-center space-x-1">
-                <span className="text-slate-400">-</span>
-                <span>80°C</span>
-              </span>
-              <span className="text-sky-600 font-semibold flex items-center space-x-1">
+              <span className="text-yellow-600 font-semibold flex items-center space-x-1">
                 <span className="text-slate-400">-</span>
                 <span>70°C</span>
               </span>
+              <span className="text-emerald-600 font-semibold flex items-center space-x-1">
+                <span className="text-slate-400">-</span>
+                <span>55°C</span>
+              </span>
+              <span className="text-cyan-600 font-semibold flex items-center space-x-1">
+                <span className="text-slate-400">-</span>
+                <span>35°C</span>
+              </span>
               <span className="text-blue-700 font-bold flex items-center space-x-1">
                 <span className="text-slate-400">-</span>
-                <span>60°C</span>
-              </span>
-              <span className="text-blue-900 font-bold flex items-center space-x-1">
-                <span className="text-slate-400">-</span>
-                <span>&lt; 60°C</span>
+                <span>&lt; 25°C</span>
               </span>
             </div>
           </div>
