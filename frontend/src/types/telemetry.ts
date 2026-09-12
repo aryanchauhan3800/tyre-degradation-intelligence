@@ -306,6 +306,7 @@ export interface WebSocketTelemetryMessage {
   tdi: TDIStateResponse;
   ai: AIStateResponse;
   blender: BlenderFramePayload;
+  decision?: StrategyDecision;
 }
 
 export interface SessionResponse {
@@ -363,3 +364,56 @@ export interface LapSummaryResponse {
   trend: TDITrend;
   confidence: number;
 }
+
+export type DecisionAction = 'PIT_NOW' | 'STAY_OUT' | 'PUSH' | 'MANAGE';
+export type DecisionRisk = 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+export type PitWindowUrgency = 'NONE' | 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+
+export interface PitWindow {
+  start_lap: number | null;
+  end_lap: number | null;
+  estimated_laps_to_cliff: number | null;
+  urgency: PitWindowUrgency;
+  reason: string;
+}
+
+export interface DecisionScenario {
+  action: DecisionAction;
+  decision_score: number;
+  projected_tdi: number;
+  projected_tdi_trend: string;
+  projected_performance_loss: number;
+  tyre_risk: DecisionRisk;
+  estimated_laps_remaining: number | null;
+  explanation: string;
+  limitations: string[];
+}
+
+export interface CliffForecast {
+  current_tdi: number;
+  current_trend: string;
+  threshold: number;
+  estimated_laps_to_threshold: number | null;
+  forecast_quality: number;
+  method: string;
+  explanation: string;
+}
+
+export interface StrategyDecision {
+  recommended_action: DecisionAction;
+  decision_score: number;
+  current_lap: number;
+  tyre_age: number | null;
+  compound: string | null;
+  current_tdi: number;
+  tdi_trend: string;
+  estimated_laps_to_cliff: number | null;
+  pit_window: PitWindow;
+  scenarios: DecisionScenario[];
+  reasons: string[];
+  risks: string[];
+  data_quality: number;
+  modelled_fields: string[];
+  unavailable_fields: string[];
+}
+

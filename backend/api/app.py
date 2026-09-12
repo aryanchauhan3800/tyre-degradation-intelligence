@@ -24,6 +24,7 @@ def create_app(
     model_path: str = "data/ml/baseline_model.joblib",
     fusion_alpha: float = 0.60,
     data_mode: str = "REPLAY",
+    decision_twin_enabled: bool = True,
 ) -> FastAPI:
     """
     Application factory initializing the pipeline, replay controller, and FastAPI endpoints.
@@ -32,6 +33,7 @@ def create_app(
         model_path=model_path,
         fusion_alpha=fusion_alpha,
         data_mode=data_mode,
+        decision_twin_enabled=decision_twin_enabled,
     )
 
     controller = ReplayController(

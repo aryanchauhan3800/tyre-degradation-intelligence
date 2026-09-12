@@ -13,6 +13,7 @@ import type {
   WebSocketTelemetryMessage,
   ReplayStatusResponse,
   ConfounderFrame,
+  StrategyDecision,
 } from './types/telemetry';
 import { api } from './services/api';
 import { useTelemetryWebSocket } from './hooks/useTelemetryWebSocket';
@@ -41,6 +42,7 @@ interface DashboardFrameState {
   canonicalTransientActive: boolean;
   canonicalTyreAge: number | null;
   canonicalCompound: string;
+  decision: StrategyDecision | null;
 }
 
 function buildUnifiedFrameState(
@@ -50,7 +52,8 @@ function buildUnifiedFrameState(
   phys: PhysicsTwinOutput | null,
   conf: ConfounderFrame | null,
   tdiRes: TDIStateResponse | null,
-  mode: DataMode
+  mode: DataMode,
+  dec: StrategyDecision | null = null
 ): DashboardFrameState {
   const veh = (tel?.vehicle || tel?.vehicle_state) ?? null;
   const speed = veh?.speed_kph ?? 0;
@@ -126,6 +129,7 @@ function buildUnifiedFrameState(
     canonicalTransientActive: transientActive,
     canonicalTyreAge,
     canonicalCompound,
+    decision: dec,
   };
 }
 
@@ -173,11 +177,12 @@ export function App() {
       if (tdiHistRes) setTdiHistory(tdiHistRes);
       if (resHistRes) setResidualHistory(resHistRes);
 
-      const [tel, phys, conf, tdiRes] = await Promise.all([
+      const [tel, phys, conf, tdiRes, decRes] = await Promise.all([
         api.getTelemetry().catch(() => null),
         api.getPhysics().catch(() => null),
         api.getConfounders().catch(() => null),
         api.getTDI().catch(() => null),
+        api.getDecision().catch(() => null),
       ]);
 
       const initialUnified = buildUnifiedFrameState(
@@ -187,7 +192,8 @@ export function App() {
         phys,
         conf,
         tdiRes,
-        dataMode
+        dataMode,
+        decRes
       );
       setFrameState(initialUnified);
     } catch (err) {
@@ -216,7 +222,8 @@ export function App() {
         msg.physics,
         msg.confounders,
         msg.tdi,
-        dataMode
+        dataMode,
+        msg.decision ?? null
       );
       setFrameState(nextUnified);
 
@@ -484,6 +491,7 @@ export function App() {
               tdi={frameState.tdi}
               dataMode={dataMode}
               session={session}
+              decision={frameState.decision}
             />
           )}
 

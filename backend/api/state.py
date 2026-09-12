@@ -19,6 +19,7 @@ from backend.api.schemas import (
     SessionResponse,
     TDIHistoryPoint,
 )
+from backend.decision.schemas import StrategyDecision
 from backend.schemas.telemetry import TelemetryFrame
 
 
@@ -52,6 +53,7 @@ class RuntimeState:
         self.current_confounders: Optional[Dict[str, Any]] = None
         self.current_tdi: Optional[Dict[str, Any]] = None
         self.current_tyres: FourWheelTyresResponse = FourWheelTyresResponse()
+        self.current_decision: Optional[StrategyDecision] = None
 
         # Historical rolling trajectories
         self.tdi_history: Deque[TDIHistoryPoint] = deque(maxlen=history_limit)
@@ -125,7 +127,10 @@ class RuntimeState:
                 "counter_evidence": tdi_frame.counter_evidence,
             }
 
-            # 2. Tyres state (FastF1 source: wheel-level degradation is explicitly unavailable)
+            # 2. Decision Twin State (Phase 1 Strategy Intelligence)
+            self.current_decision = result.decision
+
+            # 3. Tyres state (FastF1 source: wheel-level degradation is explicitly unavailable)
             self.current_tyres = FourWheelTyresResponse(
                 FL=CornerSlot(available=False, tdi=None),
                 FR=CornerSlot(available=False, tdi=None),
@@ -207,6 +212,7 @@ class RuntimeState:
             self.current_residual = None
             self.current_confounders = None
             self.current_tdi = None
+            self.current_decision = None
             self.tdi_history.clear()
             self.residual_history.clear()
             self.lap_summaries.clear()

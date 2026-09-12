@@ -21,8 +21,10 @@ import type {
   TDIStateResponse,
   TelemetryFrame,
   TyreCorner,
-  TyreVisMode
+  TyreVisMode,
+  StrategyDecision,
 } from '../types/telemetry';
+import { api } from '../services/api';
 import type { ActiveNavTab } from '../components/Navbar';
 import { calculateTyreCornerState } from '../utils/tyreCalculations';
 import { HealthCarScene, type TyreThermalValues } from '../three/HealthCarScene';
@@ -39,6 +41,7 @@ interface OverallHealthPageProps {
   tdi?: TDIStateResponse | null;
   dataMode?: DataMode;
   session?: SessionResponse | null;
+  decision?: StrategyDecision | null;
 }
 
 export const OverallHealthPage: React.FC<OverallHealthPageProps> = ({
@@ -53,7 +56,23 @@ export const OverallHealthPage: React.FC<OverallHealthPageProps> = ({
   tdi = null,
   dataMode = 'REPLAY',
   session: _session = null,
+  decision = null,
 }) => {
+  // Decision Twin Live State
+  const [liveDecision, setLiveDecision] = useState<StrategyDecision | null>(decision ?? null);
+
+  useEffect(() => {
+    if (decision) {
+      setLiveDecision(decision);
+    }
+  }, [decision]);
+
+  useEffect(() => {
+    if (!decision) {
+      api.getDecision().then(setLiveDecision).catch(() => {});
+    }
+  }, [lap, decision]);
+
   // 3D Scene ref & visualization mode
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<HealthCarScene | null>(null);
@@ -1250,40 +1269,162 @@ export const OverallHealthPage: React.FC<OverallHealthPageProps> = ({
             </div>
           </div>
 
-          {/* Card 2: Pit Stop Strategy Calculator */}
-          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs">
-            <div className="flex items-center space-x-2 pb-3 border-b border-slate-100 mb-4">
-              <Clock className="w-5 h-5 text-emerald-600" />
-              <h3 className="font-mono font-black text-sm text-slate-900 uppercase">
-                PIT STOP WINDOW CALCULATOR
-              </h3>
+          {/* Card 2: DECISION TWIN — PIT STRATEGY ENGINE */}
+          <div className="bg-white rounded-2xl p-6 border border-slate-200 shadow-2xs flex flex-col justify-between">
+            <div>
+              {/* Header */}
+              <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-3">
+                <div className="flex items-center space-x-2">
+                  <Clock className="w-5 h-5 text-red-600" />
+                  <div>
+                    <h3 className="font-mono font-black text-sm text-slate-900 uppercase tracking-tight">
+                      DECISION TWIN — PIT STRATEGY
+                    </h3>
+                    <div className="text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+                      DETERMINISTIC COUNTERFACTUAL
+                    </div>
+                  </div>
+                </div>
+                {liveDecision && (
+                  <span className={`px-2 py-0.5 rounded text-[10px] font-mono font-black uppercase ${
+                    liveDecision.pit_window.urgency === 'CRITICAL' ? 'bg-red-100 text-red-700 border border-red-200' :
+                    liveDecision.pit_window.urgency === 'HIGH' ? 'bg-amber-100 text-amber-700 border border-amber-200' :
+                    liveDecision.pit_window.urgency === 'MEDIUM' ? 'bg-blue-100 text-blue-700 border border-blue-200' :
+                    'bg-slate-100 text-slate-600 border border-slate-200'
+                  }`}>
+                    {liveDecision.pit_window.urgency} URGENCY
+                  </span>
+                )}
+              </div>
+
+              {liveDecision ? (
+                <div className="space-y-3 font-mono text-xs">
+                  {/* Primary Recommendation Banner */}
+                  <div className={`p-3.5 rounded-xl border ${
+                    liveDecision.recommended_action === 'PIT_NOW' ? 'bg-red-50/90 border-red-200 text-red-950' :
+                    liveDecision.recommended_action === 'STAY_OUT' ? 'bg-emerald-50/90 border-emerald-200 text-emerald-950' :
+                    liveDecision.recommended_action === 'PUSH' ? 'bg-amber-50/90 border-amber-200 text-amber-950' :
+                    'bg-blue-50/90 border-blue-200 text-blue-950'
+                  }`}>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+                        RECOMMENDED ACTION:
+                      </span>
+                      <span className="text-xs font-black">
+                        SCORE: {liveDecision.decision_score.toFixed(1)}/100
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <span className={`inline-flex items-center px-3 py-1 rounded-lg text-sm font-black tracking-wide ${
+                        liveDecision.recommended_action === 'PIT_NOW' ? 'bg-red-600 text-white shadow-xs' :
+                        liveDecision.recommended_action === 'STAY_OUT' ? 'bg-emerald-600 text-white shadow-xs' :
+                        liveDecision.recommended_action === 'PUSH' ? 'bg-amber-500 text-white shadow-xs' :
+                        'bg-blue-600 text-white shadow-xs'
+                      }`}>
+                        {liveDecision.recommended_action === 'PIT_NOW' && 'BOX THIS LAP (PIT NOW)'}
+                        {liveDecision.recommended_action === 'STAY_OUT' && 'STAY OUT (EXTEND)'}
+                        {liveDecision.recommended_action === 'PUSH' && 'PUSH (ATTACK PACE)'}
+                        {liveDecision.recommended_action === 'MANAGE' && 'MANAGE PACE (TYRE LIFE)'}
+                      </span>
+
+                      <div className="text-right">
+                        <span className="text-[10px] block text-slate-500">CLIFF FORECAST</span>
+                        <span className="text-xs font-bold text-slate-800">
+                          {liveDecision.estimated_laps_to_cliff !== null
+                            ? `${liveDecision.estimated_laps_to_cliff.toFixed(1)} Laps`
+                            : 'Stable / No Cliff'}
+                        </span>
+                      </div>
+                    </div>
+
+                    {liveDecision.reasons.length > 0 && (
+                      <p className="mt-2 text-[11px] font-sans leading-relaxed border-t border-slate-200/60 pt-1.5 opacity-90">
+                        {liveDecision.reasons[0]}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Pit Window & Degradation Timing */}
+                  <div className="grid grid-cols-2 gap-2 text-[11px] bg-slate-50 p-2.5 rounded-xl border border-slate-200/80">
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">PIT STOP WINDOW</span>
+                      <strong className="text-slate-800 font-bold">
+                        {liveDecision.pit_window.start_lap !== null
+                          ? `Laps ${liveDecision.pit_window.start_lap} – ${liveDecision.pit_window.end_lap ?? '?'}`
+                          : 'Not in window'}
+                      </strong>
+                    </div>
+                    <div>
+                      <span className="text-slate-400 block text-[10px]">CURRENT TDI & TREND</span>
+                      <strong className="text-slate-800 font-bold">
+                        {liveDecision.current_tdi.toFixed(1)} TDI ({liveDecision.tdi_trend})
+                      </strong>
+                    </div>
+                  </div>
+
+                  {/* Counterfactual Evaluation Matrix */}
+                  <div>
+                    <div className="text-[10px] uppercase font-bold text-slate-400 mb-1.5 flex justify-between">
+                      <span>4-WAY COUNTERFACTUAL MATRIX</span>
+                      <span>SCORE / RISK</span>
+                    </div>
+                    <div className="space-y-1">
+                      {liveDecision.scenarios.map((scen) => {
+                        const isRecommended = scen.action === liveDecision.recommended_action;
+                        return (
+                          <div
+                            key={scen.action}
+                            className={`flex items-center justify-between px-2 py-1.5 rounded-lg border text-[11px] transition-colors ${
+                              isRecommended
+                                ? 'bg-slate-900 text-white border-slate-900 font-bold'
+                                : 'bg-white border-slate-200/70 text-slate-700 hover:bg-slate-50'
+                            }`}
+                          >
+                            <div className="flex items-center gap-1.5">
+                              <span className={`w-1.5 h-1.5 rounded-full ${
+                                scen.action === 'PIT_NOW' ? 'bg-red-500' :
+                                scen.action === 'STAY_OUT' ? 'bg-emerald-500' :
+                                scen.action === 'PUSH' ? 'bg-amber-500' : 'bg-blue-500'
+                              }`} />
+                              <span>{scen.action}</span>
+                            </div>
+                            <div className="flex items-center gap-2 font-mono">
+                              <span className={isRecommended ? 'text-slate-300' : 'text-slate-500'}>
+                                TDI {scen.projected_tdi.toFixed(1)} ({scen.projected_performance_loss >= 0 ? `+${scen.projected_performance_loss.toFixed(2)}s` : `${scen.projected_performance_loss.toFixed(2)}s`})
+                              </span>
+                              <span className={`text-[10px] px-1.5 py-0.2 rounded font-bold ${
+                                isRecommended ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700'
+                              }`}>
+                                {scen.decision_score.toFixed(0)}
+                              </span>
+                              <span className={`text-[9px] px-1 py-0.2 rounded font-bold uppercase ${
+                                scen.tyre_risk === 'CRITICAL' ? 'bg-red-100 text-red-800' :
+                                scen.tyre_risk === 'HIGH' ? 'bg-amber-100 text-amber-800' :
+                                scen.tyre_risk === 'MEDIUM' ? 'bg-blue-100 text-blue-800' :
+                                'bg-emerald-100 text-emerald-800'
+                              }`}>
+                                {scen.tyre_risk}
+                              </span>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="py-8 text-center text-slate-400 font-mono text-xs">
+                  Awaiting Decision Twin Evaluation...
+                </div>
+              )}
             </div>
 
-            <div className="space-y-3 font-mono text-xs">
-              <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-200">
-                <div className="flex justify-between items-center mb-1">
-                  <span className="text-slate-600 font-bold">RECOMMENDED PIT WINDOW:</span>
-                  <span className="text-emerald-700 font-black text-sm">LAPS 31 – 34</span>
-                </div>
-                <p className="text-[11px] text-emerald-800 font-sans">
-                  Optimal crossover to C1 Hard tyre before front-right graining cliff induces +1.4s/lap delta.
-                </p>
-              </div>
-
-              <div className="flex justify-between pt-1">
-                <span className="text-slate-500">Pit Lane Loss Delta:</span>
-                <strong className="text-slate-900 font-bold">21.4 Seconds</strong>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-slate-500">Undercut Advantage:</span>
-                <strong className="text-emerald-600 font-bold">-1.8s per lap</strong>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="text-slate-500">Target Out-Lap Position:</span>
-                <strong className="text-slate-900 font-bold">P3 Clean Air Window</strong>
-              </div>
+            {/* Scientific Provenance Footer */}
+            <div className="mt-3 pt-2.5 border-t border-slate-100 text-[10px] text-slate-400 font-sans flex items-center justify-between">
+              <span>Deterministic counterfactual physics evaluation</span>
+              <span className="font-mono text-[9px] text-slate-400">FastF1 Telemetry</span>
             </div>
           </div>
 

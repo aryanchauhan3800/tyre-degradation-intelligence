@@ -1,0 +1,1026 @@
+================================================================================
+TYRETRACE / TYRE DEGRADATION INTELLIGENCE — COMPLETE TECHNICAL AUDIT REPORT
+Document Name : project_status.txt
+Author        : Technical Architecture Audit Agent
+Date          : 2026-09-12
+Source of Truth: Actual Source Codebase (Code is Authoritative over Documentation)
+================================================================================
+
+STATUS CLASSIFICATION LABELS USED THROUGHOUT THIS REPORT:
+  • IMPLEMENTED        : Fully verified in executable code with tests and runtime paths.
+  • PARTIALLY IMPLEMENTED : Code exists and functions, but has bounded scope, fallbacks, or gaps.
+  • PLACEHOLDER        : Mockup, stub, or static UI artifact without functional backend calculation.
+  • DEMO/SIMULATION    : Heuristic or synthetic calculation active only in DEMO mode to mock missing telemetry.
+  • MEASURED           : Directly captured from official timing / vehicle telemetry sensor streams (FastF1).
+  • DERIVED            : Numerically calculated directly from measured telemetry (e.g. Δv / Δt).
+  • MODELLED           : Calculated using physics formulas, baseline assumptions, or regression estimates.
+  • UNAVAILABLE        : Sensor channels not present in public F1 telemetry, explicitly maintained as None/null.
+  • NOT IMPLEMENTED    : Completely absent from the codebase.
+
+================================================================================
+TABLE OF CONTENTS
+================================================================================
+1.  Project Purpose, Current Status, and Feature Matrix
+2.  Actual Architecture and End-to-End Data Flow Map
+3.  Backend Framework, Services, Engines, and Modular Inventory
+4.  Digital Twin & Physics Engine (Calculations, Formulas, Inputs/Outputs)
+5.  Actual vs Expected Performance and Residual Calculation Engine
+6.  Confounder Analysis Engine (Rules, Factors, Thresholds, Attenuation)
+7.  Tyre Degradation Pipeline (TDI, Trajectory, Severity, Explainability)
+8.  Machine Learning Models Audit (Type, Features, Training, Inference Flow)
+9.  Physics + AI Fusion Architecture and Weights
+10. FastF1 and Telemetry Data Architecture (Measured vs Derived vs Unavailable)
+11. Real-Time Streaming Architecture (Ingestion, Pipeline, WebSockets, Schedulers)
+12. Frontend Architecture (React, TypeScript, Vite, Pages, State, Replay)
+13. Three.js Digital Twin 3D Implementation (WebGL, GLB, Scenes, Shaders)
+14. Blender Digital Twin Integration (Bridge, Protocol, Shaders, Rigs, Cameras)
+15. Complete REST and WebSocket API Inventory
+16. Canonical Data Contracts and Schemas (Pydantic, TypeScript, Blender)
+17. Test Suite Audit (Counts, Results, Coverage, Failing Tests Analysis)
+18. Configuration and Environment Variables Audit
+19. Dedicated Audit of Existing AI / Agent / Decision / Strategy Functionality
+20. Available State Supporting Future Decision Intelligence
+21. Missing Data and Capabilities Required for Strategic Decision Twin
+22. Recommended Integration Point for Future Decision Twin & AI Agent
+23. Technical Debt, Limitations, Risks, and Architectural Concerns
+24. DECISION INTELLIGENCE READINESS
+    24.1 Already Available
+    24.2 Needs Modification
+    24.3 Needs To Be Built
+    24.4 Architectural Risks
+    24.5 Recommended Starting Point
+
+================================================================================
+1. PROJECT PURPOSE, CURRENT STATUS, AND FEATURE MATRIX
+================================================================================
+1.1 PROJECT PURPOSE
+TyreTrace is an engineering digital twin and degradation inference system for Formula 1 racing.
+Because FIA technical regulations and commercial broadcast policies strictly prohibit public access
+to real-time tyre internal sensors (carcass/tread thermal arrays, internal pressures, dynamic tread
+depth, slip angles, and individual wheel speeds), tyre degradation cannot be directly observed from
+public telemetry feeds.
+
+TyreTrace solves this fundamental observability barrier via a deterministic 4-stage physics pipeline:
+  1. Ingests raw telemetry (Speed, Throttle, Brake, Gear, RPM, DRS, Weather, Stint Metadata).
+  2. Runs a first-principles Physics Digital Twin to compute expected vehicle acceleration.
+  3. Computes the Actual-vs-Expected residual: r_ax(t) = ax_actual(t) - ax_expected(t).
+  4. Filters non-tyre physical confounders (DRS, threshold braking, engine transients, aero speed scaling).
+  5. Infers the Tyre Degradation Index (TDI) [0–100] through deterministic physics scoring fused with
+     an interpretable machine learning baseline (Random Forest / Gradient Boosting).
+  6. Visualizes the car and tyres in real time across a high-performance React dashboard, WebGL Three.js
+     canvases, and an external Blender 3D Digital Twin via WebSocket streaming.
+
+1.2 CURRENT STATUS
+The core foundational pipeline (Phases 1 through 11) is fully implemented, verified, and operational.
+The backend serves both historical replay and real-time streaming over REST and WebSockets.
+The frontend displays multi-page race intelligence, interactive 3D digital twins, and explainability cards.
+However, NO autonomous decision-making, LLM agent, pit-stop optimization, or strategy execution engine
+currently exists in executable code.
+
+1.3 IMPLEMENTATION STATUS MATRIX
+-----------------------------------------------------------------------------------------------------------------------
+Subsystem / Feature                      Status                  Evidence in Codebase
+-----------------------------------------------------------------------------------------------------------------------
+FastF1 Ingestion Adapter                 IMPLEMENTED             backend/telemetry/fastf1_adapter.py (verified cache/download)
+Track Spatial Coordinate Mapper          IMPLEMENTED             backend/telemetry/track_mapper.py (distance calibration)
+First-Principles Physics Twin            IMPLEMENTED             backend/twin_engine/interface.py & physics_model.py
+Actual vs Expected Residual Engine       IMPLEMENTED             backend/residual/residual_engine.py & features.py
+Deterministic Confounder Engine          IMPLEMENTED             backend/confounders/confounder_engine.py & rules.py
+TDI Scoring & Trajectory Engine          IMPLEMENTED             backend/tdi/scoring.py & tdi_engine.py
+ML Baseline Model (Random Forest)        IMPLEMENTED             backend/ml/baseline_model.py (RandomForestRegressor)
+ML Temporal Window Feature Extractor     IMPLEMENTED             backend/ml/features.py (Models A, B, C, D, E)
+Physics + AI Fusion Layer                IMPLEMENTED             backend/api/pipeline.py (alpha * physics + (1-alpha) * ai)
+FastAPI REST API (13 endpoints)          IMPLEMENTED             backend/api/routes.py & app.py
+WebSocket Telemetry Streaming Gateway    IMPLEMENTED             backend/api/websocket.py (active connection manager)
+Replay Controller (0.25x-10x, seek)      IMPLEMENTED             backend/api/replay_controller.py
+Blender Bridge Translation Layer         IMPLEMENTED             backend/blender/bridge.py & schemas.py
+Blender Live Python Addon / Bridge       IMPLEMENTED             blender/tyretrace_live_bridge.py (bpy.app.timers loop)
+Three.js Hero Car Scene (Homepage)       IMPLEMENTED             frontend/src/three/HomeCarScene.ts (McLaren MP4/5 GLB)
+Three.js Digital Twin Wheel Scene        IMPLEMENTED             frontend/src/three/HeroTyreScene.ts (F1 Front Wheel GLB)
+Three.js Health Car Scene                IMPLEMENTED             frontend/src/three/HealthCarScene.ts (f1_car.glb)
+React UI Navigation & Tabs               IMPLEMENTED             frontend/src/App.tsx & components/Navbar.tsx
+PhyEngine Interactive Diagnostics        IMPLEMENTED             frontend/src/pages/PhyEnginePage.tsx
+Explainability & Why Panels              IMPLEMENTED             frontend/src/components/WhyPanel.tsx & ConfoundersPanel.tsx
+Real vs Demo Mode Separation             IMPLEMENTED             Explicitly enforced across backend & frontend
+4-Wheel Individual Tyre Degradation      DEMO/SIMULATION         Simulated in demoSimulation.ts; UNAVAILABLE in FastF1
+Pit Stop Strategy Calculator (Health)    PLACEHOLDER             Hardcoded static JSX text in OverallHealthPage.tsx
+Race Strategy Timeline (Home)            PLACEHOLDER             Hardcoded static JSX timeline in HomePage.tsx
+AI Strategy / Decision Agent             NOT IMPLEMENTED         No agent, LLM, or decision engine exists
+Automated Strategy Engine (PIT_NOW, etc) NOT IMPLEMENTED         No decision algorithms or action triggers exist
+Multi-Car Competitor Telemetry           NOT IMPLEMENTED         Only single car/driver session data processed
+Safety Car / VSC Strategy Dynamics       NOT IMPLEMENTED         No race control or safety car logic implemented
+-----------------------------------------------------------------------------------------------------------------------
+
+================================================================================
+2. ACTUAL ARCHITECTURE AND END-TO-END DATA FLOW MAP
+================================================================================
+2.1 END-TO-END TELEMETRY & INFERENCE DATA FLOW
+Every time-slice sample travels through a strict, unidirectional, deterministic pipeline:
+
+  [FastF1 Raw Telemetry / Pre-recorded Session File]
+                        │
+                        ▼
+            backend/telemetry/fastf1_adapter.py
+  (Converts speed, throttle, brake, DRS, weather, stint into TelemetryFrame)
+  (Strictly preserves unmeasured tyre pressures, temperatures, wheel speeds as None)
+                        │
+                        ▼
+            backend/api/replay_controller.py
+  (Controls playback clock, frame index, seeking, speed multipliers 0.25x–10x)
+                        │
+                        ▼
+            backend/api/pipeline.py: UnifiedIntelligencePipeline.process_frame()
+  ┌─────────────────────┴────────────────────────────────────────────────────────┐
+  │                                                                              │
+  │  STEP 1: Physics Digital Twin (backend/twin_engine/interface.py)             │
+  │    • Input  : TelemetryFrame (v, throttle, brake, gear, mass, weather)      │
+  │    • Logic  : Drag (v^2), Rolling Res, Max Traction Power, Brake Clamp       │
+  │    • Output : expected_acceleration_mps2, forces, load transfer              │
+  │                                                                              │
+  │  STEP 2: Actual-vs-Expected Residual Engine (backend/residual/residual_engine.py)
+  │    • Input  : TelemetryFrame + expected_acceleration_mps2                   │
+  │    • Logic  : ax_actual = Δv / Δt; r_ax = ax_actual - ax_expected            │
+  │    • Output : ResidualFrame (acceleration_residual_mps2, normalized_residual)│
+  │                                                                              │
+  │  STEP 3: Confounder Engine (backend/confounders/confounder_engine.py)        │
+  │    • Input  : ResidualFrame + TelemetryFrame                                 │
+  │    • Logic  : Evaluates DRS, Braking, Throttle, High-Speed Aero, Transients  │
+  │    • Output : ConfounderFrame (non_tyre_explanation_score, tyre_evidence_quality)
+  │                                                                              │
+  │  STEP 4: Physics TDI Engine (backend/tdi/tdi_engine.py)                      │
+  │    • Input  : ConfounderFrame + tyre_age_laps + compound                     │
+  │    • Logic  : Weighted evidence scoring attenuated by confounder penalty     │
+  │    • Output : TDIFrame (physics_tdi [0–100], state, trend, confidence)       │
+  │                                                                              │
+  │  STEP 5: Machine Learning Baseline (backend/ml/baseline_model.py)            │
+  │    • Input  : Rolling 15-frame temporal window vector (Model E features)     │
+  │    • Logic  : Scikit-learn RandomForestRegressor.predict()                   │
+  │    • Output : ai_tdi [0–100], model_reliability [0–1]                        │
+  │                                                                              │
+  │  STEP 6: Physics + AI Fusion Layer                                           │
+  │    • Formula: final_tdi = 0.60 * physics_tdi + 0.40 * ai_tdi                │
+  │    • Output : final_tdi [0–100], model_reliability                           │
+  │                                                                              │
+  │  STEP 7: 3D Visualization Payloads Generation                                │
+  │    • BlenderBridge formats compact BlenderFramePayload                       │
+  │                                                                              │
+  └─────────────────────┬────────────────────────────────────────────────────────┘
+                        │
+                        ▼
+            backend/api/state.py: runtime_state.update_from_pipeline_result()
+  (In-memory atomic update with thread lock: current state, rolling histories, lap summaries)
+                        │
+         ┌──────────────┴──────────────┐
+         ▼                             ▼
+ backend/api/routes.py         backend/api/websocket.py
+ (FastAPI REST Endpoints)      (WebSocket Broadcast /ws/telemetry)
+         │                             │
+         ├─────────────────────────────┤
+         ▼                             ▼
+  Frontend React App          Blender 3D Digital Twin
+  (http://localhost:5173)     (blender/tyretrace_live_bridge.py)
+  • DashboardPage             • Dynamic wheel RPM rotation
+  • OverallHealthPage         • Suspension pitch / squat
+  • PhyEnginePage (Three.js)  • Thermal FLIR emission shader
+  • HomePage (McLaren 3D)     • Tyre degradation roughness/bump
+  • ReplayControlBar          • DRS wing flap actuation
+
+================================================================================
+3. BACKEND FRAMEWORK, SERVICES, ENGINES, AND MODULAR INVENTORY
+================================================================================
+3.1 FRAMEWORK & ENTRY POINTS
+• Web Framework : FastAPI 0.115+ running on Starlette / Uvicorn ASGI server.
+• Entry Point 1 : backend/main.py — Lightweight script bootstrapping create_app() with default paths.
+• Entry Point 2 : backend/api/app.py — Authoritative factory create_app() registering routes, CORS,
+                  lifespan context manager, and WebSocket endpoints.
+• Python Version: Python 3.12+ (verified active on 3.12.10 Windows x64).
+
+3.2 BACKEND MODULE INVENTORY & CONSUMER DEPENDENCY GRAPH
+-----------------------------------------------------------------------------------------------------------------------
+Module / File                     Purpose                             Inputs -> Outputs             Consumers
+-----------------------------------------------------------------------------------------------------------------------
+backend/api/app.py                FastAPI application factory,        Config -> FastAPI app         Uvicorn, Pytest
+                                  lifespan manager, WebSocket handler instance
+backend/api/pipeline.py           Single orchestration pipeline for   TelemetryFrame ->             ReplayController,
+                                  end-to-end physics/residual/TDI/ML  PipelineResult                TestClient
+backend/api/state.py              Thread-safe in-memory store for     PipelineResult ->             REST routes,
+                                  latest frames, rolling history      State queries                 WebSocket manager
+backend/api/routes.py             13 REST endpoints for telemetry,    HTTP requests ->              React frontend,
+                                  physics, TDI, replay, selection     JSON responses                automated tests
+backend/api/websocket.py          Asynchronous WebSocket manager      PipelineResult ->             React frontend,
+                                  broadcasting JSON frame packets     JSON WS frames                Blender addon
+backend/api/replay_controller.py  Playback clock, seek, speed,        JSON dataset ->               REST routes,
+                                  and frame-stepping loop             TelemetryFrames               app lifespan
+backend/twin_engine/interface.py  TwinEngine wrapper executing        TelemetryFrame ->             UnifiedPipeline,
+                                  vehicle physical balance            TwinEngineOutput              ResidualEngine
+backend/twin_engine/physics_model.py First-principles math equations  v, Cd, A, m, throttle, brake  TwinEngine
+                                  (drag, load transfer, grip)         -> forces, expected_accel
+backend/twin_engine/parameters.py Frozen vehicle parameters           Config defaults ->            TwinEngine
+                                  (mass 798kg, Cd 0.85, A 1.5m^2)     PhysicsParameters
+backend/residual/residual_engine.py Actual vs expected acceleration   TelemetryFrame + TwinOutput   UnifiedPipeline,
+                                  residual calculator                 -> ResidualFrame              Test suite
+backend/residual/features.py      Residual slope, persistence, and    List[ResidualFrame] ->        ResidualEngine,
+                                  data quality scoring functions      RollingWindowFeatures         ML features
+backend/confounders/confounder_engine.py Evaluates non-tyre physical ResidualFrame + TelemetryFrame UnifiedPipeline,
+                                  confounders                         -> ConfounderFrame            Test suite
+backend/confounders/rules.py      Deterministic rules for DRS,        Telemetry signals ->          ConfounderEngine
+                                  braking, transient, rain            ConfounderDetail
+backend/tdi/tdi_engine.py         Calculates Tyre Degradation Index   ConfounderFrame + Stint info  UnifiedPipeline,
+                                  and multi-frame trajectory trend    -> TDIFrame                   Test suite
+backend/tdi/scoring.py            Deterministic component scoring     Residual, persistence, age,   TDIEngine
+                                  and explainability generation       confounders -> TDI [0-100]
+backend/tdi/trajectory.py         Linear trend slope & consistency    History buffers ->            TDIEngine
+                                  over rolling temporal window        Trend, Consistency
+backend/ml/baseline_model.py      Scikit-learn tree model wrapper     WindowFeatureVector ->        UnifiedPipeline,
+                                  (RandomForestRegressor)             predicted_degradation [0-100] training scripts
+backend/ml/features.py            Extracts 28 physics-informed        Rolling frame windows ->      UnifiedPipeline,
+                                  window features (Models A-E)        WindowFeatureVector           dataset builder
+backend/ml/dataset_builder.py     Builds tabular training datasets    Replay session files ->       Offline training
+                                  from pre-recorded F1 sessions       DataFrame (features + target)
+backend/ml/splits.py              Leakage-safe group cross-validation Session/driver/stint groups   Training pipeline
+                                  splitters                           -> Train/Validation splits
+backend/telemetry/fastf1_adapter.py FastF1 API ingestion and format   FastF1 session object ->      Replay generator,
+                                  transformation                      List[TelemetryFrame]          dataset builder
+backend/telemetry/track_mapper.py Normalizes track distance, lap      X, Y, Z GPS coordinates ->    FastF1 adapter,
+                                  fraction, and circuit positions     distance_m, relative_distance Replay generator
+backend/replay/generator.py       CLI utility generating offline      FastF1 session ->             Data directory,
+                                  JSON replay files                   JSON telemetry file           ReplayController
+backend/blender/bridge.py         Transforms pipeline outputs into    telemetry + tdi_state ->      UnifiedPipeline,
+                                  compact Blender 3D schemas          BlenderFramePayload           WebSocket payload
+backend/blender/schemas.py        Pydantic models for Blender         Chassis & wheel state data -> Blender bridge
+                                  visualization contracts             Validated models
+-----------------------------------------------------------------------------------------------------------------------
+
+================================================================================
+4. DIGITAL TWIN / PHYSICS ENGINE
+================================================================================
+4.1 SOURCE CODE LOCATION
+• backend/twin_engine/physics_model.py (Equations)
+• backend/twin_engine/interface.py (Engine Orchestration)
+• backend/twin_engine/parameters.py (Nominal Parameters & Assumptions)
+
+4.2 IMPLEMENTED PHYSICS CALCULATIONS & EXACT FORMULAS
+1. Aerodynamic Drag Force (Quadratic with Velocity):
+   F_drag = 0.5 * rho * Cd * A * (v^2) * sgn(v)
+   • Inputs:
+     - speed_mps (v) [m/s] — Vehicle true ground speed
+     - air_density (rho) = 1.225 kg/m^3 (Standard sea-level air at 15°C)
+     - cd = 0.85 (Medium-downforce F1 regulation baseline)
+     - frontal_area_m2 (A) = 1.50 m^2
+   • Output: expected_drag_n [N]
+   • Note: Strictly increases quadratically with speed; opposes motion direction.
+
+2. Rolling Resistance Force:
+   F_rolling = Crr * m * g
+   • Inputs:
+     - mass_kg (m) = 798.0 kg (2022+ F1 minimum technical regulation mass)
+     - crr = 0.015 (Smooth racing asphalt rolling resistance coefficient)
+     - gravity (g) = 9.80665 m/s^2
+   • Output: expected_rolling_resistance_n = 117.4 N (constant at non-zero speed).
+
+3. Total Normal Vertical Load:
+   Fz_total = m * g + F_aero
+   • Inputs:
+     - mass_kg (m) = 798.0 kg
+     - F_aero = 0.0 N (Nominal downforce separated in baseline MVP)
+   • Output: expected_vertical_load_n = 7825.7 N.
+
+4. Dynamic Longitudinal Load Transfer:
+   DeltaFz = (m * ax * h) / L
+   • Inputs:
+     - mass_kg (m) = 798.0 kg
+     - ax = ax_expected [m/s^2]
+     - cg_height_m (h) = 0.30 m (Center of gravity height)
+     - wheelbase_m (L) = 3.60 m (Modern F1 wheelbase)
+     - static_front_fraction = 0.45 (45% front, 55% rear static weight bias)
+   • Outputs:
+     - Fz_front = Fz_front_static - DeltaFz (under acceleration; transfers rearward)
+     - Fz_rear  = Fz_rear_static  + DeltaFz (under acceleration; squat)
+     - Fz_front = Fz_front_static + |DeltaFz| (under braking; dive)
+     - Clamped to [0, Fz_total] to prevent unphysical negative wheel loads.
+
+5. Effective Tyre-Road Grip & Maximum Friction Force Ceiling:
+   mu_eff = mu0 * (1 - D) * f_temp * f_press * f_slip
+   F_tyre_max = mu_eff * Fz
+   • Inputs:
+     - mu0 = 1.60 (Nominal baseline clean dry slick friction coefficient)
+     - D = degradation in [0, 1] (0.0 for baseline nominal twin)
+     - f_temp, f_press, f_slip = 1.0 (Sensitivities set to nominal when unmeasured)
+   • Output: F_tyre_max_total = 1.60 * 7825.7 = 12521.1 N.
+
+6. Modelled Longitudinal Traction Force:
+   P_demanded = (throttle_pct / 100.0) * P_max
+   F_traction = min(P_demanded / max(v, 4.0), F_tyre_max_total)
+   • Inputs:
+     - throttle_pct in [0, 100]
+     - P_max = 750,000 W (750 kW / ~1000 bhp peak powertrain output)
+     - effective_v = max(v, 4.0 m/s) (virtual gearing to avoid division by zero at standstill)
+   • Output: expected_traction_force_n [N] (clamped by tyre friction limit).
+
+7. Modelled Braking Force:
+   F_brake = min((brake_pct / 100.0) * F_brake_max, F_tyre_max_total)
+   • Inputs:
+     - brake_pct in [0, 100]
+     - F_brake_max = 28,000 N (Peak 4-wheel braking clamp force at 100% pedal effort)
+   • Output: expected_brake_force_n [N].
+
+8. Primary Vehicle Net Force & Expected Acceleration:
+   F_net = F_traction - F_drag - F_rolling - F_brake
+   ax_expected = F_net / m
+   • Output: expected_acceleration_mps2 [m/s^2].
+
+9. First-Principles Tyre Thermal Energy Balance (PARTIALLY IMPLEMENTED / GUARDED):
+   m_t * cp * (dT/dt) = P_heat - P_loss
+   P_heat = Fx * v_slip_x + Fy * v_slip_y
+   P_loss = hA * (T_surface - T_ambient)
+   • Inputs: tyre_mass_kg (10.5 kg), cp (1450 J/kg·K), hA (25 W/K).
+   • Code Enforcement: In interface.py:231-241, because real F1 telemetry does NOT provide wheel
+     slip velocities (v_slip_x, v_slip_y) or individual wheel forces (Fx, Fy), this function
+     strictly returns (None, "UNAVAILABLE"). It does NOT fabricate synthetic heat generation.
+
+================================================================================
+5. ACTUAL VS EXPECTED PERFORMANCE AND RESIDUAL CALCULATION
+================================================================================
+5.1 SOURCE CODE LOCATION
+• backend/residual/residual_engine.py
+• backend/residual/features.py
+• backend/residual/schemas.py
+
+5.2 DERIVATION OF ACTUAL ACCELERATION
+Because public FastF1 feeds omit raw accelerometer telemetry, ax_actual is derived numerically:
+  ax_actual(t) = (v(t) - v(t - Δt)) / Δt
+  • Inputs: v(t) [m/s] from telemetry_frame.vehicle.speed_mps, Δt from timestamps.
+  • Quality Guards:
+    - If v(t) is None or NaN: status = MISSING_INPUT.
+    - If initial frame in session (no prior sample): status = MISSING_INPUT.
+    - If Δt <= 0.0: status = INVALID_DT ("Non-positive or duplicate delta time").
+    - If Δt < 0.001 s (1 ms): status = INVALID_DT ("Sub-millisecond jitter below threshold").
+    - If |ax_actual| > 60.0 m/s^2 (~6.1g): status = NUMERICAL_OUTLIER.
+
+5.3 RAW AND NORMALIZED RESIDUAL FORMULAS
+1. Raw Acceleration Residual:
+   r_ax(t) = ax_actual(t) - ax_expected(t)
+   • Unit: m/s^2.
+   • Meaning: A negative residual indicates the vehicle accelerated slower (or decelerated harder)
+     than the first-principles physics twin predicted.
+
+2. Normalized Acceleration Residual:
+   r_ax_norm(t) = r_ax(t) / max(|ax_expected(t)|, epsilon)
+   • Default epsilon = 1.0 m/s^2.
+   • Prevents divide-by-zero singularities during coasting or steady-state velocity.
+
+5.4 SMOOTHING, TREND SLOPE, AND PERSISTENCE RATIO
+• Linear Slope (Delta r / Delta t) over rolling window:
+  slope = sum((t_i - mean_t) * (r_i - mean_r)) / sum((t_i - mean_t)^2)
+  - Numerator / denominator computed with float64 precision; returns 0.0 if denominator < 1e-9.
+• Trend Classification (classify_trend in features.py:66-92):
+  - If slope > +0.08 m/s^2 per second: INCREASING.
+  - If slope < -0.08 m/s^2 per second: DECREASING.
+  - Otherwise: STABLE.
+  - If isolated peak > 3.5 * std over <= 15 frames: SPIKE.
+• Persistence Ratio (compute_persistence_ratio in features.py:46-64):
+  persistence_ratio = (count of valid samples where |r_ax| >= threshold) / total_valid_samples
+  - Default persistence_threshold = 1.0 m/s^2.
+  - Measures the fraction of the temporal window exhibiting sustained discrepancy.
+• Residual Quality Confidence (calculate_residual_quality_confidence in features.py:153-174):
+  score = (valid_samples / total_samples) - outlier_penalty - dt_penalty
+  - Penalizes sub-millisecond timestamps and numerical outliers. Evaluates data integrity, NOT wear.
+
+================================================================================
+6. CONFOUNDER ANALYSIS ENGINE
+================================================================================
+6.1 SOURCE CODE LOCATION
+• backend/confounders/confounder_engine.py
+• backend/confounders/rules.py
+• backend/confounders/schemas.py
+
+6.2 SCIENTIFIC PRINCIPLE
+A negative residual r_ax does NOT automatically mean tyre degradation. Many non-tyre physical factors
+cause the car to produce less forward acceleration than expected:
+  • Driver opening DRS flap reduces drag by 30–40% (positive residual spike).
+  • Driver applying hydraulic brakes introduces massive unmodelled retarding forces.
+  • Driver lifting off throttle or shifting gears introduces transient driveline lag.
+  • Vehicle travelling > 252 km/h enters nonlinear aerodynamic regimes where baseline Cd is inaccurate.
+  • Ambient rain or wet track drops asphalt friction mu by 40–60%.
+  • Timestamp jitter creates mathematical derivative artifacts.
+
+6.3 EVERY CONFOUNDER FACTOR CURRENTLY CONSIDERED & EXACT THRESHOLDS
+-----------------------------------------------------------------------------------------------------------------------
+Factor Name      Signal Checked             Activation Threshold             Weight   Explanatory Logic
+-----------------------------------------------------------------------------------------------------------------------
+DRS              veh.drs (code)             code in (1, 8, 10, 12, 14)       0.35     Flap open reduces drag below
+                                            or code >= 8                              nominal Cd (0.85).
+Braking          veh.brake_pct [%]          Active: >= 25.0%                 0.30     Hydraulic brake torque and brake
+                                            Heavy : >= 65.0%                          bias dominate longitudinal force.
+Throttle         veh.throttle_pct [%]       High Demand: >= 85.0%            0.15     Peak powertrain delivery and
+                                                                                      traction control limits active.
+High Speed       veh.speed_mps [m/s]        >= 70.0 m/s (252.0 km/h)         0.20     Aerodynamic forces scale with v^2;
+                                                                                      unmodelled aero effects dominate.
+Transient        d_throttle/dt, d_brake/dt, |d_th/dt| >= 150%/s              0.25     Chassis compliance, turbo spool,
+                 d_accel/dt (jerk)          |d_br/dt| >= 150%/s                       and driveline lash explain delta.
+                                            |jerk| >= 25.0 m/s^3
+Tyre Age         tyres.fl.tyre_life_laps    <= 3 laps (NEW)                  N/A      New tyres cannot exhibit wear;
+                                            >= 21 laps (LATE_LIFE)                    limits tyre_evidence to <= 0.35.
+Environment      track_temp_c, wind_speed   |T_track - 35°C| >= 8.0°C        0.10     Track thermal shift or ambient
+                                            wind_speed >= 6.0 m/s                     crosswind creates aero drag error.
+Rainfall         rainfall, track_condition  rainfall == True or              0.50     Water film reduces peak friction
+                                            condition in ('wet', 'damp')              coefficient mu by 40–60%.
+Data Quality     residual.quality_status    status != VALID                  0.60     Numerical spike or invalid dt
+                                                                                      invalidates residual evidence.
+-----------------------------------------------------------------------------------------------------------------------
+
+6.4 NON-TYRE EXPLANATION SCORE & TYRE EVIDENCE QUALITY
+• non_tyre_explanation_score in [0.0, 1.0]:
+  Sum of active confounder weights multiplied by individual confounder strengths:
+  score = min(1.0, sum(weight_i * strength_i for each active confounder))
+  (Explicitly NOT a probability; it is an index of physical confounding presence).
+
+• tyre_evidence_quality in [0.0, 1.0]:
+  If quality_status != VALID: tyre_evidence_quality = 0.0.
+  Otherwise: tyre_evidence_quality = max(0.0, 1.0 - non_tyre_explanation_score).
+  Context Modifier: If tyre_age <= 3 laps, tyre_evidence_quality is capped at 0.35.
+
+================================================================================
+7. COMPLETE TYRE DEGRADATION PIPELINE
+================================================================================
+7.1 SOURCE CODE LOCATION
+• backend/tdi/scoring.py
+• backend/tdi/tdi_engine.py
+• backend/tdi/trajectory.py
+• backend/tdi/schemas.py
+
+7.2 EXACT DEFINITION: WHAT TDI REPRESENTS AND DOES NOT REPRESENT
+• WHAT TDI IS:
+  The Tyre Degradation Index (TDI) is a normalized, unitless severity index in [0.0, 100.0] representing
+  the weight of evidence that unexplained vehicle deceleration deficits are attributable to tyre grip
+  loss, evaluated in the context of completed tyre laps, residual persistence, and absence of confounding.
+• WHAT TDI IS NOT:
+  - It is NOT physical tread depth in millimeters (mm).
+  - It is NOT remaining tyre thickness or rubber loss mass (grams).
+  - It is NOT a failure probability or puncture likelihood.
+  - It is NOT telemetry ground-truth; it is a physics-informed inferred diagnostic metric.
+
+7.3 TDI SCORING FORMULA AND ATTENUATION
+The TDI engine computes 6 normalized components in [0.0, 1.0]:
+  1. s_res   : Residual Severity = min(|residual| / 3.0, 1.0)               (Weight: 0.25)
+  2. s_pers  : Persistence Score = persistence_ratio                       (Weight: 0.25)
+  3. s_trend : Degradation Trend Score = min(slope / 0.5, 1.0) * consistency (Weight: 0.15)
+  4. s_age   : Tyre Age Score:                                              (Weight: 0.20)
+               - 0–3 laps: 0.0 | 4–10 laps: 0.2 | 11–20 laps: 0.5 | 21–30 laps: 0.8 | >30: 1.0
+  5. s_ev    : Evidence Quality Score = tyre_evidence_quality              (Weight: 0.15)
+  6. s_conf  : Confounder Penalty = non_tyre_explanation_score
+
+Raw Evidence Synthesis:
+  raw_evidence = (0.25 * s_res) + (0.25 * s_pers) + (0.15 * s_trend) + (0.20 * s_age) + (0.15 * s_ev)
+
+Confounder Attenuation (Attenuation Coefficient = 0.70):
+  attenuation = 1.0 - (0.70 * s_conf)
+  qualified_score = max(0.0, min(1.0, raw_evidence * attenuation))
+  TDI = round(qualified_score * 100.0, 2)  # Clamped strictly to [0.0, 100.0]
+
+7.4 TDI SEVERITY STATES & THRESHOLDS
+• 0.0 – 20.0  : HEALTHY_LOW_EVIDENCE
+• 20.1 – 40.0 : EARLY_DEGRADATION
+• 40.1 – 60.0 : MODERATE_DEGRADATION
+• 60.1 – 80.0 : HIGH_DEGRADATION
+• 80.1 – 100.0: SEVERE_DEGRADATION
+
+7.5 TDI CONFIDENCE SCORE
+Confidence in [0.0, 1.0] reflects observation trustworthiness, NOT tyre health:
+  confidence = tyre_evidence_quality * (1.0 - 0.5 * non_tyre_explanation_score) * sample_factor * age_factor
+  • sample_factor = max(0.1, samples / 10) if samples < 10 else 1.0
+  • age_factor = 1.0 if tyre_age_laps is available, else 0.8
+  • Note: A high TDI with low confidence is mathematically valid (e.g. large deficit under heavy rain).
+
+================================================================================
+8. MACHINE LEARNING BASELINE MODEL AUDIT
+================================================================================
+8.1 SOURCE CODE LOCATION
+• backend/ml/baseline_model.py (Training, Inference, Reliability)
+• backend/ml/features.py (Temporal Feature Extraction)
+• backend/ml/dataset_builder.py & dataset_discovery.py (Dataset Generation)
+• backend/ml/splits.py (Leakage-Safe Validation Splits)
+• backend/ml/evaluation.py (Metrics: RMSE, MAE, R^2, Bias)
+• backend/ml/run_training.py (Offline Training CLI)
+
+8.2 EXACT MODEL TYPE
+• Model Type: Scikit-learn RandomForestRegressor.
+• Alternative Available: Scikit-learn GradientBoostingRegressor (configurable via model_type).
+• CRITICAL NEGATIVE FINDING:
+  There is NO LSTM, NO GRU, NO Recurrent Neural Network, NO Transformer, and NO PyTorch/TensorFlow
+  deep learning model anywhere in the repository. It is strictly an interpretable tree-based model.
+
+8.3 HYPERPARAMETERS (from backend/ml/baseline_model.py:92-124)
+• n_estimators      : 100
+• max_depth         : 6 (strictly bounded to prevent memorization and maintain interpretability)
+• min_samples_leaf  : 2
+• random_state      : 42
+• Model Version     : "RF_BASELINE_v1.0"
+• Persisted Artifact: data/ml/baseline_model.joblib (145,510 bytes joblib binary)
+
+8.4 FEATURES USED IN INFERENCE (Model E — 28 features from backend/ml/features.py:31-55)
+  1. mean_speed                       15. actual_acceleration_mean
+  2. speed_std                        16. non_tyre_explanation_score
+  3. mean_throttle                    17. tyre_evidence_quality
+  4. mean_brake                       18. drs_ratio
+  5. track_temperature                19. braking_ratio
+  6. air_temperature                  20. transient_ratio
+  7. humidity                         21. prior_tdi_baseline
+  8. rainfall                         22. baseline_tdi_trend_slope
+  9. tyre_life                        23. residual_slope
+  10. compound_code                   24. residual_persistence
+  11. stint_number                    25. speed_min
+  12. residual_mean                   26. speed_max
+  13. residual_std                    27. throttle_max
+  14. residual_abs_mean               28. brake_max
+
+8.5 TARGET & ANTI-LEAKAGE POLICY
+• Model Target: target_tdi_pseudo_label (inferred from Phase 6 Physics TDI or trajectory delta).
+  Code comment explicitly states: "Model target is strictly a pseudo-label; NOT ground-truth physical wear."
+• Anti-Leakage Protection (backend/ml/splits.py):
+  Temporal splitting groups frames by "SESSION_DRIVER_STINT". Test/train splits are strictly partitioned
+  across separate stints or sessions to prevent contiguous temporal frame leakage.
+
+8.6 INFERENCE FLOW
+1. TelemetryFrame, ResidualFrame, ConfounderFrame, and TDIFrame appended to deque buffers (window_size = 15).
+2. If buffer has >= 5 samples, extract_window_features() extracts the 28-dimensional vector.
+3. ai_model.predict(pd.DataFrame([features])) produces predicted_degradation [0–100].
+4. calculate_model_reliability() checks out-of-distribution feature bounds and non-tyre penalties.
+5. If model file missing or inference fails, pipeline seamlessly falls back to physics_tdi.
+
+================================================================================
+9. PHYSICS + AI FUSION LOGIC
+================================================================================
+9.1 SOURCE CODE LOCATION
+• backend/api/pipeline.py:197-200
+• backend/ml/baseline_model.py:27
+
+9.2 EXACT FORMULA AND WEIGHTS
+  final_tdi = clip((fusion_alpha * physics_tdi) + ((1.0 - fusion_alpha) * ai_tdi), 0.0, 100.0)
+  • Default Weight (fusion_alpha) = 0.60
+  • Meaning:
+    - 60% Weight attributed to First-Principles Deterministic Physics TDI.
+    - 40% Weight attributed to ML Random Forest Baseline Prediction.
+  • Transparency:
+    Both physics_tdi and ai_tdi are preserved independently and exposed side-by-side in REST,
+    WebSockets, and frontend charts so operators can inspect the exact contribution of each.
+
+================================================================================
+10. FASTF1 AND TELEMETRY DATA ARCHITECTURE
+================================================================================
+10.1 TELEMETRY CLASSIFICATION AUDIT
+The repository maintains strict engineering boundaries between measured, derived, modelled, and
+unavailable telemetry channels:
+
+A. DIRECTLY MEASURED F1 TELEMETRY (FastF1 Timing & Car Data):
+  • Speed (km/h)
+  • Throttle (0–100%)
+  • Brake (0–100% or 0/1 indicator)
+  • Gear (0–8, -1)
+  • Engine RPM
+  • DRS status code (0, 1, 8, 10, 12, 14)
+  • GPS / Track Coordinates (X, Y, Z in 1/10 m)
+  • Weather (Track Temp °C, Air Temp °C, Humidity %, Air Pressure mbar, Wind Speed m/s, Rainfall bool)
+  • Timing Metadata (LapNumber, Sector Times, Compound string, TyreLife laps run, Stint number)
+
+B. DERIVED TELEMETRY (Calculated Numerically from Measured Values):
+  • Longitudinal Acceleration: ax_actual = Δv / Δt (derived with jitter guards in backend/residual/residual_engine.py)
+  • Lap Relative Distance: 0.0 -> 1.0 (derived in backend/telemetry/track_mapper.py)
+  • Temporal Window Features: rolling means, standard deviations, min/max, jerk (Δax / Δt)
+
+C. MODELLED VALUES (Calculated using Physics & Engineering Assumptions):
+  • Aerodynamic Drag Force: F_drag = 0.5 * rho * Cd * A * v^2
+  • Rolling Resistance Force: F_rolling = Crr * m * g
+  • Expected Powertrain Traction Force: F_traction = P_max / v
+  • Expected Deceleration Force: F_brake = brake_pct * max_brake_clamp
+  • Expected Longitudinal Load Transfer: DeltaFz = (m * ax * h) / L
+  • Expected Acceleration: ax_expected = F_net / m
+  • Tyre Degradation Index: TDI [0–100]
+
+D. EXPLICITLY UNAVAILABLE CHANNELS (Maintained strictly as None / null in Replay Mode):
+  • Tyre Internal Pressures (FL, FR, RL, RR pressure_bar)
+  • Tyre Bulk & Carcass Temperatures (FL, FR, RL, RR surface_temp_c, carcass_temp_c)
+  • Individual Wheel Rotational Speeds (wheel_speed_mps)
+  • Longitudinal Slip Ratio & Lateral Slip Angles (slip_ratio, slip_angle_deg)
+  • Individual Corner Normal Vertical Loads (vertical_load_n)
+  • Handwheel Steering Angle (steer_angle_deg)
+  • True Physical Rubber Tread Depth / Remaining Tyre Life in millimeters
+
+E. DEMO / SIMULATION VALUES (Active ONLY when data_mode == "DEMO_SIMULATION"):
+  • frontend/src/services/demoSimulation.ts generates corner-specific wear offsets:
+    FL: global_tdi * 1.15 | FR: global_tdi * 0.95 | RL: global_tdi * 0.85 | RR: global_tdi * 0.80.
+  • In REAL_REPLAY mode, these slots are returned as available: false, tdi: null.
+
+10.2 SUPPORTED REPLAY DATASETS
+• data/replay/f1_2023_monza_q_ver.json (Max Verstappen, 2023 Italian GP Qualifying, Lap 20 fastest pole lap).
+  - 1000 canonical TelemetryFrames, exactly synchronized at ~10 Hz.
+
+================================================================================
+11. REAL-TIME STREAMING ARCHITECTURE
+================================================================================
+11.1 STREAMING TIMELINE & SYNCHRONIZATION
+• Ingestion Clock  : Asynchronous playback loop inside backend/api/replay_controller.py:_playback_loop().
+• Frame Frequency  : 10 Hz nominal (0.100 s per frame, adjusted dynamically by 1.0 / playback_speed).
+• Playback Speeds  : 0.25x, 0.5x, 1.0x, 2.0x, 5.0x, 10.0x.
+• Seeking          : Atomic index seek with runtime state reset and single-frame pre-step.
+• WebSocket Gateway: FastAPI /ws/telemetry endpoint managed by ConnectionManager (backend/api/websocket.py).
+• Sequence Number  : Strictly monotonic integer sequence incremented on every processed frame.
+
+11.2 WEBSOCKET MESSAGE CONTRACT
+Every broadcast frame sends a JSON object with:
+  • type: "telemetry_update"
+  • sequence: integer
+  • timestamp: ISO 8601 string
+  • telemetry: full TelemetryFrame (vehicle, tyres, environment)
+  • physics: expected forces (drag, rolling, brake, traction, net), expected_acceleration_mps2
+  • residual: actual_accel, expected_accel, raw_residual, normalized_residual, quality_status
+  • confounders: active_flags, non_tyre_explanation_score, tyre_evidence_quality, individual details
+  • tdi: physics_tdi, ai_tdi, final_tdi, state, trend, confidence, evidence, counter_evidence
+  • ai: predicted_degradation, model_reliability, target_type, model_version
+  • blender: compact payload formatted specifically for 3D digital twin consumption
+
+================================================================================
+12. FRONTEND ARCHITECTURE
+================================================================================
+12.1 FRAMEWORK & BUILD TOOLING
+• Framework : React 19 + TypeScript + Vite 5.0.
+• Styling   : Vanilla CSS design tokens + TailwindCSS v4 plugin.
+• Routing   : State-driven navigation via activeTab ('home' | 'phyengine' | 'health' | 'info').
+
+12.2 PAGES AUDIT
+1. HomePage (frontend/src/pages/HomePage.tsx):
+   • Hero section hosting Three.js HomeCarScene (McLaren MP4/5 GLB model).
+   • Interactive telemetry badges (Velocity, Tyre Temp, Grip, Wear, Tyre Health).
+   • Storytelling narrative, problem definition, architecture explanation.
+   • Presentation timeline for "Optimal Pit Window" (PLACEHOLDER: static hardcoded laps 31–34).
+
+2. PhyEnginePage (frontend/src/pages/PhyEnginePage.tsx):
+   • Hosts Three.js DigitalTwinCanvas / HeroTyreScene (single interactive F1 wheel).
+   • Mode toggles: 3D Twin Canvas vs Laser / FLIR Thermal Image inspection.
+   • Displays live physics forces, mathematical formulas, and real-time parameters.
+
+3. OverallHealthPage (frontend/src/pages/OverallHealthPage.tsx):
+   • Comprehensive race engineering cockpit.
+   • 4-corner tyre health gauges, thermal FLIR color maps, and residual telemetry.
+   • ResidualChart (Chart.js / canvas) and TDITrajectoryChart.
+   • WhyPanel and ConfoundersPanel detailing explainability factors.
+   • Pit Stop Window Calculator (PLACEHOLDER: hardcoded static JSX mockup).
+
+4. OtherInfoPage (frontend/src/pages/OtherInfoPage.tsx):
+   • Toyota Gazoo Racing (TGR) × Formula 1 technical partnership overview.
+   • Pirelli 2023–2026 compound specifications (C1 through C5 operating ranges).
+
+12.3 STATE MANAGEMENT & HOOKS
+• frontend/src/App.tsx maintains top-level state: frameState, tdiHistory, residualHistory, session, replayStatus.
+• useTelemetryWebSocket (frontend/src/hooks/useTelemetryWebSocket.ts):
+  - Handles automatic reconnection with exponential backoff (1s, 2s, 4s, 8s max).
+  - Listens for telemetry_update messages and updates frame state.
+• Mode Switcher: Smoothly transitions between REAL_REPLAY and DEMO_SIMULATION via REST /api/mode.
+
+================================================================================
+13. THREE.JS DIGITAL TWIN IMPLEMENTATION
+================================================================================
+13.1 THREE.JS SCENES INVENTORY
+-----------------------------------------------------------------------------------------------------------------------
+Scene File                Container / Component     Model Asset Loaded               Behavior & Animation
+-----------------------------------------------------------------------------------------------------------------------
+frontend/src/three/       HomePage Hero Section     public/models/mclaren_mp45.glb   Cinematic camera dolly, TGR red rim
+HomeCarScene.ts                                     (36.9 MB, McLaren MP4/5 GLB)     light sweep, idle drift rotation,
+                                                                                     fade-in intro sequence.
+frontend/src/three/       PhyEngine / DigitalTwin   public/assets/models/            Real-time wheel spin (RPM-driven),
+HeroTyreScene.ts          Canvas Component          F1 Front wheel.obj.glb (1.2 MB)  FLIR thermal shader heatmap,
+                                                                                     roughness graining wear shader.
+frontend/src/three/       OverallHealthPage         public/models/f1_car.glb         Corner wheel highlighting, camera
+HealthCarScene.ts         Header & Diagnostics      (19.1 MB, F1 2022 Car GLB)       orbiting, component inspection.
+-----------------------------------------------------------------------------------------------------------------------
+
+13.2 SHADERS & VISUALIZATION MODES (in HeroTyreScene.ts)
+• MECHANICAL Mode: High-contrast studio lighting showing physical carcass textures and rim spokes.
+• THERMAL Mode: Custom GLSL fragment shader mapping temperature [70°C – 140°C] to FLIR thermal palette
+  (Black -> Purple -> Orange -> Yellow -> White hot spots).
+• DEGRADATION Mode: Dynamic normal/roughness shader mapping TDI score to surface pitting, blistering, and graining.
+
+================================================================================
+14. BLENDER DIGITAL TWIN INTEGRATION
+================================================================================
+14.1 ASSETS & SCENES
+• Blender File : blender/Formula_2_Car_DigitalTwin_V7_Mechanical_Thermal.blend (9.05 MB).
+• Primary Bridge: blender/tyretrace_live_bridge.py (1030 lines of Python code).
+
+14.2 PROTOCOL & ARCHITECTURE
+• Threading Architecture:
+  Background daemon thread connects to ws://localhost:8000/ws/telemetry.
+  Incoming frames pushed into thread-safe queue.Queue.
+  Main thread timer (bpy.app.timers.register) polls queue at 30–60 FPS and applies transforms safely.
+• Telemetry to Blender Rig Mapping:
+  - Wheel Rotation: Wheel_FL, Wheel_FR, Wheel_RL, Wheel_RR rotated around local X/Y axis proportional to speed_mps.
+  - Suspension Squat / Dive: Chassis Z position and pitch angle modulated by load_transfer_n and ax_actual.
+  - DRS Wing Actuation: Rear wing flap object rotated open when drs_active is True.
+  - Tyre Thermal / Wear Shaders: Nodes in Material "Tire_Thermal" updated via shader node inputs
+    ("Thermal_Heat_Factor", "Degradation_Wear_Factor").
+• Non-Destructive Policy: Bridge caches original transforms and shader inputs, restoring them on disconnect.
+
+================================================================================
+15. COMPLETE REST AND WEBSOCKET API INVENTORY
+================================================================================
+-----------------------------------------------------------------------------------------------------------------------
+Method  Endpoint                Purpose                       Request Body              Response Model / Payload
+-----------------------------------------------------------------------------------------------------------------------
+GET     /api/health             System health & service status None                     HealthResponse (ok, version, pipeline)
+GET     /api/session            Session metadata & driver info None                     SessionResponse (driver, lap, compound)
+GET     /api/telemetry          Latest canonical TelemetryFrame None                    TelemetryFrame (v, throttle, brake, etc)
+GET     /api/physics            Latest physics twin forces    None                      PhysicsStateResponse (drag, forces, ax)
+GET     /api/residual           Latest residual evaluation    None                      ResidualStateResponse (r_ax, norm_r)
+GET     /api/confounders        Latest confounder flags & score None                    ConfoundersStateResponse (flags, score)
+GET     /api/tdi                Latest TDI score & fusion     None                      TDIStateResponse (physics, ai, final)
+GET     /api/tyres              Four-wheel degradation status None                      FourWheelTyresResponse (FL/FR/RL/RR)
+POST    /api/replay/start       Starts/resumes playback loop  None                      ReplayStatusResponse (running, frame)
+POST    /api/replay/pause       Pauses playback loop          None                      ReplayStatusResponse (paused: true)
+POST    /api/replay/resume      Resumes paused playback       None                      ReplayStatusResponse (paused: false)
+POST    /api/replay/stop        Stops playback & rewinds      None                      ReplayStatusResponse (running: false)
+POST    /api/replay/reset       Clears histories & rewinds    None                      ReplayStatusResponse (frame: 0)
+POST    /api/replay/seek        Seeks to frame index          {"frame_index": int}      ReplayStatusResponse
+POST    /api/replay/speed       Sets playback speed           {"speed": float}          ReplayStatusResponse (0.25 to 10.0)
+GET     /api/replay/status      Current playback status       None                      ReplayStatusResponse
+GET     /api/history/tdi        Rolling TDI history points    Query: limit (1..1000)    List[TDIHistoryPoint]
+GET     /api/history/residual   Rolling residual history      Query: limit (1..1000)    List[ResidualHistoryPoint]
+GET     /api/laps               List of completed lap numbers None                      List[int]
+GET     /api/laps/{lap_number}  Aggregated lap summary        None                      LapSummaryResponse (mean TDI, etc)
+POST    /api/component/select   Selects 3D component focus    {"component": "Wheel_FR"} ComponentSelectResponse
+GET     /api/component/selected Returns active 3D focus       None                      ComponentSelectResponse
+POST    /api/mode               Switches REPLAY / DEMO mode   {"mode": "DEMO_SIMULATION"} ModeSelectResponse
+GET     /api/mode               Returns active data mode      None                      ModeSelectResponse
+WS      /ws/telemetry           Real-time streaming gateway   Optional text pings /     Unified JSON Frame Packet
+                                                              control messages          (telemetry, physics, tdi, blender)
+-----------------------------------------------------------------------------------------------------------------------
+
+================================================================================
+16. CANONICAL DATA CONTRACTS AND SCHEMAS
+================================================================================
+16.1 CORE CANONICAL TELEMETRY SCHEMA (backend/schemas/telemetry.py)
+• TelemetryFrame:
+  - timestamp: float (epoch or session seconds)
+  - timestamp_iso: Optional[str]
+  - session_id: str
+  - lap: int
+  - distance_m: Optional[float]
+  - relative_distance: Optional[float] (0.0 to 1.0)
+  - driver: Optional[str]
+  - vehicle: VehicleState
+    * speed_mps: float, speed_kph: float (validated consistent within 2.0 km/h)
+    * throttle_pct: float [0..100], brake_pct: float [0..100]
+    * gear: int [-1..10], rpm: Optional[float], drs: Optional[int]
+    * steer_angle_deg, longitudinal_accel_g, lateral_accel_g, yaw_rate_deg_s: Optional[float]
+    * position_x, position_y, position_z: Optional[float]
+  - tyres: FourWheelTyreStates
+    * fl, fr, rl, rr: TyreState
+      - pressure_bar, surface_temp_c, carcass_temp_c, wheel_speed_mps, slip_ratio: Optional[float] (None in FastF1)
+      - compound: Optional[str], tyre_life_laps: Optional[int], stint: Optional[int]
+  - environment: EnvironmentState
+    * ambient_temp_c, track_temp_c, humidity_pct, air_pressure_mbar, wind_speed_mps, rainfall, track_condition
+
+16.2 TWIN ENGINE OUTPUT CONTRACT (backend/schemas/twin.py)
+• TwinEngineOutput:
+  - expected_acceleration_mps2: float
+  - expected_drag_n, expected_rolling_resistance_n, expected_brake_force_n, expected_traction_force_n: float
+  - expected_vertical_load_n, expected_fz_front_n, expected_fz_rear_n, expected_load_transfer_n: float
+  - measured_inputs, derived_inputs, modelled_inputs, unavailable_inputs: Dict / List provenance records
+
+16.3 TDI CONTRACT (backend/tdi/schemas.py)
+• TDIFrame:
+  - tdi: float [0..100]
+  - state: TDIState (HEALTHY_LOW_EVIDENCE, EARLY_DEGRADATION, MODERATE, HIGH, SEVERE)
+  - trend: TDITrend (STABLE, DEGRADING_SLOW, DEGRADING_FAST, IMPROVING)
+  - confidence: float [0..1]
+  - components: TDIComponentScores (severity, persistence, trend, age, evidence, confounder)
+  - evidence, counter_evidence: List[str]
+
+================================================================================
+17. TEST SUITE AUDIT
+================================================================================
+17.1 BACKEND TEST SUITE (pytest)
+• Test Directory: tests/ (22 test files)
+• Actual Execution Result (Executed 2026-09-12):
+  - Total Tests : 157
+  - PASSED      : 156 passed
+  - SKIPPED     : 1 skipped (tests/test_blender_integration.py::test_blender_headless_smoke skipped because
+                  Blender binary is not executed in headless CI mode)
+  - FAILED      : 0 failed
+  - Duration    : 18.00 seconds
+  - Warnings    : 1 deprecation warning (httpx in starlette.testclient)
+
+17.2 FRONTEND TEST SUITE (vitest)
+• Test Directory: frontend/src/test/ (6 test files)
+• Actual Execution Result (Executed 2026-09-12):
+  - Total Tests : 43
+  - PASSED      : 41 passed
+  - FAILED      : 2 failed
+  - Failure Analysis:
+    1. src/test/navigation_and_pages.test.tsx > renders HomePage:
+       Error: "ReferenceError: IntersectionObserver is not defined".
+       Cause: Node/jsdom test runner lacks native browser IntersectionObserver API without mock.
+    2. src/test/navigation_and_pages.test.tsx > renders OverallHealthPage:
+       Error: "THREE.WebGLRenderer: Error creating WebGL context".
+       Cause: Node/jsdom environment does not have hardware WebGL canvas context mocked.
+  - Notice: Neither failure is a product regression; both are standard jsdom browser mock deficiencies.
+
+================================================================================
+18. CONFIGURATION AND ENVIRONMENT VARIABLES AUDIT
+================================================================================
+• Configuration Approach: Hardcoded sensible defaults with constructor overrides.
+• Environment Variables Inspected:
+  - TYRETRACE_AUTOSTART : Used in blender/tyretrace_live_bridge.py:1009 to automatically initiate
+    WebSocket connection if set to "1".
+  - FastF1 CDN Mirror : backend/telemetry/fastf1_adapter.py sets fastf1.events._SCHEDULE_BASE_URL
+    to "https://cdn.jsdelivr.net/gh/theOehrly/f1schedule@master/" to prevent schedule fetch timeouts.
+• Secrets & API Keys:
+  - NO API keys or credentials exist in the codebase.
+  - FastF1 uses open-access FIA public timing endpoints with local disk caching (data/cache/fastf1).
+
+================================================================================
+19. DEDICATED AUDIT OF EXISTING AI / AGENT / DECISION / STRATEGY FUNCTIONALITY
+================================================================================
+19.1 RIGOROUS CODEBASE INSPECTION FOR AGENTIC OR DECISION CAPABILITIES
+• Search performed for: "agent", "llm", "decision", "strategy", "recommend", "pit_now", "stay_out", "push".
+• Results:
+  1. AI AGENT / LLM:
+     - ZERO code exists. No OpenAI, Anthropic, Gemini, LangChain, or autonomous agent frameworks exist.
+     - The "AI" in TyreTrace refers strictly to Scikit-learn RandomForestRegressor in backend/ml/baseline_model.py.
+  2. DECISION TWIN / DECISION INTELLIGENCE:
+     - ZERO backend decision algorithms exist.
+     - There are NO functions that decide whether to pit, stay out, push, or manage tyres.
+  3. UI PLACEHOLDERS (DOCUMENTATION VS CODE):
+     - frontend/src/pages/OverallHealthPage.tsx (lines 1253–1288) displays a card titled "PIT STOP WINDOW
+       CALCULATOR" showing "RECOMMENDED PIT WINDOW: LAPS 31 – 34" and "Pit Lane Loss Delta: 21.4s".
+       CODE VERIFICATION: This is 100% hardcoded static JSX markup. It does not connect to any calculation.
+     - frontend/src/pages/HomePage.tsx (lines 713–765) displays a section titled "OPTIMAL PIT WINDOW"
+       showing laps 31–34 with a diagram "DATA -> PHYSICS -> AI -> DECISION".
+       CODE VERIFICATION: This is 100% static marketing/presentation JSX. The "DECISION" node is an inactive
+       placeholder highlighting future vision.
+
+================================================================================
+20. ALL CURRENTLY AVAILABLE STATE SUPPORTING FUTURE DECISION INTELLIGENCE
+================================================================================
+If a Decision Twin or AI Strategy Agent is built, the following rich, synchronized state is already
+computed and available on every single frame:
+  1. Driver & Vehicle Dynamics:
+     - True ground speed (mps & kph), Throttle %, Brake %, Selected Gear, Engine RPM, DRS status.
+     - Track X, Y, Z coordinates, distance_m, relative_distance along lap (0.0–1.0).
+  2. Physical Force Balance:
+     - Aerodynamic drag force (N), rolling resistance (N), brake force (N), traction force (N).
+     - Vertical normal load (N), longitudinal load transfer (N).
+     - Expected acceleration (m/s^2) vs Actual derived acceleration (m/s^2).
+  3. Residual Discrepancy & Health:
+     - Raw residual r_ax (m/s^2), normalized residual, data quality status.
+     - Rolling residual slope (Δr / Δt), persistence ratio.
+  4. Confounder Explanations:
+     - Active flags: DRS_ACTIVE, HEAVY_BRAKING, HIGH_THROTTLE, HIGH_SPEED, TRANSIENT_EVENT.
+     - non_tyre_explanation_score [0.0–1.0].
+     - tyre_evidence_quality [0.0–1.0].
+  5. Degradation Scoring (Fused Physics + AI):
+     - physics_tdi [0–100], ai_tdi [0–100], final_tdi [0–100].
+     - Degradation severity state (e.g. MODERATE_DEGRADATION, SEVERE_DEGRADATION).
+     - Degradation trend (STABLE, DEGRADING_SLOW, DEGRADING_FAST, IMPROVING).
+     - Observation confidence [0.0–1.0].
+     - Natural language evidence & counter-evidence bullet points.
+  6. Race Context:
+     - Current lap number, total session laps.
+     - Tyre compound (SOFT, MEDIUM, HARD, INTERMEDIATE, WET).
+     - Tyre age in laps (TyreLife from FastF1 stint log).
+     - Stint sequence number.
+     - Ambient weather: track temperature, ambient temperature, rainfall flag.
+
+================================================================================
+21. ALL MISSING INFORMATION / DATA / CAPABILITIES REQUIRED FOR FUTURE DECISIONS
+================================================================================
+To implement strategic decisions (PIT_NOW, STAY_OUT, PUSH_LAP, CONSERVE_TYRE, BOX_OPPOSITE, COMPOUND_SELECT),
+the system currently lacks the following critical data and modules:
+  1. Competitor Track Positions & Gap Telemetry:
+     - Ingestion currently processes ONLY the focal driver (e.g. Max Verstappen).
+     - Missing: Interval to car ahead, gap to car behind, pit exit traffic window projection.
+  2. Circuit Pit Lane Parameters:
+     - Pit lane transit time loss (e.g. 21.5s at Monza, 19.8s at Red Bull Ring).
+     - Stationary pit stop service time variance (e.g. 2.4s ± 0.4s).
+     - Pit delta under Safety Car / Virtual Safety Car (e.g. 12.0s loss vs 21.5s under green flag).
+  3. Compound Pace Delta Matrix:
+     - Lap-time pace offsets between compounds on clean tyres (e.g. Soft is -0.6s faster than Medium).
+     - Compound crossover degradation rates (deg slope per lap for Soft vs Medium vs Hard).
+  4. Strategic Objective Functions:
+     - Predicted race completion time optimizer: T_total = sum(lap_times) + n_stops * T_pit.
+     - Undercut / overcut probability models.
+     - Tyre degradation cliff projection (extrapolating when TDI will cross 80.0 into catastrophic grip loss).
+  5. Race Control Status Stream:
+     - Safety Car, Virtual Safety Car, Yellow Flags, Track Limits penalties, Weather Radar forecast.
+
+================================================================================
+22. BEST INTEGRATION POINT FOR A FUTURE DECISION TWIN & AI AGENT
+================================================================================
+22.1 ARCHITECTURAL INTEGRATION LOCATION
+The optimal integration point is directly inside `backend/api/pipeline.py` as **STEP 8** of the
+UnifiedIntelligencePipeline, right after Step 6 (Physics + AI Fusion Layer).
+
+22.2 WHY THIS IS THE OPTIMAL POINT
+• Determinism & Single-Point Execution:
+  The pipeline already guarantees that every frame receives fully synchronized Telemetry, Physics,
+  Residuals, Confounders, and TDI before generating output payloads.
+• Immediate Downstream Consumers:
+  Placing the Decision Twin here allows the resulting decisions to automatically feed:
+  1. RuntimeState (state.py) -> served via new REST endpoint `/api/decision`
+  2. WebSocket gateway (websocket.py) -> broadcast in real time to React and Blender
+  3. BlenderBridge (bridge.py) -> visualize team radio / pit-in indicator lights on the 3D car rig
+
+22.3 PROPOSED MODULE CONTRACT (Conceptual Specification — Not Implemented)
+• Target Module : `backend/decision/decision_engine.py` (New module to be created)
+• Available Inputs to Consume:
+  - pipeline_result.final_tdi, pipeline_result.tdi_frame.trend, pipeline_result.tdi_frame.confidence
+  - frame.lap, frame.tyres.fl.tyre_life_laps, frame.tyres.fl.compound, frame.tyres.fl.stint
+  - frame.vehicle.speed_kph, frame.environment.rainfall
+• Expected Decision Outputs:
+  - strategic_action: Enum (STAY_OUT | BOX_THIS_LAP | PUSH | CONSERVE_TYRES | PREPARE_INVERT)
+  - recommended_compound: Optional[str] (HARD | MEDIUM | SOFT | INTERMEDIATE)
+  - pit_window_start_lap: int, pit_window_end_lap: int
+  - degradation_cliff_lap_estimate: Optional[int]
+  - rationale: List[str] (e.g., "TDI reached 68.4 with DEGRADING_FAST trend; C3 Medium cliff projected in 2 laps")
+• Likely Files Involved:
+  - [NEW] backend/decision/decision_engine.py
+  - [NEW] backend/decision/schemas.py
+  - [MODIFY] backend/api/pipeline.py (invoke decision engine in process_frame)
+  - [MODIFY] backend/api/state.py (store latest decision state)
+  - [MODIFY] backend/api/routes.py (expose GET /api/decision)
+  - [MODIFY] backend/api/websocket.py (include decision block in WebSocket payload)
+  - [MODIFY] frontend/src/types/telemetry.ts & pages/OverallHealthPage.tsx (replace static mockup with live decision data)
+
+================================================================================
+23. TECHNICAL DEBT, LIMITATIONS, RISKS, AND ARCHITECTURAL CONCERNS
+================================================================================
+1. Hardcoded UI Placeholders Disagree with Code Capabilities:
+   The frontend OverallHealthPage and HomePage display elaborate "Pit Stop Window Calculator" and
+   "Compound Lifetime Crossover" cards. Users and judges may believe an AI strategy engine is active,
+   when it is currently static HTML/JSX markup.
+2. Single-Driver Limitation:
+   The FastF1 adapter and replay generator currently extract data for one driver at a time (e.g. VER).
+   Real race strategy decisions require knowledge of gaps to competitors and clean air pit exit windows.
+3. Aerodynamic Downforce Simplification:
+   The physics digital twin currently models aero drag (Cd * A * v^2) accurately, but treats downforce F_aero
+   as 0.0 in the baseline vertical load calculation (backend/twin_engine/interface.py:173). Adding downforce
+   (Cl * A * v^2) would improve vertical tyre load estimation at speeds > 200 km/h.
+4. Single-Wheel Replay vs 4-Wheel Simulation Asymmetry:
+   In REPLAY mode, FastF1 corner tyre degradation is strictly null (scientifically accurate).
+   In DEMO_SIMULATION mode, heuristic multipliers simulate 4-wheel wear. Transitioning between modes
+   causes sudden changes in 3D wheel shader appearances if operators do not realize the mode switch.
+5. In-Memory State Non-Persistence:
+   RuntimeState stores rolling histories in memory deques. If the backend process restarts, historical
+   trends reset to zero until the replay runs again.
+6. Vitest JSDOM Mocking Gaps:
+   Frontend vitest suite has 2 failing tests due to missing WebGL and IntersectionObserver mocks in jsdom.
+
+================================================================================
+24. DECISION INTELLIGENCE READINESS
+================================================================================
+24.1 ALREADY AVAILABLE
+  ✓ Complete, deterministic 4-stage physics and degradation pipeline.
+  ✓ Real-time fused TDI score [0–100], severity classification, trend slope, and observation confidence.
+  ✓ Rigorous confounder isolation preventing false degradation triggers from DRS, braking, and speed.
+  ✓ Full-duplex WebSocket and REST infrastructure streaming synchronized updates at 10 Hz.
+  ✓ Interactive 3D WebGL and external Blender digital twin visualization.
+  ✓ 156 passing backend tests covering all physics equations, residuals, confounders, and TDI scoring.
+
+24.2 NEEDS MODIFICATION
+  • backend/api/pipeline.py: Needs extension to call a Decision Engine step after TDI fusion.
+  • backend/api/state.py: Needs fields to hold active strategy decisions, pit windows, and target compounds.
+  • backend/api/websocket.py: Needs "decision" dictionary added to broadcast payload.
+  • frontend/src/pages/OverallHealthPage.tsx: Needs the static Pit Stop Window Calculator replaced with
+    live dynamic props derived from the backend decision engine.
+
+24.3 NEEDS TO BE BUILT
+  • Decision Engine (`backend/decision/decision_engine.py`):
+    - Degradation cliff forecasting (linear/polynomial extrapolation of TDI trajectory to 80.0 threshold).
+    - Pit window evaluator based on tyre age, compound crossover, and current lap.
+    - Strategy decision rule engine (STAY_OUT vs PIT_NOW vs PUSH vs MANAGE).
+  • Strategy Data Contracts (`backend/decision/schemas.py`).
+  • Competitor Gap / Multi-Car Ingestion (for realistic pit exit traffic window calculation).
+  • Circuit Pit Loss Database (transit loss, pit delta, safety car deltas per track).
+  • LLM Race Engineer Agent (optional natural-language conversational interface over Decision Twin state).
+
+24.4 ARCHITECTURAL RISKS
+  • Risk 1 (Overfitting Decision Logic to One Session): Developing strategy rules tuned solely to Monza Q
+    will fail in full Grand Prix race conditions where fuel burn-off and traffic dominate.
+  • Risk 2 (Latency Spikes in Pipeline): If future LLM calls are placed synchronously in process_frame(),
+    the 10 Hz WebSocket streaming loop will block. Any LLM reasoning must run asynchronously or out-of-band.
+  • Risk 3 (Simulated vs Real Confusion): Strategy logic must explicitly handle the unavailability of
+    corner-level wear in real F1 data rather than assuming 4 distinct measured tyre wear values.
+
+24.5 RECOMMENDED STARTING POINT
+  1. Create `backend/decision/schemas.py` defining clean strategy outputs (StrategyDecision, PitWindow, Action).
+  2. Create a deterministic, rule-based `StrategyTwin` in `backend/decision/decision_engine.py` that calculates:
+     - Estimated laps until TDI exceeds 75.0 (degradation cliff).
+     - Optimal pit lap window [current_lap + n, current_lap + m].
+     - Recommended compound transition (e.g. Soft -> Hard).
+  3. Integrate `StrategyTwin` into `UnifiedIntelligencePipeline` in `backend/api/pipeline.py`.
+  4. Wire the decision payload through `runtime_state`, `/api/decision`, and `/ws/telemetry`.
+  5. Connect `OverallHealthPage.tsx` to display real-time calculated strategy decisions instead of static text.
+  6. (Optional) Wrap the Decision Twin with an LLM Agent for voice/text race-engineer dialogue.
+
+================================================================================
+END OF AUDIT REPORT — project_status.txt
+================================================================================

@@ -78,6 +78,7 @@ class ConnectionManager:
                 "target_type": "TDI_BASELINE_PSEUDO_LABEL",
                 "model_version": "RF_BASELINE_v1.0",
             },
+            "decision": result.decision.model_dump(),
             "blender": result.blender_payload.model_dump(),
         }
 

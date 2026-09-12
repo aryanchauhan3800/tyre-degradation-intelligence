@@ -256,25 +256,34 @@ export class HomeCarScene {
     const loader = new GLTFLoader();
 
     loader.load(
-      '/models/f2_car.glb',
+      '/models/mclaren_mp45.glb',
       (gltf) => {
         if (this.isDestroyed) return;
 
         const model = gltf.scene;
 
-        /* Auto-center & scale to a sensible size */
+        /* Orient McLaren so front points along +X (matching hero composition) */
+        model.rotation.y = Math.PI / 2;
+        model.updateMatrixWorld(true);
+
+        /* Auto-center & scale to match previous hero car dimensions */
         const box = new THREE.Box3().setFromObject(model);
         const size = box.getSize(new THREE.Vector3());
         const maxDim = Math.max(size.x, size.y, size.z);
         const scale = 5.5 / maxDim;
 
         model.scale.setScalar(scale);
-        // Re-compute center after scaling
+        model.updateMatrixWorld(true);
+
+        // Re-compute center after scaling and center horizontally
         const scaledBox = new THREE.Box3().setFromObject(model);
         const scaledCenter = scaledBox.getCenter(new THREE.Vector3());
-        model.position.sub(scaledCenter);
-        model.position.y = -scaledBox.min.y * 1; // sit on ground
-        // Re-adjust: set y so the bottom of the car is at y=0
+        model.position.x -= scaledCenter.x;
+        model.position.z -= scaledCenter.z;
+        model.position.y = -scaledBox.min.y; // sit on ground
+
+        // Final ground alignment so bottom touches ground at y=0
+        model.updateMatrixWorld(true);
         const finalBox = new THREE.Box3().setFromObject(model);
         model.position.y -= finalBox.min.y;
 
@@ -292,6 +301,11 @@ export class HomeCarScene {
                 mat.envMapIntensity = 1.8;
                 mat.metalness = Math.max(mat.metalness, 0.35);
                 mat.roughness = Math.min(mat.roughness, 0.65);
+
+                const isGlass = mat.name.toLowerCase().includes('glass') || mat.transparent;
+                mesh.userData.isGlass = isGlass;
+                mesh.userData.originalOpacity = isGlass ? (mat.opacity || 0.4) : 1;
+
                 /* Start transparent for intro fade-in */
                 mat.transparent = true;
                 mat.opacity = 0;
@@ -371,12 +385,14 @@ export class HomeCarScene {
       const o = smoothstep((e - 0.8) / 2.4);
       this.carGroup.traverse((c) => {
         if ((c as THREE.Mesh).isMesh) {
-          const mats = Array.isArray((c as THREE.Mesh).material)
-            ? (c as THREE.Mesh).material as THREE.Material[]
-            : [(c as THREE.Mesh).material];
+          const mesh = c as THREE.Mesh;
+          const mats = Array.isArray(mesh.material)
+            ? mesh.material as THREE.Material[]
+            : [mesh.material];
           mats.forEach((m) => {
             if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
-              (m as THREE.MeshStandardMaterial).opacity = o;
+              const targetOp = mesh.userData.originalOpacity ?? 1;
+              (m as THREE.MeshStandardMaterial).opacity = o * targetOp;
             }
           });
         }
@@ -430,13 +446,15 @@ export class HomeCarScene {
 
       this.carGroup.traverse((c) => {
         if ((c as THREE.Mesh).isMesh) {
-          const mats = Array.isArray((c as THREE.Mesh).material)
-            ? (c as THREE.Mesh).material as THREE.Material[]
-            : [(c as THREE.Mesh).material];
+          const mesh = c as THREE.Mesh;
+          const mats = Array.isArray(mesh.material)
+            ? mesh.material as THREE.Material[]
+            : [mesh.material];
           mats.forEach((m) => {
             if ((m as THREE.MeshStandardMaterial).isMeshStandardMaterial) {
-              (m as THREE.MeshStandardMaterial).opacity = 1;
-              (m as THREE.MeshStandardMaterial).transparent = false;
+              const isGlass = mesh.userData.isGlass;
+              (m as THREE.MeshStandardMaterial).opacity = mesh.userData.originalOpacity ?? 1;
+              (m as THREE.MeshStandardMaterial).transparent = !!isGlass;
             }
           });
         }

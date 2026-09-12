@@ -16,6 +16,7 @@ import type {
   TelemetryFrame,
   FourWheelTyres,
   ConfounderFrame,
+  StrategyDecision,
 } from '../types/telemetry';
 
 const API_BASE = '/api';
@@ -56,6 +57,9 @@ export const api = {
 
   getTDI: (): Promise<TDIStateResponse> =>
     fetchJson<TDIStateResponse>(`${API_BASE}/tdi`),
+
+  getDecision: (): Promise<StrategyDecision> =>
+    fetchJson<StrategyDecision>(`${API_BASE}/decision`),
 
   getTyres: (): Promise<FourWheelTyres> =>
     fetchJson<FourWheelTyres>(`${API_BASE}/tyres`),
