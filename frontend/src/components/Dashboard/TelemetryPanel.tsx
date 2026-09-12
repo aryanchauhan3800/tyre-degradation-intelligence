@@ -17,6 +17,31 @@ interface TelemetryPanelProps {
   state: CalculatedTyreCornerState;
 }
 
+function getTempColorClass(tempC: number): string {
+  if (tempC < 75) return 'text-[#0284C7]';
+  if (tempC < 90) return 'text-[#06B6D4]';
+  if (tempC <= 105) return 'text-[#10B981]';
+  if (tempC <= 115) return 'text-[#F59E0B]';
+  return 'text-[#EF4444]';
+}
+
+function getTempIconStroke(tempC: number): string {
+  if (tempC < 75) return '#0284C7';
+  if (tempC < 90) return '#06B6D4';
+  if (tempC <= 105) return '#10B981';
+  if (tempC <= 115) return '#F59E0B';
+  return '#EF4444';
+}
+
+function getThermalStatusBadge(tempC: number, isLive: boolean): { text: string; colorClass: string } {
+  if (!isLive || tempC === 0) return { text: '+0.0°C', colorClass: 'text-slate-400' };
+  if (tempC < 80) return { text: 'COLD', colorClass: 'text-[#0284C7]' };
+  if (tempC < 90) return { text: 'WARMUP', colorClass: 'text-[#06B6D4]' };
+  if (tempC <= 105) return { text: 'OPTIMAL', colorClass: 'text-[#10B981]' };
+  if (tempC <= 115) return { text: '↑ WARM', colorClass: 'text-[#F59E0B]' };
+  return { text: '▲ HOT', colorClass: 'text-[#EF4444]' };
+}
+
 export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
   const { corner, label, compound, pressure_psi, thermal, wear, load, grip } = state;
   const [activeTab, setActiveTab] = useState<'TREAD' | 'SECTION'>('TREAD');
@@ -72,8 +97,8 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
       <div className="grid grid-cols-2 gap-1.5">
         {/* 1. SURFACE TEMP */}
         <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2 py-1.5 flex items-center space-x-2 shadow-2xs">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-[#EF4444] shrink-0">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-[#EF4444] fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round" stroke={getTempIconStroke(surfaceTemp)}>
               <path d="M12 2v9" />
               <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
             </svg>
@@ -83,11 +108,11 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
               SURFACE TEMP
             </div>
             <div className="flex items-baseline justify-between mt-0.5">
-              <span className="text-[15px] font-bold text-[#10B981] leading-tight">
+              <span className={`text-[15px] font-bold leading-tight ${getTempColorClass(surfaceTemp)}`}>
                 {surfaceTemp}°C
               </span>
-              <span className="text-[10px] font-medium text-[#EF4444]">
-                {isLive ? '↑ +2.1°C' : '+0.0°C'}
+              <span className={`text-[9px] font-bold ${getThermalStatusBadge(surfaceTemp, isLive).colorClass}`}>
+                {getThermalStatusBadge(surfaceTemp, isLive).text}
               </span>
             </div>
           </div>
@@ -115,8 +140,8 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
 
         {/* 3. INNER TEMP */}
         <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2 py-1.5 flex items-center space-x-2 shadow-2xs">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-[#F97316] shrink-0">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-[#F97316] fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round" stroke={getTempIconStroke(innerTemp)}>
               <path d="M12 2v9" />
               <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
             </svg>
@@ -126,11 +151,11 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
               INNER TEMP
             </div>
             <div className="flex items-baseline justify-between mt-0.5">
-              <span className="text-[15px] font-bold text-[#EA580C] leading-tight">
+              <span className={`text-[15px] font-bold leading-tight ${getTempColorClass(innerTemp)}`}>
                 {innerTemp}°C
               </span>
-              <span className="text-[10px] font-medium text-[#EF4444]">
-                {isLive ? '↑ +1.8°C' : '+0.0°C'}
+              <span className={`text-[9px] font-bold ${getThermalStatusBadge(innerTemp, isLive).colorClass}`}>
+                {getThermalStatusBadge(innerTemp, isLive).text}
               </span>
             </div>
           </div>
@@ -138,8 +163,8 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
 
         {/* 4. CENTER TEMP */}
         <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2 py-1.5 flex items-center space-x-2 shadow-2xs">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-[#10B981] shrink-0">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-[#10B981] fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round" stroke={getTempIconStroke(centerTemp)}>
               <circle cx="12" cy="7" r="2.8" />
               <circle cx="6" cy="17" r="2.3" />
               <circle cx="18" cy="17" r="2.3" />
@@ -151,11 +176,11 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
               CENTER TEMP
             </div>
             <div className="flex items-baseline justify-between mt-0.5">
-              <span className="text-[15px] font-bold text-[#10B981] leading-tight">
+              <span className={`text-[15px] font-bold leading-tight ${getTempColorClass(centerTemp)}`}>
                 {centerTemp}°C
               </span>
-              <span className="text-[10px] font-medium text-[#EF4444]">
-                {isLive ? '↑ +1.9°C' : '+0.0°C'}
+              <span className={`text-[9px] font-bold ${getThermalStatusBadge(centerTemp, isLive).colorClass}`}>
+                {getThermalStatusBadge(centerTemp, isLive).text}
               </span>
             </div>
           </div>
@@ -163,8 +188,8 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
 
         {/* 5. OUTER TEMP */}
         <div className="bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg px-2 py-1.5 flex items-center space-x-2 shadow-2xs">
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-[#2563EB] shrink-0">
-            <svg viewBox="0 0 24 24" className="w-4 h-4 stroke-[#2563EB] fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round">
+          <div className="w-6 h-6 rounded-full flex items-center justify-center shrink-0">
+            <svg viewBox="0 0 24 24" className="w-4 h-4 fill-none stroke-[1.7] stroke-linecap-round stroke-linejoin-round" stroke={getTempIconStroke(outerTemp)}>
               <path d="M12 2v9" />
               <path d="M18.36 6.64a9 9 0 1 1-12.73 0" />
             </svg>
@@ -174,11 +199,11 @@ export const TelemetryPanel: React.FC<TelemetryPanelProps> = ({ state }) => {
               OUTER TEMP
             </div>
             <div className="flex items-baseline justify-between mt-0.5">
-              <span className="text-[15px] font-bold text-[#10B981] leading-tight">
+              <span className={`text-[15px] font-bold leading-tight ${getTempColorClass(outerTemp)}`}>
                 {outerTemp}°C
               </span>
-              <span className="text-[10px] font-medium text-[#EF4444]">
-                {isLive ? '↑ +1.5°C' : '+0.0°C'}
+              <span className={`text-[9px] font-bold ${getThermalStatusBadge(outerTemp, isLive).colorClass}`}>
+                {getThermalStatusBadge(outerTemp, isLive).text}
               </span>
             </div>
           </div>

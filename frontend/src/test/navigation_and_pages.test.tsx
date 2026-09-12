@@ -92,6 +92,64 @@ describe('Navigation and Multi-Page UI Component Tests', () => {
     expect(screen.getByText(/SYSTEM HEALTH COMMAND CENTER/i)).toBeInTheDocument();
     expect(screen.getByText(/TYRE HEALTH & CORNER SYNCHRONIZATION/i)).toBeInTheDocument();
     expect(screen.getByText(/PIT STOP WINDOW CALCULATOR/i)).toBeInTheDocument();
+    expect(screen.getByText(/SUZUKA CIRCUIT/i)).toBeInTheDocument();
+    expect(screen.getByText(/130R/i)).toBeInTheDocument();
+    expect(screen.getByText(/SPOON/i)).toBeInTheDocument();
+    expect(screen.getByText(/HAIRPIN/i)).toBeInTheDocument();
+    expect(screen.getByText(/RPM & SPEED TRACE/i)).toBeInTheDocument();
+    expect(screen.getByText(/THERMAL PROFILES/i)).toBeInTheDocument();
+    expect(screen.getByText(/TYRE & AERO LOAD/i)).toBeInTheDocument();
+  });
+
+  it('renders OverallHealthPage live charts driven by real backend telemetry frames', () => {
+    const mockTelemetry: any = {
+      timestamp: 4445.5,
+      session_id: 'TEST_SESSION',
+      lap: 18,
+      vehicle: {
+        speed_kph: 312.4,
+        speed_mps: 86.7,
+        throttle_pct: 100,
+        brake_pct: 0,
+        rpm: 11450,
+      },
+    };
+
+    const mockPhysics: any = {
+      ax_expected_mps2: 1.2,
+      forces: {
+        drag_n: 2500,
+        rolling_resistance_n: 300,
+        brake_force_n: 0,
+        traction_force_n: 3800,
+        downforce_n: 8500,
+        net_longitudinal_force_n: 1000,
+        vertical_loads_n: {
+          front_left: 4800,
+          front_right: 5200,
+          rear_left: 6100,
+          rear_right: 6400,
+          total: 22500,
+        },
+      },
+    };
+
+    render(
+      <OverallHealthPage
+        telemetry={mockTelemetry}
+        fourWheelStates={null}
+        selectedTyre="FR"
+        onSelectTyre={vi.fn()}
+        onNavigate={vi.fn()}
+        lap={18}
+        physics={mockPhysics}
+      />
+    );
+
+    // Verify real values rendered into telemetry graph headers
+    expect(screen.getByText(/11,450 RPM/i)).toBeInTheDocument();
+    expect(screen.getByText(/CURRENT: 312 KM\/H/i)).toBeInTheDocument();
+    expect(screen.getByText(/8.5 kN Aero/i)).toBeInTheDocument();
   });
 
   it('renders OtherInfoPage with partnership and Pirelli specifications', () => {

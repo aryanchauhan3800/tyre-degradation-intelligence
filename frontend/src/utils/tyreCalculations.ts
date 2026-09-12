@@ -201,32 +201,45 @@ export function calculateTyreCornerState(
   // 4. Thermal Model (FLIR 3-zone surface + core)
   // Ambient & track base
   const trackTemp = telemetry?.environment?.track_temp_c ?? 38.0;
-  
-  // Real-physics speed-dependent thermal curve:
-  // At 0-40 km/h (slow/stationary): Tyre stays in normal cool operating window (~48°C - 58°C, Emerald Green / Teal).
-  // At high speed (180 - 320 km/h): Friction, rolling deformation, and load elevate temperatures up to 105°C - 125°C+ (Crimson Red / White Hot).
-  // When slowing down: Temperature dissipates rapidly down to ~50°C (Red disappears).
+
+  // Authentic F1 Tyre Thermodynamics (Pirelli 18-inch Formula 1 slicks):
+  // - Target operating window: 90°C - 105°C (Optimal Green band on the 60°C - 120°C scale)
+  // - Cold tyre / out-lap: 65°C - 80°C (Cyan / Blue)
+  // - Heavy braking / high-energy corners: 105°C - 114°C (Amber / Warm)
+  // - Overheating / blistering threshold: > 118°C (Crimson Red)
   const speedRatio = Math.min(1.2, speedKph / 250.0);
-  const baseTireTemp = Math.max(45.0, (trackTemp + 12.0) + Math.pow(speedRatio, 1.3) * 58.0);
 
-  // Dynamic heat from friction, slip, braking, and TDI
-  const speedHeating = Math.pow(speedRatio, 1.5) * 18.0;
-  const brakeHeating = isFront ? (brakePct / 100) * 28.0 : (brakePct / 100) * 14.0;
-  const tractionHeating = !isFront ? (throttlePct / 100) * 18.0 : 0;
-  const tdiHeatOffset = (effectiveTdi / 100) * 12.0;
+  // Baseline tyre bulk temperature:
+  // Starts around tyre blanket temp (~70°C) and climbs to nominal race working window (~92°C - 96°C) at race speed
+  const baseTireTemp = Math.max(
+    50.0,
+    68.0 + Math.min(1.0, speedRatio) * 22.0 + (trackTemp - 30.0) * 0.2
+  );
 
-  const centerTemp = Math.round(baseTireTemp + speedHeating + brakeHeating * 0.45 + tractionHeating * 0.5 + tdiHeatOffset);
+  // Dynamic heat generation:
+  // - Braking heat flux into front tyres: +6°C to +14°C peak under heavy braking
+  const brakeHeating = isFront ? (brakePct / 100) * 14.0 : (brakePct / 100) * 6.0;
+  // - Longitudinal slip traction on driven rear tyres: +3°C to +8°C under hard throttle
+  const tractionHeating = !isFront ? (throttlePct / 100) * 7.5 : 0;
+  // - Steering scrub & lateral friction: +2°C to +7°C during cornering
+  const steerScrubHeat = (Math.abs(steerVal) / 100) * speedRatio * 6.0;
+  // - Degradation thermal offset: worn tyres slip more (+1°C to +5°C)
+  const tdiHeatOffset = (effectiveTdi / 100) * 5.0;
 
-  // F1 negative camber kinematics (-3.5° front camber):
-  // Inside shoulder runs significantly hotter (camberDelta ~14°C front, 9°C rear).
-  // When cornering, lateral load transfers thermal mass to outside shoulder.
-  const camberDelta = isFront ? 14.0 : 9.0;
-  const lateralShift = (steerVal / 100) * (isLeft ? 10.0 : -10.0);
+  const centerTemp = Math.round(
+    baseTireTemp + brakeHeating + tractionHeating + steerScrubHeat + tdiHeatOffset
+  );
+
+  // F1 negative camber kinematics (-3.5° front camber, -1.8° rear):
+  // Inner shoulder runs ~4.5°C to 6°C hotter in a straight line; outer shoulder is ~3°C to 5°C cooler.
+  // When cornering, lateral weight transfer shifts load outward to equalize the contact patch.
+  const camberDelta = isFront ? 5.5 : 3.5;
+  const lateralShift = (steerVal / 100) * (isLeft ? 4.0 : -4.0);
 
   const innerTemp = Math.round(centerTemp + (camberDelta - lateralShift * 0.5));
-  const outerTemp = Math.round(centerTemp - (camberDelta * 0.85 - lateralShift * 0.8));
+  const outerTemp = Math.round(centerTemp - (camberDelta * 0.8 - lateralShift * 0.8));
   const surfaceTemp = Math.round((innerTemp + centerTemp + outerTemp) / 3);
-  const coreTemp = Math.round(surfaceTemp + 8.5 + (effectiveTdi / 100) * 5.0);
+  const coreTemp = Math.round(surfaceTemp + 4.0 + (effectiveTdi / 100) * 3.0);
 
   // 5. Wear & Health
   const wearPct = Math.min(100, Math.max(0, Math.round(effectiveTdi * 10) / 10));

@@ -37,45 +37,38 @@ export const thermalFragmentHeader = `
   uniform float uContactPatchHeat;
   uniform float uWheelAngle;
 
-  // Self-emissive radiance computed in the color chunk and emitted after lighting,
-  // so the thermal image is completely independent of scene lights (true IR camera behavior).
-  vec3 gThermalEmissive = vec3(0.0);
+  vec3 gThermalFinalColor = vec3(0.0);
 
-  // Exact 7-Stop Calibrated IR Thermal Spectrum (20°C to 120°C+)
-  // 20–30°C  -> Deep Royal Blue
-  // 30–45°C  -> Electric Cyan / Blue-Green
-  // 45–60°C  -> Pure Emerald Green
-  // 60–75°C  -> Intense Lemon Yellow
-  // 75–90°C  -> Fiery Saturated Orange
-  // 90–110°C -> Crimson Red
-  // 110°C+   -> Extremely Hot Red / White Core
+  // Exact 7-Stop Calibrated IR Thermal Spectrum (25°C to 115°C+)
+  // Matches the vertical HUD scale exactly:
+  // < 25°C   -> Deep Royal Blue (#0526e6)
+  // 25–35°C  -> Electric Cyan (#00e5f5)
+  // 35–55°C  -> Pure Emerald Green (#1ee038)
+  // 55–70°C  -> Intense Lemon Yellow (#faeb0a)
+  // 70–85°C  -> Warm Orange (#ff7700)
+  // 85–105°C -> Red-Orange (#ff1a00)
+  // >= 105°C -> Saturated Deep Crimson Red (#f50505) - never white!
   vec3 getThermalPaletteColor(float tempC) {
     if (tempC <= 25.0) {
       return vec3(0.02, 0.15, 0.90); // Deep Royal Blue
-    } else if (tempC < 40.0) {
-      // 25-40°C: Deep Blue -> Cyan
-      float t = (tempC - 25.0) / 15.0;
-      return mix(vec3(0.02, 0.15, 0.90), vec3(0.00, 0.90, 0.96), t);
+    } else if (tempC < 35.0) {
+      float t = (tempC - 25.0) / 10.0;
+      return mix(vec3(0.02, 0.15, 0.90), vec3(0.00, 0.90, 0.96), t); // Blue -> Cyan
     } else if (tempC < 55.0) {
-      // 40-55°C: Cyan -> Pure Emerald Green
-      float t = (tempC - 40.0) / 15.0;
-      return mix(vec3(0.00, 0.90, 0.96), vec3(0.12, 0.88, 0.22), t);
-    } else if (tempC < 75.0) {
-      // 55-75°C: Green -> Intense Lemon Yellow
-      float t = (tempC - 55.0) / 20.0;
-      return mix(vec3(0.12, 0.88, 0.22), vec3(0.98, 0.92, 0.04), t);
-    } else if (tempC < 92.0) {
-      // 75-92°C: Yellow -> Fiery Orange
-      float t = (tempC - 75.0) / 17.0;
-      return mix(vec3(0.98, 0.92, 0.04), vec3(1.00, 0.46, 0.00), t);
-    } else if (tempC < 110.0) {
-      // 92-110°C: Orange -> Crimson Red
-      float t = (tempC - 92.0) / 18.0;
-      return mix(vec3(1.00, 0.46, 0.00), vec3(1.00, 0.10, 0.00), t);
+      float t = (tempC - 35.0) / 20.0;
+      return mix(vec3(0.00, 0.90, 0.96), vec3(0.12, 0.88, 0.22), t); // Cyan -> Emerald Green
+    } else if (tempC < 70.0) {
+      float t = (tempC - 55.0) / 15.0;
+      return mix(vec3(0.12, 0.88, 0.22), vec3(0.98, 0.92, 0.04), t); // Green -> Lemon Yellow
+    } else if (tempC < 85.0) {
+      float t = (tempC - 70.0) / 15.0;
+      return mix(vec3(0.98, 0.92, 0.04), vec3(1.00, 0.46, 0.00), t); // Yellow -> Orange
+    } else if (tempC < 105.0) {
+      float t = (tempC - 85.0) / 20.0;
+      return mix(vec3(1.00, 0.46, 0.00), vec3(0.96, 0.08, 0.02), t); // Orange -> Crimson Red
     } else {
-      // >= 110°C: Extremely Hot Crimson Red to White-Hot Core
-      float t = clamp((tempC - 110.0) / 15.0, 0.0, 1.0);
-      return mix(vec3(1.00, 0.10, 0.00), vec3(1.00, 0.96, 0.88), t);
+      // >= 105°C: Rich Saturated Deep Crimson Red (stays deep red, never white!)
+      return vec3(0.96, 0.04, 0.02);
     }
   }
 
@@ -109,8 +102,8 @@ export const thermalColorFragmentReplace = `
   #include <color_fragment>
   if (uThermalActive > 0.001) {
     // Coordinate along tyre width:
-    // z = -0.1769 is the INNER SHOULDER (left side of tread)
-    // z = +0.1769 is the OUTER SHOULDER (right side of tread, adjacent to sidewall)
+    // z = -0.1769 is the INNER SHOULDER (inboard side of tread)
+    // z = +0.1769 is the OUTER SHOULDER (outboard side of tread, adjacent to sidewall)
     float z = vThermalLocalPos.z;
     float u = clamp((z + 0.1769) / 0.3538, 0.0, 1.0);
 
@@ -131,7 +124,7 @@ export const thermalColorFragmentReplace = `
     }
 
     // Surface sensor skin bias
-    baseTemp += (uSurfaceTemp - baseTemp) * 0.12;
+    baseTemp += (uSurfaceTemp - baseTemp) * 0.10;
 
     // ---------- ROTATIONAL HEAT CARRIAGE & CONTACT PATCH FRICTION ----------
     // World space down vector: contact patch is always at the road interface (bottom)
@@ -139,29 +132,23 @@ export const thermalColorFragmentReplace = `
     float contactPatchZone = smoothstep(0.10, 0.95, worldDown);
 
     // Friction heat generated at contact patch (bottom of wheel)
-    float directContactHeat = contactPatchZone * uContactPatchHeat * 12.0;
+    float directContactHeat = contactPatchZone * uContactPatchHeat * 4.0;
 
-    // As wheel spins (uWheelAngle), rubber leaving the contact patch carries heat around!
-    // We compute circumferential offset relative to the bottom contact zone
+    // As wheel spins (uWheelAngle), rubber leaving the contact patch carries heat around
     float rotTheta = theta + uWheelAngle;
     float trailHeat = smoothstep(0.0, 3.14159, abs(mod(rotTheta + 1.5708, 6.28318) - 3.14159));
-    float rubberMassHeat = (1.0 - trailHeat * 0.35) * uContactPatchHeat * 4.5;
+    float rubberMassHeat = (1.0 - trailHeat * 0.35) * uContactPatchHeat * 1.5;
 
     // Airflow convective cooling along upper arc
-    float upperCool = smoothstep(0.10, 0.95, -worldDown) * 3.2;
+    float upperCool = smoothstep(0.10, 0.95, -worldDown) * 1.5;
 
-    // Turbulent heat irregularities (value noise) carried by rotating rubber
+    // Subtle thermal noise texture carried by rotating rubber
     float ca = cos(theta);
     float sa = sin(theta);
     vec2 npA = vec2(ca, sa) * 2.8 + vec2(z * 15.0, z * 7.0);
-    float turb = (thermalFbm(npA) - 0.5) * 4.8;
-    float fine = (thermalNoise2(npA * 6.5) - 0.5) * 1.6;
+    float turb = (thermalFbm(npA) - 0.5) * 2.0;
 
-    // Micro-wear thermal filaments along rolling direction
-    float filament = thermalNoise2(vec2(ca, sa) * 9.0 + vec2(z * 28.0, 12.0));
-    float filaments = smoothstep(0.62, 0.88, filament) * 2.2;
-
-    float tempC = baseTemp + directContactHeat + rubberMassHeat - upperCool + turb + fine + filaments;
+    float tempC = baseTemp + directContactHeat + rubberMassHeat - upperCool + turb;
 
     // Groove thermal characteristics (cool groove valley, hot groove edge pooling)
     float h1 = abs(u - 0.25);
@@ -169,40 +156,32 @@ export const thermalColorFragmentReplace = `
     float h3 = abs(u - 0.75);
     float grooveCore = max(max(smoothstep(0.026, 0.005, h1), smoothstep(0.026, 0.005, h2)), smoothstep(0.026, 0.005, h3));
     float grooveHalo = max(max(smoothstep(0.055, 0.028, h1), smoothstep(0.055, 0.028, h2)), smoothstep(0.055, 0.028, h3));
-    tempC -= grooveCore * 5.5;
-    tempC += grooveHalo * 1.8;
+    tempC -= grooveCore * 3.0;
+    tempC += grooveHalo * 1.2;
 
     // ---------- INFRARED CAMERA COLORTABLE RENDERING ----------
     vec3 thermalColor = getThermalPaletteColor(tempC);
 
-    // White-hot core clipping above 108°C
-    float hotCore = smoothstep(108.0, 120.0, tempC);
-    thermalColor = mix(thermalColor, vec3(1.0, 0.97, 0.90), hotCore * 0.55);
+    // Subtle form shading so rubber curvature and grooves remain crisp
+    float form = 0.88 + 0.12 * max(0.0, dot(vThermalWorldNormal, normalize(vec3(-0.3, 0.7, 0.6))));
 
-    // Subtle form lighting so rubber curvature remains readable
-    float light = 0.92 + 0.08 * max(0.0, dot(vThermalWorldNormal, normalize(vec3(-0.5, 0.8, 0.6))));
-
-    // IR Sensor noise grain
+    // Modulate with IR camera grain
     float grain = fract(sin(dot(vThermalLocalPos.xy * 43.0 + theta, vec2(12.9898, 78.233))) * 43758.5453);
-    thermalColor *= (0.975 + 0.05 * grain);
 
-    // Emissivity modulation from rubber micro-wear
-    float emissivity = 0.94 + 0.06 * thermalNoise2(vec2(ca, sa) * 5.2 + vec2(z * 20.0, 4.5));
-
-    // Self-emissive thermal radiance added AFTER lighting
-    gThermalEmissive = thermalColor * light * 1.15 * emissivity * uThermalActive;
-
-    // Faint IR camera scanline effect
-    float scan = 0.985 + 0.015 * sin(gl_FragCoord.y * 2.3);
-    gThermalEmissive *= scan;
-
-    // Diffuse goes dark carbon while thermal is active
-    diffuseColor.rgb = mix(diffuseColor.rgb, vec3(0.012, 0.013, 0.015), uThermalActive);
+    // Store final saturated thermal color for dithering fragment output
+    gThermalFinalColor = thermalColor * form * (0.98 + 0.04 * grain);
   }
 `;
 
 export const thermalEmissiveFragmentReplace = `
   #include <emissivemap_fragment>
-  // Emit the full self-radiant thermal image (computed in color chunk)
-  totalEmissiveRadiance += gThermalEmissive;
+`;
+
+export const thermalDitheringFragmentReplace = `
+  #include <dithering_fragment>
+  if (uThermalActive > 0.001) {
+    // Override final fragment color with calibrated infrared radiation map,
+    // completely immune to scene spotlights bleaching the colors to white!
+    gl_FragColor.rgb = mix(gl_FragColor.rgb, gThermalFinalColor, uThermalActive);
+  }
 `;

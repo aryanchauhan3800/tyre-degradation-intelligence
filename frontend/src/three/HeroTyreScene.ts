@@ -34,6 +34,7 @@ import {
   thermalFragmentHeader,
   thermalColorFragmentReplace,
   thermalEmissiveFragmentReplace,
+  thermalDitheringFragmentReplace,
 } from '../components/TyreScene/ThermalShader';
 
 export interface ThermalCalloutPoint {
@@ -889,6 +890,11 @@ export class HeroTyreScene {
         '#include <emissivemap_fragment>',
         thermalEmissiveFragmentReplace
       );
+
+      shader.fragmentShader = shader.fragmentShader.replace(
+        '#include <dithering_fragment>',
+        thermalDitheringFragmentReplace
+      );
     };
   }
 
@@ -1394,22 +1400,22 @@ export class HeroTyreScene {
     // 100% visible from any camera angle (front, rear, other side, close-up)
     // without ever rotating with the rolling wheel spin.
     const aHot = camAngle - 0.42;
-    this.hotSpotAnchor.position.set(R * Math.cos(aHot), R * Math.sin(aHot), -0.1472);
+    this.hotSpotAnchor.position.set(R * Math.cos(aHot), R * Math.sin(aHot), -0.12);
 
     const aInner = camAngle - 0.72;
-    this.innerShoulderAnchor.position.set(R * Math.cos(aInner), R * Math.sin(aInner), -0.0828);
+    this.innerShoulderAnchor.position.set(R * Math.cos(aInner), R * Math.sin(aInner), -0.14);
 
     const aSurf = camAngle - 0.12;
-    this.surfaceTempAnchor.position.set(R * Math.cos(aSurf), R * Math.sin(aSurf), -0.0368);
+    this.surfaceTempAnchor.position.set(R * Math.cos(aSurf), R * Math.sin(aSurf), -0.04);
 
     const aCenter = camAngle + 0.12;
-    this.treadCenterAnchor.position.set(R * Math.cos(aCenter), R * Math.sin(aCenter), 0.0276);
+    this.treadCenterAnchor.position.set(R * Math.cos(aCenter), R * Math.sin(aCenter), 0.0);
 
     const aOuter = camAngle + 0.46;
-    this.outerShoulderAnchor.position.set(R * Math.cos(aOuter), R * Math.sin(aOuter), 0.1472);
+    this.outerShoulderAnchor.position.set(R * Math.cos(aOuter), R * Math.sin(aOuter), 0.14);
 
     // Contact Patch is always at the bottom road contact interface
-    this.contactPatchAnchor.position.set(0, -R, -0.055);
+    this.contactPatchAnchor.position.set(0, -R, 0.0);
 
     const anchorsList: {
       id: 'hotSpot' | 'innerShoulder' | 'surfaceTemp' | 'treadCenter' | 'contactPatch' | 'outerShoulder';

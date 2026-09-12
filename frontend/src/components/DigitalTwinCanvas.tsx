@@ -99,6 +99,48 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
   const hotSpotC = isConnectedEffective && surfaceC > 0 ? Math.max(innerC, centerC, outerC, surfaceC) : 0;
   const contactPatchC = isConnectedEffective && surfaceC > 0 ? Math.round((innerC + centerC) / 2) : 0;
 
+  /**
+   * Exact FLIR infrared thermal palette matching the vertical HUD scale:
+   * < 25°C   -> Deep Royal Blue (#0526e6)
+   * 25–35°C  -> Electric Cyan (#00e5f5)
+   * 35–55°C  -> Emerald Green (#1ee038)
+   * 55–70°C  -> Lemon Yellow (#faeb0a)
+   * 70–85°C  -> Warm Orange (#ff7700)
+   * 85–105°C -> Red-Orange (#ff1a00)
+   * >= 105°C -> Saturated Deep Crimson Red (#f50505)
+   */
+  const getThermalCalloutStyle = (tempC: number) => {
+    if (tempC <= 0) {
+      return { hex: '#94a3b8', border: 'border-slate-500/80', bg: 'bg-slate-500/25', text: '#94a3b8', shadow: 'shadow-slate-950/40' };
+    }
+    if (tempC < 25) {
+      return { hex: '#0526e6', border: 'border-blue-600/90', bg: 'bg-blue-600/25', text: '#3b82f6', shadow: 'shadow-blue-950/40' };
+    }
+    if (tempC < 35) {
+      return { hex: '#00e5f5', border: 'border-cyan-400/90', bg: 'bg-cyan-400/25', text: '#00e5f5', shadow: 'shadow-cyan-950/40' };
+    }
+    if (tempC < 55) {
+      return { hex: '#1ee038', border: 'border-emerald-500/90', bg: 'bg-emerald-500/25', text: '#1ee038', shadow: 'shadow-emerald-950/40' };
+    }
+    if (tempC < 70) {
+      return { hex: '#faeb0a', border: 'border-yellow-400/90', bg: 'bg-yellow-400/25', text: '#faeb0a', shadow: 'shadow-yellow-950/40' };
+    }
+    if (tempC < 85) {
+      return { hex: '#ff7700', border: 'border-orange-500/90', bg: 'bg-orange-500/25', text: '#ff7700', shadow: 'shadow-orange-950/40' };
+    }
+    if (tempC < 105) {
+      return { hex: '#ff1a00', border: 'border-red-500/90', bg: 'bg-red-500/25', text: '#ff1a00', shadow: 'shadow-red-950/40' };
+    }
+    return { hex: '#f50505', border: 'border-rose-600/90', bg: 'bg-rose-600/25', text: '#f50505', shadow: 'shadow-rose-950/40' };
+  };
+
+  const hotSpotStyle = getThermalCalloutStyle(hotSpotC);
+  const innerStyle = getThermalCalloutStyle(innerC);
+  const surfaceStyle = getThermalCalloutStyle(surfaceC);
+  const contactPatchStyle = getThermalCalloutStyle(contactPatchC);
+  const centerStyle = getThermalCalloutStyle(centerC);
+  const outerStyle = getThermalCalloutStyle(outerC);
+
   // Live Telemetry Car Marker state along Suzuka Track Map
   const [carCoords, setCarCoords] = useState<{ x: number; y: number }>({ x: 182, y: 130 });
   const trackPathRef = useRef<SVGPathElement>(null);
@@ -373,7 +415,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <path
               ref={(el) => { calloutRefs.current.paths['hotSpot'] = el; }}
               fill="none"
-              stroke="#ef4444"
+              stroke={hotSpotStyle.hex}
               strokeWidth="1.6"
               strokeLinecap="round"
             />
@@ -381,7 +423,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <path
               ref={(el) => { calloutRefs.current.paths['innerShoulder'] = el; }}
               fill="none"
-              stroke="#f97316"
+              stroke={innerStyle.hex}
               strokeWidth="1.6"
               strokeLinecap="round"
             />
@@ -389,7 +431,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <path
               ref={(el) => { calloutRefs.current.paths['surfaceTemp'] = el; }}
               fill="none"
-              stroke="#facc15"
+              stroke={surfaceStyle.hex}
               strokeWidth="1.6"
               strokeLinecap="round"
             />
@@ -397,7 +439,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <path
               ref={(el) => { calloutRefs.current.paths['contactPatch'] = el; }}
               fill="none"
-              stroke="#10b981"
+              stroke={contactPatchStyle.hex}
               strokeWidth="1.6"
               strokeLinecap="round"
             />
@@ -405,7 +447,7 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <path
               ref={(el) => { calloutRefs.current.paths['treadCenter'] = el; }}
               fill="none"
-              stroke="#22c55e"
+              stroke={centerStyle.hex}
               strokeWidth="1.6"
               strokeLinecap="round"
             />
@@ -413,62 +455,62 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
             <path
               ref={(el) => { calloutRefs.current.paths['outerShoulder'] = el; }}
               fill="none"
-              stroke="#0284c7"
+              stroke={outerStyle.hex}
               strokeWidth="1.6"
               strokeLinecap="round"
             />
           </svg>
 
           {/* 6 Responsive Dual-Ring Anchor Nodes On the 3D Tyre Rubber (Tracked via 3D world projection) */}
-          {/* Node 1: Hot Spot (Crimson Red) */}
+          {/* Node 1: Hot Spot */}
           <div
             ref={(el) => { calloutRefs.current.dots['hotSpot'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border border-red-500 bg-red-500/25 shadow-sm shadow-red-950/40"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border ${hotSpotStyle.border} ${hotSpotStyle.bg} shadow-sm`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
           </div>
 
-          {/* Node 2: Inner Shoulder (Fiery Orange) */}
+          {/* Node 2: Inner Shoulder */}
           <div
             ref={(el) => { calloutRefs.current.dots['innerShoulder'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border border-orange-500 bg-orange-500/25 shadow-sm shadow-orange-950/40"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border ${innerStyle.border} ${innerStyle.bg} shadow-sm`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
           </div>
 
-          {/* Node 3: Surface Temp (Lemon Yellow) */}
+          {/* Node 3: Surface Temp */}
           <div
             ref={(el) => { calloutRefs.current.dots['surfaceTemp'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border border-amber-400 bg-amber-400/25 shadow-sm shadow-amber-950/40"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border ${surfaceStyle.border} ${surfaceStyle.bg} shadow-sm`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
           </div>
 
-          {/* Node 4: Contact Patch (Emerald Green) */}
+          {/* Node 4: Contact Patch */}
           <div
             ref={(el) => { calloutRefs.current.dots['contactPatch'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border border-emerald-500 bg-emerald-500/25 shadow-sm shadow-emerald-950/40"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border ${contactPatchStyle.border} ${contactPatchStyle.bg} shadow-sm`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
           </div>
 
-          {/* Node 5: Tread Center (Pure Green) */}
+          {/* Node 5: Tread Center */}
           <div
             ref={(el) => { calloutRefs.current.dots['treadCenter'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border border-green-500 bg-green-500/25 shadow-sm shadow-green-950/40"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border ${centerStyle.border} ${centerStyle.bg} shadow-sm`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
           </div>
 
-          {/* Node 6: Outer Shoulder (Cobalt / Sky Blue) */}
+          {/* Node 6: Outer Shoulder */}
           <div
             ref={(el) => { calloutRefs.current.dots['outerShoulder'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border border-sky-500 bg-sky-500/25 shadow-sm shadow-sky-950/40"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform flex items-center justify-center w-4 h-4 rounded-full border ${outerStyle.border} ${outerStyle.bg} shadow-sm`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="w-1.5 h-1.5 rounded-full bg-white shadow-xs" />
@@ -478,61 +520,61 @@ export const DigitalTwinCanvas: React.FC<DigitalTwinCanvasProps> = ({
           {/* BADGE 1: HOT SPOT */}
           <div
             ref={(el) => { calloutRefs.current.badges['hotSpot'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-red-500/90 shadow-lg shadow-red-950/40 text-center min-w-[78px]"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border ${hotSpotStyle.border} shadow-lg text-center min-w-[78px]`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">HOT SPOT</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#ef4444] leading-tight">{hotSpotC}°C</div>
+            <div className="text-[17px] font-extrabold font-mono leading-tight" style={{ color: hotSpotStyle.text }}>{hotSpotC}°C</div>
           </div>
 
           {/* BADGE 2: INNER SHOULDER */}
           <div
             ref={(el) => { calloutRefs.current.badges['innerShoulder'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-orange-500/90 shadow-lg shadow-orange-950/40 text-center min-w-[86px]"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border ${innerStyle.border} shadow-lg text-center min-w-[86px]`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">INNER SHOULDER</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#f97316] leading-tight">{innerC}°C</div>
+            <div className="text-[17px] font-extrabold font-mono leading-tight" style={{ color: innerStyle.text }}>{innerC}°C</div>
           </div>
 
           {/* BADGE 3: SURFACE TEMP */}
           <div
             ref={(el) => { calloutRefs.current.badges['surfaceTemp'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-amber-400/90 shadow-lg shadow-amber-950/40 text-center min-w-[86px]"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border ${surfaceStyle.border} shadow-lg text-center min-w-[86px]`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">SURFACE TEMP</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#facc15] leading-tight">{surfaceC}°C</div>
+            <div className="text-[17px] font-extrabold font-mono leading-tight" style={{ color: surfaceStyle.text }}>{surfaceC}°C</div>
           </div>
 
           {/* BADGE 4: CONTACT PATCH */}
           <div
             ref={(el) => { calloutRefs.current.badges['contactPatch'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/90 shadow-lg shadow-emerald-950/40 text-center min-w-[86px]"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border ${contactPatchStyle.border} shadow-lg text-center min-w-[86px]`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">CONTACT PATCH</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#10b981] leading-tight">{contactPatchC}°C</div>
+            <div className="text-[17px] font-extrabold font-mono leading-tight" style={{ color: contactPatchStyle.text }}>{contactPatchC}°C</div>
           </div>
 
           {/* BADGE 5: TREAD CENTER */}
           <div
             ref={(el) => { calloutRefs.current.badges['treadCenter'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-emerald-500/90 shadow-lg shadow-emerald-950/40 text-center min-w-[86px]"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border ${centerStyle.border} shadow-lg text-center min-w-[86px]`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">TREAD CENTER</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#22c55e] leading-tight">{centerC}°C</div>
+            <div className="text-[17px] font-extrabold font-mono leading-tight" style={{ color: centerStyle.text }}>{centerC}°C</div>
           </div>
 
           {/* BADGE 6: OUTER SHOULDER */}
           <div
             ref={(el) => { calloutRefs.current.badges['outerShoulder'] = el; }}
-            className="absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border border-sky-500/90 shadow-lg shadow-sky-950/40 text-center min-w-[86px]"
+            className={`absolute top-0 left-0 pointer-events-none will-change-transform bg-[#13161f]/95 backdrop-blur-md px-3 py-1.5 rounded-xl border ${outerStyle.border} shadow-lg text-center min-w-[86px]`}
             style={{ transform: 'translate(-9999px, -9999px)' }}
           >
             <div className="text-[8px] font-mono font-bold tracking-wider text-white/90 uppercase leading-tight">OUTER SHOULDER</div>
-            <div className="text-[17px] font-extrabold font-mono text-[#0284c7] leading-tight">{outerC}°C</div>
+            <div className="text-[17px] font-extrabold font-mono leading-tight" style={{ color: outerStyle.text }}>{outerC}°C</div>
           </div>
         </div>
       )}

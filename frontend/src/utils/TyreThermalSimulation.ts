@@ -129,9 +129,15 @@ export class TyreThermalSimulation {
     let verticalLoadKn = cornerState.load.vertical_load_kn ?? 4.5;
 
     if (telemetryFrame?.vehicle) {
-      const brk = telemetryFrame.vehicle.brake ?? 0;
-      const thr = telemetryFrame.vehicle.throttle ?? 0;
-      gLong = thr * 1.8 - brk * 2.5;
+      const veh = telemetryFrame.vehicle;
+      const rawBrk = veh.brake_pct ?? (veh.brake ? (veh.brake > 1 ? veh.brake : veh.brake * 100) : 0);
+      const rawThr = veh.throttle_pct ?? (veh.throttle ? (veh.throttle > 1 ? veh.throttle : veh.throttle * 100) : 0);
+      const brkNorm = Math.min(1.0, Math.max(0.0, rawBrk / 100.0));
+      const thrNorm = Math.min(1.0, Math.max(0.0, rawThr / 100.0));
+      gLong = thrNorm * 1.2 - brkNorm * 2.0;
+      if (veh.g_lat != null && !isNaN(veh.g_lat)) {
+        gLat = veh.g_lat;
+      }
     }
     slipRatio = cornerState.grip.slip_ratio_pct ? cornerState.grip.slip_ratio_pct / 100.0 : 0.02;
     slipAngle = cornerState.grip.slip_angle_deg ? (cornerState.grip.slip_angle_deg * Math.PI) / 180.0 : 0.01;
@@ -139,65 +145,47 @@ export class TyreThermalSimulation {
 
     // 2. Contact Patch Friction Energy Calculation
     // Friction is speed-dependent: no speed = no friction heat
-    const brakePressure = gLong < -0.3 ? Math.min(1.0, Math.abs(gLong) / 2.5) : 0.0;
-    const accelPower = gLong > 0.3 ? Math.min(1.0, gLong / 2.0) : 0.0;
+    const brakePressure = gLong < -0.3 ? Math.min(1.0, Math.abs(gLong) / 2.0) : 0.0;
+    const accelPower = gLong > 0.3 ? Math.min(1.0, gLong / 1.5) : 0.0;
 
     const frictionIntensity = (
-      slipRatio * 1.8 +
-      slipAngle * 2.2 +
-      brakePressure * 0.9 +
-      accelPower * 0.6 +
-      (speedMps / 80.0) * 0.15
+      slipRatio * 1.5 +
+      slipAngle * 2.0 +
+      brakePressure * 0.8 +
+      accelPower * 0.5 +
+      (speedMps / 80.0) * 0.12
     ) * (verticalLoadKn / 4.5) * speedHeatFactor;
 
-    // Friction heat generation rate (°C / sec) — scales with speed
-    const frictionHeatRate = frictionIntensity * 18.0;
-
-    // 3. Lateral Camber & Cornering Load Distribution
-    // F1 Front tires run negative camber (-3.5°).
-    // Straight-line: Inner shoulder is naturally warmer than outer shoulder.
-    // Turn Right (gLat > 0):
-    //   - Left Tire (Outer wheel): High lateral load transfer onto Outer Shoulder & Tread!
-    //   - Right Tire (Inner wheel): Unloaded, rides heavily on Inner Shoulder.
-    // Turn Left (gLat < 0):
-    //   - Right Tire (Outer wheel): High lateral load transfer onto Outer Shoulder & Tread!
-    //   - Left Tire (Inner wheel): Unloaded, rides heavily on Inner Shoulder.
-    let innerLoadFactor = 1.15; // default negative camber bias
-    let outerLoadFactor = 0.85;
-    let centerLoadFactor = 1.0;
-
+    // 3. Dynamic Lateral Camber & Cornering Load Distribution
     const corneringMagnitude = Math.min(1.5, Math.abs(gLat));
     const isOuterWheelInTurn = (gLat > 0.1 && isLeft) || (gLat < -0.1 && !isLeft);
+    let lateralOffsetInner = 0.0;
+    let lateralOffsetOuter = 0.0;
 
     if (corneringMagnitude > 0.1) {
       if (isOuterWheelInTurn) {
-        // High load on outer shoulder
-        outerLoadFactor += corneringMagnitude * 0.8;
-        innerLoadFactor -= corneringMagnitude * 0.4;
+        // High load on outer shoulder in turns
+        lateralOffsetOuter += corneringMagnitude * 3.5;
+        lateralOffsetInner -= corneringMagnitude * 1.5;
       } else {
         // High load on inner shoulder
-        innerLoadFactor += corneringMagnitude * 0.7;
-        outerLoadFactor -= corneringMagnitude * 0.3;
+        lateralOffsetInner += corneringMagnitude * 3.0;
+        lateralOffsetOuter -= corneringMagnitude * 1.2;
       }
     }
 
-    // Straight line braking / acceleration boosts center tread
-    if (Math.abs(gLong) > 0.3) {
-      centerLoadFactor += Math.abs(gLong) * 0.4;
-    }
+    // Straight line braking / acceleration adds modest dynamic heat to center crown
+    const longitudinalOffset = Math.min(5.0, Math.abs(gLong) * 2.0);
 
-    // 4. Compute Target Zone Equilibrium Temperatures
-    const targetInnerShoulder = Math.max(25.0, baseInner * innerLoadFactor + (trackTemp - 25.0) * 0.1);
-    const targetInnerTread = Math.max(25.0, (baseInner * 0.4 + baseCenter * 0.6) * ((innerLoadFactor + centerLoadFactor) * 0.5));
-    const targetCenterTread = Math.max(25.0, baseCenter * centerLoadFactor);
-    const targetOuterTread = Math.max(25.0, (baseOuter * 0.4 + baseCenter * 0.6) * ((outerLoadFactor + centerLoadFactor) * 0.5));
-    const targetOuterShoulder = Math.max(25.0, baseOuter * outerLoadFactor);
+    // 4. Compute Target Zone Equilibrium Temperatures (directly anchored to calibrated telemetry)
+    const targetInnerShoulder = Math.max(25.0, baseInner + lateralOffsetInner);
+    const targetCenterTread = Math.max(25.0, baseCenter + longitudinalOffset);
+    const targetOuterShoulder = Math.max(25.0, baseOuter + lateralOffsetOuter);
+    const targetInnerTread = targetInnerShoulder * 0.5 + targetCenterTread * 0.5;
+    const targetOuterTread = targetOuterShoulder * 0.5 + targetCenterTread * 0.5;
 
-    // Contact Patch receives immediate friction spike
-    const targetContactPatch = Math.max(
-      targetCenterTread + (speedKph > 100 ? 12.0 : 4.0),
-      (targetInnerTread + targetCenterTread + targetOuterTread) / 3.0 + frictionHeatRate * 1.2
-    );
+    // Contact Patch receives immediate friction spike (bottom of tyre)
+    const targetContactPatch = (targetInnerTread + targetCenterTread) / 2.0 + frictionIntensity * 3.0;
 
     // 5. Dynamic Thermal Integration (Fast heating under high load/speed, rapid cooling when slowing down)
     const isCooling = targetCenterTread < this.currentThermal.centerTread;
